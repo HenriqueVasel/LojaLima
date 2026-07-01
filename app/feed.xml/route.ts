@@ -184,7 +184,9 @@ if (
 
           const description = cleanHtml(product.description ?? "").slice(0, 500);
 
-      const price = (product.priceCents / 100).toFixed(2);
+      const finalPrice = Math.round(product.priceCents * 1.35);
+
+const price = (finalPrice / 100).toFixed(2);
 
 const now = new Date();
 
@@ -196,20 +198,20 @@ if (
   (!product.promotion.startsAt || product.promotion.startsAt <= now) &&
   (!product.promotion.endsAt || product.promotion.endsAt >= now)
 ) {
-  let promoPrice = product.priceCents;
+  let promoPrice = product.priceCents * 1.35;
 
   if (product.promotion.discountType === "percentage") {
     promoPrice =
-      product.priceCents -
-      Math.round(
-        (product.priceCents * product.promotion.discountValue) / 100
-      );
+  promoPrice -
+  Math.round(
+    (promoPrice * product.promotion.discountValue) / 100
+  );
   }
 
   if (product.promotion.discountType === "fixed") {
-    promoPrice =
-      product.priceCents -
-      Math.round(product.promotion.discountValue * 100);
+   promoPrice =
+  promoPrice -
+  Math.round(product.promotion.discountValue * 100);
   }
 
   if (promoPrice > 0 && promoPrice < product.priceCents) {
