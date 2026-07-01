@@ -12,7 +12,8 @@ function escapeXml(str: string = "") {
 function cleanHtml(text: string = "") {
   return text
     .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
+    .replace(/&nbsp;?/gi, " ")
+    .replace(/&#160;/gi, " ")
     .replace(/&amp;/gi, "&")
     .replace(/&quot;/gi, '"')
     .replace(/&#39;/gi, "'")
