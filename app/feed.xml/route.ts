@@ -11,7 +11,14 @@ function escapeXml(str: string = "") {
 
 function cleanHtml(text: string = "") {
   return text
-    .replace(/<[^>]*>/g, "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&[a-z0-9#]+;/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -89,13 +96,19 @@ function optimizeTitle(product: {
   }
 
   if (
-    category.includes("interfone") &&
-    !title.toLowerCase().includes("interfone")
-  ) {
-    title = `Interfone ${title}`;
-  }
+  category.includes("interfone") &&
+  !title.toLowerCase().includes("interfone")
+) {
+  title = `Interfone ${title}`;
+}
 
-  return title.replace(/\s+/g, " ").trim();
+// Padroniza alguns termos
+title = title
+  .replace(/\bWI[- ]?FI\b/gi, "Wi-Fi")
+  .replace(/\bFULL HD\b/gi, "Full HD")
+  .replace(/\bHD\b/g, "HD");
+
+return title.replace(/\s+/g, " ").trim();
 }
 
 export async function GET() {
@@ -140,16 +153,24 @@ if (
 }
 
       const additionalImages = product.productimage
-        .slice(1)
-        .map(
-          (img) =>
-            `<g:additional_image_link>${escapeXml(
-              img.url.startsWith("http")
-                ? img.url
-                : `https://lojalimaelima.com.br${img.url}`
-            )}</g:additional_image_link>`
-        )
-        .join("");
+  .slice(1)
+  .filter((img) => {
+    const url = img.url.toLowerCase();
+
+    return (
+      !url.includes("placeholder") &&
+      !url.includes("sem-imagem") &&
+      !url.includes("no-image")
+    );
+  })
+  .map((img) => {
+    const url = img.url.startsWith("http")
+      ? img.url
+      : `https://lojalimaelima.com.br${img.url}`;
+
+    return `<g:additional_image_link>${escapeXml(url)}</g:additional_image_link>`;
+  })
+  .join("");
 
       const category =
         product.productcategory
@@ -200,7 +221,7 @@ if (
 
         <g:id>${product.id}</g:id>
 
-        <title>${escapeXml(product.name)}</title>
+       
 
         <title>${escapeXml(optimizedTitle)}</title>
 
@@ -215,10 +236,13 @@ if (
         <g:brand>${escapeXml(product.brand ?? "Intelbras")}</g:brand>
 
         ${
-          product.ean
-            ? `<g:gtin>${product.ean}</g:gtin>`
-            : `<g:identifier_exists>no</g:identifier_exists>`
-        }
+  product.ean
+    ? `
+      <g:gtin>${product.ean}</g:gtin>
+      <g:identifier_exists>yes</g:identifier_exists>
+    `
+    : `<g:identifier_exists>no</g:identifier_exists>`
+}
 
         ${
           product.sku
