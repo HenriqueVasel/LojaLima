@@ -355,7 +355,7 @@ let updated = 0;
     // =========================
 
 const products =
-  Array.from(grouped.values()).slice(3200, 3530);
+   Array.from(grouped.values());
  
 
 for (const product of products) {
