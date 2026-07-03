@@ -706,8 +706,14 @@ payment_methods:
 
   } catch (error) {
 
-    console.log("ERRO CHECKOUT:", error);
+    console.error("ERRO CHECKOUT:");
+console.error(error);
 
+if (error instanceof Error) {
+  console.error(error.message);
+}
+
+console.error(JSON.stringify(error, null, 2));
     return NextResponse.json(
       { error: "Erro no checkout" },
       { status: 500 }
