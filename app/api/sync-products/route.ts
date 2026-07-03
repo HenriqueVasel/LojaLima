@@ -227,6 +227,12 @@ let data = [];
 
 try {
   data = JSON.parse(text);
+
+  const teste = data.find(
+  (p: any) => p.SKU === "SKU_DO_PRODUTO"
+);
+
+console.log(teste);
 } catch {
   throw new Error("JSON inválido da API");
 }

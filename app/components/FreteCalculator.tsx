@@ -128,6 +128,7 @@ localStorage.setItem("bairro", data.bairro || "");
 });
 
 const freteData = await freteRes.json();
+console.log(freteData);
 
 console.log("FRETE:", freteData);
 
@@ -145,11 +146,15 @@ if (opcoes.length === 0) {
   return;
 }
 
-setFretes(opcoes);
+const opcoesOrdenadas = [...opcoes].sort(
+  (a, b) => Number(a.price) - Number(b.price)
+);
+
+setFretes(opcoesOrdenadas);
 
 // Continua selecionando automaticamente a primeira
 // para não quebrar o checkout atual.
-const primeira = opcoes[0];
+const primeira = opcoesOrdenadas[0];
 
 setFreteSelecionado(primeira);
 
@@ -198,6 +203,38 @@ if (saveToCart) {
       setLoading(false);
     }
   }
+
+
+  function nomeTransportadora(item:any){
+
+  return item.company?.name ||
+         item.company?.company_name ||
+         "Transportadora";
+
+}
+
+function nomeServico(item:any){
+
+  switch(item.name){
+
+    case "Package":
+      return "Package";
+
+    case "Package Centralizada":
+      return "Package Econômico";
+
+    case "Com":
+      return "Convencional";
+
+    case "Standard":
+      return "Standard";
+
+    default:
+      return item.name;
+
+  }
+
+}
 
   return (
     <div
@@ -373,7 +410,11 @@ if (saveToCart) {
         {fretes.map((item: any, index) => {
 
           const ativo =
-            freteSelecionado?.id === item.id;
+  freteSelecionado?.name === item.name &&
+  freteSelecionado?.price === item.price;
+
+
+            
 
           return (
 
@@ -410,18 +451,21 @@ if (saveToCart) {
                 );
 
               }}
-              style={{
-                cursor: "pointer",
-                border: ativo
-                  ? "2px solid #0bc15c"
-                  : "1px solid #444",
-                borderRadius: 12,
-                padding: 15,
-                background: ativo
-                  ? "rgba(11,193,92,.12)"
-                  : "#1b1b1b",
-                transition: ".2s"
-              }}
+            style={{
+  cursor: "pointer",
+  border: ativo
+    ? "2px solid #22c55e"
+    : "1px solid #333",
+  borderRadius: 16,
+  padding: 20,
+  background: ativo
+    ? "#103320"
+    : "#202020",
+  transition: ".25s",
+  boxShadow: ativo
+    ? "0 0 18px rgba(34,197,94,.25)"
+    : "none"
+}}
             >
 
               <div
@@ -434,10 +478,25 @@ if (saveToCart) {
 
                 <div>
 
-                  <strong>
-                    {item.name}
-                  </strong>
+                  <strong
+  style={{
+    fontSize:16,
+  color:"#fff"
+    
+  }}
+>
+  {nomeTransportadora(item)}
+</strong>
 
+<div
+  style={{
+       fontSize:14,
+    color:"#c8c8c8",
+    marginTop:4
+  }}
+>
+  {nomeServico(item)}
+</div>
                   <div
                     style={{
                       fontSize: 13,
@@ -445,21 +504,44 @@ if (saveToCart) {
                       marginTop: 3
                     }}
                   >
-                    Entrega em{" "}
-                    {item.delivery_time} dias
+                    Entrega em até {item.delivery_time} dias úteis
                   </div>
 
                 </div>
 
                 <div
-                  style={{
-                    fontWeight: 700,
-                    fontSize: 18
-                  }}
-                >
-                  R$ {Number(item.price).toFixed(2)}
-                </div>
+  style={{
+    textAlign: "right"
+  }}
+>
 
+  <div
+    style={{
+      fontSize: 24,
+      fontWeight: 700,
+      color: "#22c55e"
+    }}
+  >
+    R$ {Number(item.price).toFixed(2)}
+  </div>
+
+  {ativo && (
+    <div
+      style={{
+        marginTop: 8,
+        background: "#16a34a",
+        color: "#fff",
+        padding: "4px 10px",
+        borderRadius: 20,
+        fontSize: 12,
+        fontWeight: 600
+      }}
+    >
+      ✓ Selecionado
+    </div>
+  )}
+
+</div>
               </div>
 
             </div>
