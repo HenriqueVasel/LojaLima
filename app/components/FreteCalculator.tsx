@@ -26,6 +26,9 @@ export default function FreteCalculator({
   const [numero, setNumero] = useState("");
   const [retirada, setRetirada] = useState(false);
 
+  const [fretes, setFretes] = useState<any[]>([]);
+const [freteSelecionado, setFreteSelecionado] = useState<any>(null);
+
  async function calcularFrete() {
 
   const cepLimpo = cep.replace(/\D/g, "");
@@ -128,37 +131,44 @@ const freteData = await freteRes.json();
 
 console.log("FRETE:", freteData);
 
-const melhorOpcao = Array.isArray(freteData)
-  ? freteData.find(
+const opcoes = Array.isArray(freteData)
+  ? freteData.filter(
       (item: any) =>
         !item.error &&
         item.price &&
         Number(item.price) > 0
     )
-  : null;
+  : [];
 
-if (
-  !melhorOpcao ||
-  melhorOpcao.error ||
-  !melhorOpcao.price
-) {
-  console.log("ERRO FRETE:", melhorOpcao);
-
+if (opcoes.length === 0) {
   alert("Não foi possível calcular o frete");
-
   return;
 }
 
+setFretes(opcoes);
+
+// Continua selecionando automaticamente a primeira
+// para não quebrar o checkout atual.
+const primeira = opcoes[0];
+
+setFreteSelecionado(primeira);
+
 const valor = Math.round(
-  Number(melhorOpcao.price) * 100
+  Number(primeira.price) * 100
 );
 
 setFrete(valor);
 
 localStorage.setItem(
   "freteNome",
-  melhorOpcao.name
+  primeira.name
 );
+
+sessionStorage.setItem(
+  "shipping",
+  JSON.stringify(primeira)
+);
+
 if (saveToCart) {
 
   sessionStorage.setItem(
