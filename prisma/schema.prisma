@@ -45,6 +45,11 @@ model order {
   id            String       @id @default(cuid())
   createdAt     DateTime     @default(now())
   status        order_status @default(pending)
+  trackingCode       String?
+  trackingUrl        String?
+  shippingStatus     String? @default("processing")
+  lastTrackingUpdate DateTime?
+  carrier            String?
   customerEmail String
   customerObs   String?
   customerWhats String

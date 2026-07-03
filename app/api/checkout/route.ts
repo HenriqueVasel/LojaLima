@@ -638,9 +638,7 @@ couponCode !== "WIFI25"
    
 ],
 
-shipments: {
-  cost: (freteCents || 0) / 100
-},
+
 
   payer: {
   email: customerEmail,
