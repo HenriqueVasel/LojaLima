@@ -355,39 +355,155 @@ if (saveToCart) {
 )}
 
       {/* RESULTADO */}
-      {frete !== null && (endereco || retirada) && (
-        <div className={s.resultBox}>
-          <div className={s.resultTop}>
-            <span className={s.resultLabel}>
-  <img
-    src={
-      retirada
-        ? "/icons/store.png"
-        : "/icons/truck.png"
-    }
-    className={s.iconSmall}
-  />
+{frete !== null && (endereco || retirada) && (
 
-  {localStorage.getItem("freteNome")}
-</span>
-            <span className={s.price}>
-              R$ {(frete / 100).toFixed(2)}
-            </span>
-          </div>
+  <>
 
-      {!retirada && endereco && (
-  <div
-    style={{
-      marginTop: 4,
-      fontSize: 12,
-      opacity: 0.7
-    }}
-  >
-    Entrega para {endereco.localidade} - {endereco.uf}
-  </div>
-)}
+    {fretes.length > 0 ? (
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 12,
+          marginTop: 20
+        }}
+      >
+
+        {fretes.map((item: any, index) => {
+
+          const ativo =
+            freteSelecionado?.id === item.id;
+
+          return (
+
+            <div
+              key={index}
+              onClick={() => {
+
+                setFreteSelecionado(item);
+
+                const valor =
+                  Math.round(
+                    Number(item.price) * 100
+                  );
+
+                setFrete(valor);
+
+                localStorage.setItem(
+                  "freteNome",
+                  item.name
+                );
+
+                sessionStorage.setItem(
+                  "freteCents",
+                  String(valor)
+                );
+
+                sessionStorage.setItem(
+                  "shipping",
+                  JSON.stringify(item)
+                );
+
+                window.dispatchEvent(
+                  new Event("freteUpdated")
+                );
+
+              }}
+              style={{
+                cursor: "pointer",
+                border: ativo
+                  ? "2px solid #0bc15c"
+                  : "1px solid #444",
+                borderRadius: 12,
+                padding: 15,
+                background: ativo
+                  ? "rgba(11,193,92,.12)"
+                  : "#1b1b1b",
+                transition: ".2s"
+              }}
+            >
+
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center"
+                }}
+              >
+
+                <div>
+
+                  <strong>
+                    {item.name}
+                  </strong>
+
+                  <div
+                    style={{
+                      fontSize: 13,
+                      opacity: .75,
+                      marginTop: 3
+                    }}
+                  >
+                    Entrega em{" "}
+                    {item.delivery_time} dias
+                  </div>
+
+                </div>
+
+                <div
+                  style={{
+                    fontWeight: 700,
+                    fontSize: 18
+                  }}
+                >
+                  R$ {Number(item.price).toFixed(2)}
+                </div>
+
+              </div>
+
+            </div>
+
+          );
+
+        })}
+
+      </div>
+
+    ) : (
+
+      <div className={s.resultBox}>
+
+        <div className={s.resultTop}>
+
+          <span className={s.resultLabel}>
+
+            <img
+              src={
+                retirada
+                  ? "/icons/store.png"
+                  : "/icons/truck.png"
+              }
+              className={s.iconSmall}
+            />
+
+            {localStorage.getItem("freteNome")}
+
+          </span>
+
+          <span className={s.price}>
+            R$ {(frete / 100).toFixed(2)}
+          </span>
+
         </div>
-      )}
+
+      </div>
+
+    )}
+
+  </>
+
+)}
 
     </div>
   );
