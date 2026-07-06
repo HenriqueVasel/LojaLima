@@ -101,8 +101,8 @@ if (typeof window !== "undefined" && (window as any).fbq) {
         "Content-Type":"application/json"
       },
       credentials:"include",
-   body:JSON.stringify({
-    couponCode: coupon?.code || null,
+ body:JSON.stringify({
+  couponCode: coupon?.code || null,
   customerName: customer.nome,
   customerWhats: customer.whats,
   customerEmail: customer.email,
@@ -111,9 +111,13 @@ if (typeof window !== "undefined" && (window as any).fbq) {
   paymentMethod: payment,
   retiradaLoja:
   sessionStorage.getItem("retiradaLoja") === "true",
-  
+
   endereco: customer.endereco,
-  numero: customer.numero // 🔥 AQUI
+  numero: customer.numero,
+
+  shipping: JSON.parse(
+    sessionStorage.getItem("shipping") || "null"
+  )
 })
     });
 

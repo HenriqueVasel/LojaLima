@@ -32,19 +32,19 @@ const userId = await getUserId();
 
     const body = await req.json();
 
-    const {
-        customerName,
-        customerEmail,
-        customerWhats,
-        customerCpf,
-        customerObs,
-        paymentMethod,
-        retiradaLoja,
-        endereco,
-        numero,
-        couponCode
-        
-    } = body;
+const {
+    customerName,
+    customerEmail,
+    customerWhats,
+    customerCpf,
+    customerObs,
+    paymentMethod,
+    retiradaLoja,
+    endereco,
+    numero,
+    couponCode,
+    shipping
+} = body;
 
     
 
@@ -100,74 +100,26 @@ const userId = await getUserId();
       );
     }
 
-    let freteCents = 0;
+    
+
+let freteCents = 0;
 
 if (!retiradaLoja) {
 
-    const response = await fetch(
-  "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate",
-  {
-    method: "POST",
-
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.MELHOR_ENVIO_TOKEN}`,
-      "Accept": "application/json",
-      "User-Agent":
-        "Lima e Lima Ecommerce (contato@lojalimaelima.com.br)"
-    },
-
-    body: JSON.stringify({
-
-      from: {
-        postal_code: "89251155"
+  if (!shipping) {
+    return NextResponse.json(
+      {
+        error: "Frete não selecionado"
       },
-
-      to: {
-        postal_code: endereco.cep.replace(/\D/g, "")
-      },
-
-      products: [
-        {
-          id: "1",
-          width: 20,
-          height: 5,
-          length: 30,
-          weight: 1,
-          insurance_value: 100,
-          quantity: cartItems.length
-        }
-      ],
-
-      options: {
-        receipt: false,
-        own_hand: false
+      {
+        status: 400
       }
-    })
+    );
   }
-);
 
-const freteData = await response.json();
-
-const melhorOpcao = Array.isArray(freteData)
-  ? freteData.find(
-      (item: any) =>
-        !item.error &&
-        item.price &&
-        Number(item.price) > 0
-    )
-  : null;
-
-if (!melhorOpcao) {
-  return NextResponse.json(
-    { error: "Erro ao calcular frete" },
-    { status: 400 }
+  freteCents = Math.round(
+    Number(shipping.price) * 100
   );
-}
-
-freteCents = Math.round(
-  Number(melhorOpcao.price) * 100
-);
 
 }
 
