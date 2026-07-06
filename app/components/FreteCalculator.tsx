@@ -252,18 +252,27 @@ function nomeServico(item:any){
         <div className={s.methods}>
 
 <button
-  onClick={() => {
-    setRetirada(false);
+onClick={() => {
 
-    sessionStorage.removeItem("retiradaLoja");
-    sessionStorage.removeItem("freteCents");
+  setRetirada(false);
 
-    setFrete(null);
+  setFrete(null);
 
-    window.dispatchEvent(
-      new Event("freteUpdated")
-    );
-  }}
+  setFretes([]);
+
+  setFreteSelecionado(null);
+
+  setEndereco(null);
+
+  sessionStorage.removeItem("retiradaLoja");
+  sessionStorage.removeItem("freteCents");
+  sessionStorage.removeItem("shipping");
+
+  window.dispatchEvent(
+    new Event("freteUpdated")
+  );
+
+}}
   className={`${s.methodBtn} ${!retirada ? s.active : ""}`}
 >
   <div className={s.methodContent}>
@@ -277,6 +286,10 @@ function nomeServico(item:any){
     setRetirada(true);
 
     setFrete(0);
+     setFretes([]);
+    setFreteSelecionado(null);
+
+    setEndereco(null);
 
     sessionStorage.setItem(
       "freteCents",
@@ -392,7 +405,7 @@ function nomeServico(item:any){
 )}
 
       {/* RESULTADO */}
-{frete !== null && (endereco || retirada) && (
+{!retirada && frete !== null && endereco && (
 
   <>
 
@@ -498,11 +511,12 @@ function nomeServico(item:any){
   {nomeServico(item)}
 </div>
                   <div
-                    style={{
-                      fontSize: 13,
-                      opacity: .75,
-                      marginTop: 3
-                    }}
+                   style={{
+  marginTop: 8,
+  fontSize: 13,
+  color: "#7dd3a7",
+  fontWeight: 500
+}}
                   >
                     Entrega em até {item.delivery_time} dias úteis
                   </div>
