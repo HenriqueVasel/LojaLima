@@ -256,13 +256,19 @@ onClick={() => {
 
   setRetirada(false);
 
-  setFrete(null);
-
-  setFretes([]);
-
-  setFreteSelecionado(null);
-
+  // Obriga calcular novamente
+  setCep("");
+  setNumero("");
   setEndereco(null);
+  setFrete(null);
+  setFretes([]);
+  setFreteSelecionado(null);
+  localStorage.removeItem("cep");
+localStorage.removeItem("cidade");
+localStorage.removeItem("uf");
+localStorage.removeItem("logradouro");
+localStorage.removeItem("bairro");
+localStorage.removeItem("numero");
 
   sessionStorage.removeItem("retiradaLoja");
   sessionStorage.removeItem("freteCents");
@@ -282,33 +288,38 @@ onClick={() => {
 </button>
 
 <button
-  onClick={() => {
-    setRetirada(true);
+ onClick={() => {
 
-    setFrete(0);
-     setFretes([]);
-    setFreteSelecionado(null);
+  setRetirada(true);
 
-    setEndereco(null);
+  // Limpa tudo da entrega
+  setCep("");
+  setNumero("");
+  setEndereco(null);
+  setFrete(null);
+  setFretes([]);
+  setFreteSelecionado(null);
+  localStorage.removeItem("cep");
+localStorage.removeItem("cidade");
+localStorage.removeItem("uf");
+localStorage.removeItem("logradouro");
+localStorage.removeItem("bairro");
+localStorage.removeItem("numero");
 
-    sessionStorage.setItem(
-      "freteCents",
-      "0"
-    );
+  sessionStorage.setItem("freteCents", "0");
+  sessionStorage.setItem("retiradaLoja", "true");
+  sessionStorage.removeItem("shipping");
 
-    window.dispatchEvent(
-      new Event("freteUpdated")
-    );
+  localStorage.setItem(
+    "freteNome",
+    "Retirada na loja"
+  );
 
-    sessionStorage.setItem(
-      "retiradaLoja",
-      "true"
-    );
+  window.dispatchEvent(
+    new Event("freteUpdated")
+  );
 
-    localStorage.setItem(
-      "freteNome",
-      "Retirada na loja"
-    );
+  
   }}
   className={`${s.methodBtn} ${retirada ? s.active : ""}`}
 >
