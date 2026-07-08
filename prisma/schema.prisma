@@ -110,6 +110,11 @@ model product {
   description      String?
   shortDescription String? @db.Text
 
+  weight           Float?
+  height           Float?
+  width            Float?
+  length           Float?
+
   priceCents  Int
 
   promotionId String?
