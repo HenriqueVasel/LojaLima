@@ -380,6 +380,12 @@ const BATCH_SIZE = 500;
 
 const products = Array.from(grouped.values());
 
+console.log("TOTAL DA API:", data.length);
+console.log("TOTAL AGRUPADOS:", grouped.size);
+console.log("TOTAL PRODUCTS:", products.length);
+
+console.log("TOTAL LOTES:", batches.length);
+
 const batches = [];
 
 for (let i = 0; i < products.length; i += BATCH_SIZE) {
