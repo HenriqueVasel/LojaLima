@@ -31,13 +31,17 @@ export async function POST(req: Request) {
       type: "buffer"
     });
 
-    const firstSheet =
-      workbook.Sheets[
-        workbook.SheetNames[0]
-      ];
+ console.log(workbook.SheetNames);
 
-    const rows: any[] =
-      XLSX.utils.sheet_to_json(firstSheet);
+const firstSheet =
+  workbook.Sheets[
+    workbook.SheetNames[0]
+  ];
+    const rows =
+XLSX.utils.sheet_to_json(firstSheet, {
+  defval: "",
+  raw: false
+});
 
    const primeiraLinha = rows[0] || {};
 

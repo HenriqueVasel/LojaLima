@@ -828,6 +828,13 @@ if (!existingCategory) {
       updated,
     });
 
+    console.log({
+  totalApi: data.length,
+  totalProdutos: grouped.size,
+  criados: created,
+  atualizados: updated,
+});
+
   } catch (error) {
 
     console.error(error);
