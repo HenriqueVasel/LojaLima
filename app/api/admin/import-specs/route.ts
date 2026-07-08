@@ -48,9 +48,41 @@ const rows = XLSX.utils.sheet_to_json(firstSheet, {
 
 const colunas = Object.keys(primeiraLinha);
 
+let encontrados = 0;
+let naoEncontrados = 0;
+
+for (const row of rows) {
+
+  const ean = String(row.EAN || "").trim();
+
+  if (!ean) continue;
+
+  const produto = await prisma.product.findFirst({
+    where: {
+      ean
+    },
+    select: {
+      id: true,
+      name: true
+    }
+  });
+
+  if (produto) {
+    encontrados++;
+  } else {
+    naoEncontrados++;
+  }
+
+}
+
 return NextResponse.json({
-  totalLinhas: rows.length,
-  primeiras10Linhas: rows.slice(0, 10)
+
+  totalPlanilha: rows.length,
+
+  encontrados,
+
+  naoEncontrados
+
 });
 
   } catch (error) {
