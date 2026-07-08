@@ -39,15 +39,21 @@ export async function POST(req: Request) {
     const rows: any[] =
       XLSX.utils.sheet_to_json(firstSheet);
 
-    return NextResponse.json({
+   const primeiraLinha = rows[0] || {};
 
-      message: "Planilha lida com sucesso.",
+const colunas = Object.keys(primeiraLinha);
 
-      totalLinhas: rows.length,
+return NextResponse.json({
 
-      primeiraLinha: rows[0]
+  message: "Planilha lida com sucesso.",
 
-    });
+  totalLinhas: rows.length,
+
+  colunas,
+
+  primeiraLinha
+
+});
 
   } catch (error) {
 
