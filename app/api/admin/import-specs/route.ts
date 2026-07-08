@@ -38,7 +38,7 @@ export async function POST(req: Request) {
 const firstSheet =
   workbook.Sheets["Tabela"];
   
-const rows = XLSX.utils.sheet_to_json(firstSheet, {
+const rows = XLSX.utils.sheet_to_json<any>(firstSheet, {
   range: 2,
   defval: "",
   raw: false
