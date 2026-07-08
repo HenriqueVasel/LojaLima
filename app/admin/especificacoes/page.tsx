@@ -42,7 +42,7 @@ export default function EspecificacoesPage() {
         );
       }
 
-      setMessage(data.message);
+   setMessage(JSON.stringify(data, null, 2));
 
     } catch (err: any) {
 
@@ -148,7 +148,15 @@ export default function EspecificacoesPage() {
             }}
           >
 
-            {message}
+           <pre
+  style={{
+    whiteSpace: "pre-wrap",
+    fontSize: 12,
+    overflow: "auto"
+  }}
+>
+  {message}
+</pre>
 
           </div>
 
