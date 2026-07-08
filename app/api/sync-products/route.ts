@@ -325,6 +325,16 @@ for (const item of data) {
     Number(item.ESTOQUE || 0) -
     Number(item.RESERVADO || 0);
 
+    if (sku === "15598") {
+  console.log({
+    sku,
+    descricao: item.DESCRICAO,
+    estoqueApi: item.ESTOQUE,
+    reservado: item.RESERVADO,
+    estoqueCalculado: estoque,
+  });
+}
+
   if (!grouped.has(productName)) {
 
     const csvProduct: any =
