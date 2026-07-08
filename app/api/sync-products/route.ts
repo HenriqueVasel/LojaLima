@@ -293,6 +293,21 @@ csvProducts.forEach((p: any) => {
 
 });
 
+// =========================
+// CACHE PRODUTOS
+// =========================
+
+const existingProducts = await prisma.product.findMany({
+  include: {
+    stock: true,
+    productimage: true,
+  },
+});
+
+const productMap = new Map(
+  existingProducts.map((p) => [p.sku, p])
+);
+
 const grouped = new Map();
 
 for (const item of data) {
@@ -605,18 +620,7 @@ const categorySlug =
       // PRODUTO EXISTE?
       // =========================
 
-      const existing =
-        await prisma.product.findUnique({
-          where: {
-            sku: product.sku,
-          },
-         select: {
-  id: true,
-  name: true,
-  stock: true,
-  productimage: true,
-},
-        });
+      const existing = productMap.get(product.sku);
 
       // =========================
       // CREATE
