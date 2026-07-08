@@ -5,7 +5,7 @@
 import s from "@/app/styles/FreteCalculator.module.css";
 import { FaTruck, FaStore } from "react-icons/fa";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 type Props = {
   dark?: boolean;
@@ -28,6 +28,30 @@ export default function FreteCalculator({
 
   const [fretes, setFretes] = useState<any[]>([]);
 const [freteSelecionado, setFreteSelecionado] = useState<any>(null);
+
+
+useEffect(() => {
+
+  if (!retirada) return;
+
+  setCep("");
+  setNumero("");
+  setEndereco(null);
+  setFrete(null);
+  setFretes([]);
+  setFreteSelecionado(null);
+
+  sessionStorage.setItem("freteCents", "0");
+  sessionStorage.removeItem("shipping");
+
+  localStorage.removeItem("cep");
+  localStorage.removeItem("cidade");
+  localStorage.removeItem("uf");
+  localStorage.removeItem("logradouro");
+  localStorage.removeItem("bairro");
+  localStorage.removeItem("numero");
+
+}, [retirada]);
 
  async function calcularFrete() {
 
@@ -256,23 +280,10 @@ onClick={() => {
 
   setRetirada(false);
 
-  // Obriga calcular novamente
-  setCep("");
-  setNumero("");
-  setEndereco(null);
-  setFrete(null);
-  setFretes([]);
-  setFreteSelecionado(null);
-  localStorage.removeItem("cep");
-localStorage.removeItem("cidade");
-localStorage.removeItem("uf");
-localStorage.removeItem("logradouro");
-localStorage.removeItem("bairro");
-localStorage.removeItem("numero");
+sessionStorage.removeItem("retiradaLoja");
+sessionStorage.removeItem("shipping");
 
-  sessionStorage.removeItem("retiradaLoja");
-  sessionStorage.removeItem("freteCents");
-  sessionStorage.removeItem("shipping");
+
 
   window.dispatchEvent(
     new Event("freteUpdated")
@@ -289,38 +300,22 @@ localStorage.removeItem("numero");
 
 <button
  onClick={() => {
+setRetirada(true);
 
-  setRetirada(true);
+sessionStorage.setItem("retiradaLoja", "true");
+sessionStorage.setItem("freteCents", "0");
+sessionStorage.removeItem("shipping");
 
-  // Limpa tudo da entrega
-  setCep("");
-  setNumero("");
-  setEndereco(null);
-  setFrete(null);
-  setFretes([]);
-  setFreteSelecionado(null);
-  localStorage.removeItem("cep");
-localStorage.removeItem("cidade");
-localStorage.removeItem("uf");
-localStorage.removeItem("logradouro");
-localStorage.removeItem("bairro");
-localStorage.removeItem("numero");
+localStorage.setItem(
+  "freteNome",
+  "Retirada na loja"
+);
 
-  sessionStorage.setItem("freteCents", "0");
-  sessionStorage.setItem("retiradaLoja", "true");
-  sessionStorage.removeItem("shipping");
+window.dispatchEvent(
+  new Event("freteUpdated")
+);
 
-  localStorage.setItem(
-    "freteNome",
-    "Retirada na loja"
-  );
-
-  window.dispatchEvent(
-    new Event("freteUpdated")
-  );
-
-  
-  }}
+}}
   className={`${s.methodBtn} ${retirada ? s.active : ""}`}
 >
   <div className={s.methodContent}>
