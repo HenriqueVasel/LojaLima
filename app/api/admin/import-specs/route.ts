@@ -31,14 +31,16 @@ export async function POST(req: Request) {
       type: "buffer"
     });
 
+    const sheetNames = workbook.SheetNames;
+
  console.log(workbook.SheetNames);
 
 const firstSheet =
   workbook.Sheets[
     workbook.SheetNames[0]
   ];
-    const rows =
-XLSX.utils.sheet_to_json(firstSheet, {
+const rows = XLSX.utils.sheet_to_json(firstSheet, {
+  header: 1,
   defval: "",
   raw: false
 });
@@ -48,15 +50,8 @@ XLSX.utils.sheet_to_json(firstSheet, {
 const colunas = Object.keys(primeiraLinha);
 
 return NextResponse.json({
-
-  message: "Planilha lida com sucesso.",
-
   totalLinhas: rows.length,
-
-  colunas,
-
-  primeiraLinha
-
+  primeiras10Linhas: rows.slice(0, 10)
 });
 
   } catch (error) {
