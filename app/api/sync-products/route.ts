@@ -361,14 +361,24 @@ let updated = 0;
     // LOOP PRODUTOS
     // =========================
 
-const products =
-   Array.from(grouped.values());
+const BATCH_SIZE = 500;
+
+const products = Array.from(grouped.values());
+
+const batches = [];
+
+for (let i = 0; i < products.length; i += BATCH_SIZE) {
+  batches.push(products.slice(i, i + BATCH_SIZE));
+}
  
 
-for (const product of products) {
-  await new Promise(resolve =>
-  setTimeout(resolve, 150)
-);
+for (const batch of batches) {
+
+  console.log(`Lote com ${batch.length} produtos`);
+
+  for (const product of batch) {
+    
+ 
 
       const slug = slugify(product.name);
 
@@ -784,7 +794,7 @@ if (!existingCategory) {
       }
     }
 
-
+} // fecha for (const batch of batches)
 
     return NextResponse.json({
       success: true,
