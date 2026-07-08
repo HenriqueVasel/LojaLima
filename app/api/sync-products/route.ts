@@ -384,7 +384,6 @@ console.log("TOTAL DA API:", data.length);
 console.log("TOTAL AGRUPADOS:", grouped.size);
 console.log("TOTAL PRODUCTS:", products.length);
 
-console.log("TOTAL LOTES:", batches.length);
 
 const batches = [];
 
@@ -392,6 +391,8 @@ for (let i = 0; i < products.length; i += BATCH_SIZE) {
   batches.push(products.slice(i, i + BATCH_SIZE));
 }
  
+
+console.log("TOTAL LOTES:", batches.length);
 
 for (const batch of batches) {
 
