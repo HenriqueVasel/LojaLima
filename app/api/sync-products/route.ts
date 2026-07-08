@@ -308,6 +308,8 @@ const productMap = new Map(
   existingProducts.map((p) => [p.sku, p])
 );
 
+console.log("TOTAL API:", data.length);
+
 const grouped = new Map();
 
 for (const item of data) {
@@ -369,6 +371,8 @@ for (const item of data) {
 
   }
 }
+
+console.log("TOTAL GROUPED:", grouped.size);
 
 let created = 0;
 let updated = 0;
