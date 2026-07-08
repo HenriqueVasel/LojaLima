@@ -90,7 +90,7 @@ export default function EspecificacoesPage() {
 
       <input
         type="file"
-        accept=".xlsx,.xls"
+        accept=".xlsx,.xls,.xlsb,.csv"
         onChange={(e)=>{
 
           if(e.target.files){
