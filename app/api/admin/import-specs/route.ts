@@ -36,11 +36,10 @@ export async function POST(req: Request) {
  console.log(workbook.SheetNames);
 
 const firstSheet =
-  workbook.Sheets[
-    workbook.SheetNames[0]
-  ];
+  workbook.Sheets["Tabela"];
+  
 const rows = XLSX.utils.sheet_to_json(firstSheet, {
-  header: 1,
+  range: 2,
   defval: "",
   raw: false
 });
