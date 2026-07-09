@@ -84,28 +84,46 @@ if (produto) {
 
   if (atualizados < 10) {
 
-    await prisma.product.update({
+    
 
-      where: {
-        id: produto.id
-      },
+     try {
 
-      data: {
+  const peso = Number(String(row.Peso).replace(",", "."));
+  const altura = Number(String(row.Alt).replace(",", "."));
+  const largura = Number(String(row.Larg).replace(",", "."));
+  const comprimento = Number(String(row.Comp).replace(",", "."));
 
-        weight: Number(String(row.Peso).replace(",", ".")),
+  console.log({
+    peso,
+    altura,
+    largura,
+    comprimento
+  });
 
-        height: Number(String(row.Alt).replace(",", ".")),
+  await prisma.product.update({
 
-        width: Number(String(row.Larg).replace(",", ".")),
+    where: {
+      id: produto.id
+    },
 
-        length: Number(String(row.Comp).replace(",", "."))
+    data: {
 
-      }
+      weight: peso,
+      height: altura,
+      width: largura,
+      length: comprimento
 
-    });
+    }
 
-    atualizados++;
+  });
 
+  atualizados++;
+
+} catch (e) {
+
+  console.error("ERRO AO ATUALIZAR:", e);
+
+}
   }
 
 } else {
