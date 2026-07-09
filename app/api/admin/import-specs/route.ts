@@ -105,7 +105,9 @@ if (
 
 }
 
-await prisma.product.update({
+console.log("ATUALIZANDO:", produto.id);
+
+const resultado = await prisma.product.update({
 
   where: {
     id: produto.id
@@ -121,6 +123,10 @@ await prisma.product.update({
   }
 
 });
+
+console.log(resultado);
+
+atualizados++;
 
 atualizados++;
 
