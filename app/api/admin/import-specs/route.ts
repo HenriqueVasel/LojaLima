@@ -75,20 +75,35 @@ eansProcessados.add(ean);
     }
   });
 
+let atualizados = 0;
+
 if (produto) {
 
   encontrados++;
 
-  if (encontrados <= 10) {
+  if (atualizados < 10) {
 
-    console.log({
-      ean,
-      produto: produto.name,
-      peso: row.Peso,
-      altura: row.Alt,
-      largura: row.Larg,
-      comprimento: row.Comp
+    await prisma.product.update({
+
+      where: {
+        id: produto.id
+      },
+
+      data: {
+
+        weight: Number(String(row.Peso).replace(",", ".")),
+
+        height: Number(String(row.Alt).replace(",", ".")),
+
+        width: Number(String(row.Larg).replace(",", ".")),
+
+        length: Number(String(row.Comp).replace(",", "."))
+
+      }
+
     });
+
+    atualizados++;
 
   }
 
