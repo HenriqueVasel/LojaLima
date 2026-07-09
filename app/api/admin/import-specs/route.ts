@@ -76,7 +76,6 @@ eansProcessados.add(ean);
     }
   });
 
-let atualizados = 0;
 
 if (produto) {
 
