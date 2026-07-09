@@ -128,17 +128,7 @@ body: JSON.stringify({
     sessionStorage.getItem("shipping") || "null"
   )
 })
-  paymentMethod: payment,
-  retiradaLoja:
-  sessionStorage.getItem("retiradaLoja") === "true",
-
-  endereco: customer.endereco,
-  numero: customer.numero,
-
-  shipping: JSON.parse(
-    sessionStorage.getItem("shipping") || "null"
-  )
-})
+  
     });
 
     
