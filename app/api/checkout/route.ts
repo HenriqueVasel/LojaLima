@@ -619,10 +619,10 @@ couponCode !== "WIFI25"
   email: customerEmail,
  identification: {
   type: customerType === "PJ" ? "CNPJ" : "CPF",
-  number:
-    customerType === "PJ"
-      ? customerCnpj.replace(/\D/g, "")
-      : customerCpf.replace(/\D/g, "")
+number:
+  customerType === "PJ"
+    ? (customerCnpj || "").replace(/\D/g, "")
+    : (customerCpf || "").replace(/\D/g, "")
 }
 },
 
@@ -673,14 +673,19 @@ payment_methods:
     // ================= RESPONSE =================
 
     return NextResponse.json({
-      success: true,
-      orderId: result.order.id,
-      paymentId: result.payment.id,
-      totalCents,
-      customerCpf,
-      paymentMethod,
-      init_point: preferenceData.init_point
-    });
+  success: true,
+  orderId: result.order.id,
+  paymentId: result.payment.id,
+  totalCents,
+
+  customerType,
+  customerCpf,
+  customerCnpj,
+  customerIe,
+
+  paymentMethod,
+  init_point: preferenceData.init_point
+});
 
   } catch (error) {
 

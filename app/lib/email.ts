@@ -154,9 +154,32 @@ export async function sendOrderEmail(order: any) {
               <strong>Email:</strong> ${order.customerEmail}
             </p>
 
-            <p>
-              <strong>CPF:</strong> ${order.customerCpf || "-"}
-            </p>
+           <p>
+  <strong>Tipo:</strong>{" "}
+  ${
+    order.customerType === "PJ"
+      ? "Pessoa Jurídica"
+      : "Pessoa Física"
+  }
+</p>
+
+${
+  order.customerType === "PJ"
+    ? `
+      <p>
+        <strong>CNPJ:</strong> ${order.customerCnpj || "-"}
+      </p>
+
+      <p>
+        <strong>Inscrição Estadual:</strong> ${order.customerIe || "-"}
+      </p>
+    `
+    : `
+      <p>
+        <strong>CPF:</strong> ${order.customerCpf || "-"}
+      </p>
+    `
+}
 
             <!-- ENDEREÇO -->
             <h4 style="margin-top:20px;">
