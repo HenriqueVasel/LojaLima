@@ -101,13 +101,33 @@ if (typeof window !== "undefined" && (window as any).fbq) {
         "Content-Type":"application/json"
       },
       credentials:"include",
- body:JSON.stringify({
+body: JSON.stringify({
   couponCode: coupon?.code || null,
+
   customerName: customer.nome,
   customerWhats: customer.whats,
   customerEmail: customer.email,
+
+  customerType: customer.tipoPessoa,
+
   customerCpf: customer.cpf,
+  customerCnpj: customer.cnpj,
+  customerIe: customer.inscricaoEstadual,
+
   customerObs: customer.obs || "",
+
+  paymentMethod: payment,
+
+  retiradaLoja:
+    sessionStorage.getItem("retiradaLoja") === "true",
+
+  endereco: customer.endereco,
+  numero: customer.numero,
+
+  shipping: JSON.parse(
+    sessionStorage.getItem("shipping") || "null"
+  )
+})
   paymentMethod: payment,
   retiradaLoja:
   sessionStorage.getItem("retiradaLoja") === "true",
@@ -227,10 +247,25 @@ Pagamento
 <b>Email:</b> {customer.email || "-"}
 </p>
 
-<p>
-<b>CPF:</b> {customer.cpf}
-</p>
+{customer.tipoPessoa === "PF" ? (
 
+  <p>
+    <b>CPF:</b> {customer.cpf}
+  </p>
+
+) : (
+
+  <>
+    <p>
+      <b>CNPJ:</b> {customer.cnpj}
+    </p>
+
+    <p>
+      <b>Inscrição Estadual:</b> {customer.inscricaoEstadual}
+    </p>
+  </>
+
+)}
 {customer.freteCents && (
   <p>
     <b>Frete:</b> R$ {(customer.freteCents / 100).toFixed(2)}

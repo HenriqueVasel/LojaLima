@@ -12,6 +12,9 @@ export default function CheckoutPage(){
   const [whats,setWhats]=useState("");
   const [email,setEmail]=useState("");
   const [cpf,setCpf] = useState("");
+const [tipoPessoa, setTipoPessoa] = useState("PF");
+const [cnpj, setCnpj] = useState("");
+const [inscricaoEstadual, setInscricaoEstadual] = useState("");
   const [obs,setObs]=useState("");
   const [frete, setFrete] = useState<number | null>(null);
       
@@ -179,22 +182,38 @@ if (!retirada && !endereco) {
       return;
     }
 
-    if(!cpf){
-      alert("Informe o CPF");
-      return;
-    }
+  if (tipoPessoa === "PF") {
 
-    const cpfLimpo = cpf.replace(/\D/g,"");
+  if (!cpf) {
+    alert("Informe o CPF");
+    return;
+  }
 
-    if(cpfLimpo.length !== 11){
-      alert("CPF incompleto");
-      return;
-    }
+  const cpfLimpo = cpf.replace(/\D/g, "");
 
-    if(!validarCPF(cpf)){
-      alert("CPF inválido");
-      return;
-    }
+  if (cpfLimpo.length !== 11) {
+    alert("CPF incompleto");
+    return;
+  }
+
+  if (!validarCPF(cpf)) {
+    alert("CPF inválido");
+    return;
+  }
+
+} else {
+
+  if (!cnpj) {
+    alert("Informe o CNPJ");
+    return;
+  }
+
+  if (!inscricaoEstadual) {
+    alert("Informe a Inscrição Estadual");
+    return;
+  }
+
+}
 
     // 🔥 NOVO: PEGAR ENDEREÇO
     const cep = localStorage.getItem("cep");
@@ -210,7 +229,12 @@ if (!retirada && !endereco) {
     nome,
     whats,
     email,
+
+    tipoPessoa,
     cpf,
+    cnpj,
+    inscricaoEstadual,
+
     obs,
 
     retirada,
@@ -258,6 +282,30 @@ if (!retirada && !endereco) {
             className={s.input}
           />
 
+          <div style={{ marginBottom: "15px" }}>
+
+  <label style={{ marginRight: "20px" }}>
+    <input
+      type="radio"
+      value="PF"
+      checked={tipoPessoa === "PF"}
+      onChange={() => setTipoPessoa("PF")}
+    />
+    Pessoa Física
+  </label>
+
+  <label>
+    <input
+      type="radio"
+      value="PJ"
+      checked={tipoPessoa === "PJ"}
+      onChange={() => setTipoPessoa("PJ")}
+    />
+    Pessoa Jurídica
+  </label>
+
+</div>
+
           <input
             placeholder="WhatsApp"
             value={whats}
@@ -272,16 +320,37 @@ if (!retirada && !endereco) {
             className={s.input}
           />
 
-          <input
-            placeholder="CPF"
-            value={cpf}
-            onChange={(e)=>
-              setCpf(formatarCPF(e.target.value))
-            }
-            className={s.input}
-            maxLength={14}
-          />
+          {tipoPessoa === "PF" ? (
 
+  <input
+    placeholder="CPF"
+    value={cpf}
+    onChange={(e)=>
+      setCpf(formatarCPF(e.target.value))
+    }
+    className={s.input}
+    maxLength={14}
+  />
+
+) : (
+
+  <>
+    <input
+      placeholder="CNPJ"
+      value={cnpj}
+      onChange={(e)=>setCnpj(e.target.value)}
+      className={s.input}
+    />
+
+    <input
+      placeholder="Inscrição Estadual"
+      value={inscricaoEstadual}
+      onChange={(e)=>setInscricaoEstadual(e.target.value)}
+      className={s.input}
+    />
+  </>
+
+)}
           <textarea
             placeholder="Observações"
             value={obs}
