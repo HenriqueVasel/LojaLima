@@ -9,6 +9,13 @@ export async function POST(req: Request) {
 
 const { cep, items } = body;
 
+type CartItem = {
+  productId: number;
+  quantity: number;
+};
+
+const cartItems = items as CartItem[];
+
 console.log("BODY:", body);
 console.log("CEP:", cep);
 console.log("ITEMS:", items);
@@ -46,7 +53,7 @@ if (!items || items.length === 0) {
     const produtos = await prisma.product.findMany({
   where: {
     id: {
-      in: items.map(item => item.productId)
+      in: items.map((item: any) => item.productId)
     }
   }
 });
@@ -55,7 +62,7 @@ const produtosMap = new Map(
   produtos.map(produto => [produto.id, produto])
 );
 
-for (const item of items) {
+for (const item of items as any[]) {
 
   const produto = produtosMap.get(item.productId);
 
