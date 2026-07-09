@@ -9,6 +9,10 @@ export async function POST(req: Request) {
 
 const { cep, items } = body;
 
+console.log("BODY:", body);
+console.log("CEP:", cep);
+console.log("ITEMS:", items);
+
     const cepLimpo = cep.replace(/\D/g, "");
 
     if (cepLimpo.length !== 8) {
@@ -23,6 +27,17 @@ const { cep, items } = body;
     { error: "Nenhum produto informado." },
     { status: 400 }
   );
+}
+
+if (!items || items.length === 0) {
+
+  console.log("ERRO: nenhum item recebido");
+
+  return NextResponse.json(
+    { error: "Nenhum produto informado." },
+    { status: 400 }
+  );
+
 }
     console.log(process.env.MELHOR_ENVIO_TOKEN);
 
@@ -62,6 +77,7 @@ length: produto.length
 
   });
 
+  console.log("PRODUTOS:", products);
 }
 
     const response = await fetch(
@@ -99,6 +115,9 @@ length: produto.length
     );
 
     const data = await response.json();
+
+    console.log("STATUS MELHOR ENVIO:", response.status);
+console.log("RESPOSTA MELHOR ENVIO:", data);
 
     return NextResponse.json(data);
 
