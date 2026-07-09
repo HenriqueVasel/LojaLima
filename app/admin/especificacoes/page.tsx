@@ -9,6 +9,8 @@ export default function EspecificacoesPage() {
   const [loading, setLoading] = useState(false);
 
   const [message, setMessage] = useState("");
+  const [senha, setSenha] = useState("");
+const [liberado, setLiberado] = useState(false);
 
   async function importar() {
 
@@ -55,6 +57,109 @@ export default function EspecificacoesPage() {
     }
 
   }
+
+ async function entrar() {
+
+  try {
+
+    const res = await fetch("/api/admin/login-import", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        password: senha
+      })
+
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+
+      alert(data.error || "Senha incorreta.");
+
+      return;
+
+    }
+
+    setLiberado(true);
+
+  } catch {
+
+    alert("Erro ao autenticar.");
+
+  }
+
+}
+
+if (!liberado) {
+
+  return (
+
+    <div
+      style={{
+        maxWidth:400,
+        margin:"120px auto",
+        background:"#111827",
+        padding:30,
+        borderRadius:12,
+        color:"#fff"
+      }}
+    >
+
+      <h2>Área restrita</h2>
+
+      <p
+        style={{
+          opacity:.7,
+          marginBottom:20
+        }}
+      >
+        Digite a senha para acessar.
+      </p>
+
+      <input
+        type="password"
+        value={senha}
+        onChange={(e)=>setSenha(e.target.value)}
+        placeholder="Senha"
+        style={{
+          width:"100%",
+          height:45,
+          borderRadius:8,
+          border:"1px solid #444",
+          background:"#1f2937",
+          color:"#fff",
+          padding:"0 12px"
+        }}
+      />
+
+      <button
+        onClick={entrar}
+        style={{
+          marginTop:20,
+          width:"100%",
+          height:45,
+          background:"#00c853",
+          border:0,
+          color:"#fff",
+          borderRadius:8,
+          cursor:"pointer",
+          fontWeight:700
+        }}
+      >
+        Entrar
+      </button>
+
+    </div>
+
+  );
+
+}
 
   return (
 

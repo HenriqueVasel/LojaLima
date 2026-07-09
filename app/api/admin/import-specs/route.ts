@@ -1,8 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import * as XLSX from "xlsx";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
+
+  const auth = req.cookies.get("import_auth");
+
+if (!auth || auth.value !== "true") {
+
+  return NextResponse.json(
+    {
+      error: "Não autorizado."
+    },
+    {
+      status: 401
+    }
+  );
+
+}
 
   try {
 
