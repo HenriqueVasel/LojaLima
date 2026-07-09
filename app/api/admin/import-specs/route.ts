@@ -50,6 +50,7 @@ const rows = XLSX.utils.sheet_to_json<any>(firstSheet, {
 
 let encontrados = 0;
 let naoEncontrados = 0;
+let atualizados = 0;
 
 for (const row of rows) {
 
@@ -123,12 +124,12 @@ return NextResponse.json({
 
   naoEncontrados,
 
+  atualizados,
+
   percentual:
     (
       (encontrados / rows.length) * 100
     ).toFixed(2) + "%"
-
-    
 
 });
 
