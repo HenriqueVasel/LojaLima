@@ -36,7 +36,12 @@ const {
     customerName,
     customerEmail,
     customerWhats,
+
+    customerType,
     customerCpf,
+    customerCnpj,
+    customerIe,
+
     customerObs,
     paymentMethod,
     retiradaLoja,
@@ -60,12 +65,26 @@ const {
   );
 }
 
-    if (!customerName || !customerWhats || !customerCpf) {
-      return NextResponse.json(
-        { error: "Dados obrigatórios faltando" },
-        { status: 400 }
-      );
-    }
+    if (!customerName || !customerWhats) {
+  return NextResponse.json(
+    { error: "Dados obrigatórios faltando" },
+    { status: 400 }
+  );
+}
+
+if (customerType === "PF" && !customerCpf) {
+  return NextResponse.json(
+    { error: "CPF obrigatório" },
+    { status: 400 }
+  );
+}
+
+if (customerType === "PJ" && (!customerCnpj || !customerIe)) {
+  return NextResponse.json(
+    { error: "CNPJ e Inscrição Estadual são obrigatórios" },
+    { status: 400 }
+  );
+}
 
     const allowedMethods = ["pix", "credito", "debito"];
 
@@ -462,9 +481,13 @@ if (
       customerEmail: customerEmail || "",
 
       customerWhats,
-      customerCpf,
 
-      customerObs: customerObs || "",
+customerCpf: customerCpf || "",
+customerType,
+customerCnpj,
+customerIe,
+
+customerObs: customerObs || "",
 
       // 🔥 ENDEREÇO
       cep: endereco?.cep || "",
@@ -594,10 +617,13 @@ couponCode !== "WIFI25"
 
   payer: {
   email: customerEmail,
-  identification: {
-    type: "CPF",
-    number: customerCpf.replace(/\D/g, "") // 🔥 IMPORTANTE
-  }
+ identification: {
+  type: customerType === "PJ" ? "CNPJ" : "CPF",
+  number:
+    customerType === "PJ"
+      ? customerCnpj.replace(/\D/g, "")
+      : customerCpf.replace(/\D/g, "")
+}
 },
 
 payment_methods:

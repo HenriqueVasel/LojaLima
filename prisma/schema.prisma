@@ -57,6 +57,9 @@ model order {
   totalCents    Int
   userId        String
   customerCpf   String
+customerType  String?
+customerCnpj  String?
+customerIe    String?
   shippingCents Int          @default(0)
   cep           String?
   street        String?
