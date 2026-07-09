@@ -582,7 +582,11 @@ onMouseLeave={(e)=>(
 
   </div>
   
-  <FreteCalculator dark  saveToCart/>
+  <FreteCalculator
+  dark
+  saveToCart
+  items={items}
+/>
   {/* FRETE */}
   
 

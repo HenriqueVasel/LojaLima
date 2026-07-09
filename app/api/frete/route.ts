@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { prisma } from "@/app/lib/prisma";
 
 export async function POST(req: Request) {
 
@@ -6,7 +7,7 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const { cep } = body;
+const { cep, items } = body;
 
     const cepLimpo = cep.replace(/\D/g, "");
 
@@ -16,7 +17,52 @@ export async function POST(req: Request) {
         { status: 400 }
       );
     }
+
+    if (!items || items.length === 0) {
+  return NextResponse.json(
+    { error: "Nenhum produto informado." },
+    { status: 400 }
+  );
+}
     console.log(process.env.MELHOR_ENVIO_TOKEN);
+
+    const products = [];
+
+for (const item of items) {
+
+  const produto = await prisma.product.findUnique({
+    where: {
+      id: item.productId
+    }
+  });
+
+  if (!produto) continue;
+
+  products.push({
+
+    id: String(produto.id),
+
+width: produto.width
+  ? Number((produto.width / 10).toFixed(1))
+  : 20,
+
+height: produto.height
+  ? Number((produto.height / 10).toFixed(1))
+  : 5,
+
+length: produto.length
+  ? Number((produto.length / 10).toFixed(1))
+  : 30,
+
+    weight: produto.weight || 1,
+
+    insurance_value: produto.priceCents / 100,
+
+    quantity: item.quantity
+
+  });
+
+}
 
     const response = await fetch(
       "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate",
@@ -40,17 +86,7 @@ export async function POST(req: Request) {
             postal_code: cepLimpo
           },
 
-          products: [
-            {
-              id: "1",
-              width: 20,
-              height: 5,
-              length: 30,
-              weight: 1,
-              insurance_value: 100,
-              quantity: 1
-            }
-          ],
+          products,
 
           options: {
             receipt: false,

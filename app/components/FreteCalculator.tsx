@@ -7,14 +7,24 @@ import { FaTruck, FaStore } from "react-icons/fa";
 
 import { useState, useEffect } from "react";
 
+type CartItem = {
+  id: number;
+  qty: number;
+  product: {
+    id: number;
+  };
+};
+
 type Props = {
   dark?: boolean;
   saveToCart?: boolean;
+  items?: CartItem[];
 };
 
 export default function FreteCalculator({
   dark = false,
-  saveToCart = false
+  saveToCart = false,
+  items = []
 }: Props) {
 
   const [cep, setCep] = useState("");
@@ -147,8 +157,12 @@ localStorage.setItem("bairro", data.bairro || "");
     "Content-Type": "application/json",
   },
   body: JSON.stringify({
-    cep: cepLimpo,
-  }),
+  cep: cepLimpo,
+  items: items.map(item => ({
+    productId: item.product.id,
+    quantity: item.qty
+  }))
+}),
 });
 
 const freteData = await freteRes.json();
