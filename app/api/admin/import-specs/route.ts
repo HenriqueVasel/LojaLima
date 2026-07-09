@@ -75,15 +75,19 @@ eansProcessados.add(ean);
     }
   });
 
- if (produto) {
+if (produto) {
 
   encontrados++;
 
   if (encontrados <= 10) {
 
     console.log({
-      eanPlanilha: ean,
-      produtoBanco: produto.name
+      ean,
+      produto: produto.name,
+      peso: row.Peso,
+      altura: row.Alt,
+      largura: row.Larg,
+      comprimento: row.Comp
     });
 
   }
