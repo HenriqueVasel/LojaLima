@@ -43,13 +43,21 @@ if (!items || items.length === 0) {
 
     const products = [];
 
+    const produtos = await prisma.product.findMany({
+  where: {
+    id: {
+      in: items.map(item => item.productId)
+    }
+  }
+});
+
+const produtosMap = new Map(
+  produtos.map(produto => [produto.id, produto])
+);
+
 for (const item of items) {
 
-  const produto = await prisma.product.findUnique({
-    where: {
-      id: item.productId
-    }
-  });
+  const produto = produtosMap.get(item.productId);
 
   if (!produto) continue;
 
@@ -71,7 +79,8 @@ length: produto.length
 
     weight: produto.weight || 1,
 
-    insurance_value: produto.priceCents / 100,
+    insurance_value:
+  (produto.priceCents / 100) * item.quantity,
 
     quantity: item.quantity
 
