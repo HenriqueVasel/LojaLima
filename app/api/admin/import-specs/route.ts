@@ -44,7 +44,7 @@ const rows = XLSX.utils.sheet_to_json<any>(firstSheet, {
   raw: false
 });
 
-  
+  const eansProcessados = new Set<string>();
 
 
 
@@ -54,6 +54,14 @@ let naoEncontrados = 0;
 for (const row of rows) {
 
   const ean = String(row.EAN || "").trim();
+
+  if (eansProcessados.has(ean)) {
+  continue;
+}
+
+eansProcessados.add(ean);
+
+  
 
   if (!ean) continue;
 
@@ -101,7 +109,11 @@ return NextResponse.json({
       (encontrados / rows.length) * 100
     ).toFixed(2) + "%"
 
+    
+
 });
+
+
 
   } catch (error) {
 
