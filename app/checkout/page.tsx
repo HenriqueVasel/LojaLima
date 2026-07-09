@@ -117,6 +117,16 @@ const [inscricaoEstadual, setInscricaoEstadual] = useState("");
     return valor;
   }
 
+
+  function formatarCNPJ(valor: string) {
+  valor = valor.replace(/\D/g, "");
+  valor = valor.replace(/^(\d{2})(\d)/, "$1.$2");
+  valor = valor.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+  valor = valor.replace(/\.(\d{3})(\d)/, ".$1/$2");
+  valor = valor.replace(/(\d{4})(\d)/, "$1-$2");
+  return valor;
+}
+
   function validarCPF(cpf:string){
     cpf = cpf.replace(/\D/g,"");
 
@@ -145,6 +155,49 @@ const [inscricaoEstadual, setInscricaoEstadual] = useState("");
 
     return resto === parseInt(cpf.substring(10,11));
   }
+
+  function validarCNPJ(cnpj: string) {
+
+  cnpj = cnpj.replace(/\D/g, "");
+
+  if (cnpj.length !== 14) return false;
+
+  if (/^(\d)\1+$/.test(cnpj)) return false;
+
+  let tamanho = cnpj.length - 2;
+  let numeros = cnpj.substring(0, tamanho);
+  let digitos = cnpj.substring(tamanho);
+
+  let soma = 0;
+  let pos = tamanho - 7;
+
+  for (let i = tamanho; i >= 1; i--) {
+    soma += Number(numeros.charAt(tamanho - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+
+  let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+  if (resultado !== Number(digitos.charAt(0))) {
+    return false;
+  }
+
+  tamanho += 1;
+  numeros = cnpj.substring(0, tamanho);
+
+  soma = 0;
+  pos = tamanho - 7;
+
+  for (let i = tamanho; i >= 1; i--) {
+    soma += Number(numeros.charAt(tamanho - i)) * pos--;
+    if (pos < 2) pos = 9;
+  }
+
+  resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+
+  return resultado === Number(digitos.charAt(1));
+
+}
 
   function validarEmail(email:string){
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -204,14 +257,26 @@ if (!retirada && !endereco) {
 } else {
 
   if (!cnpj) {
-    alert("Informe o CNPJ");
-    return;
-  }
+  alert("Informe o CNPJ");
+  return;
+}
 
-  if (!inscricaoEstadual) {
-    alert("Informe a Inscrição Estadual");
-    return;
-  }
+const cnpjLimpo = cnpj.replace(/\D/g, "");
+
+if (cnpjLimpo.length !== 14) {
+  alert("CNPJ incompleto");
+  return;
+}
+
+if (!validarCNPJ(cnpj)) {
+  alert("CNPJ inválido");
+  return;
+}
+
+if (!inscricaoEstadual) {
+  alert("Informe a Inscrição Estadual");
+  return;
+}
 
 }
 
@@ -336,11 +401,12 @@ if (!retirada && !endereco) {
 
   <>
     <input
-      placeholder="CNPJ"
-      value={cnpj}
-      onChange={(e)=>setCnpj(e.target.value)}
-      className={s.input}
-    />
+  placeholder="CNPJ"
+  value={cnpj}
+  onChange={(e)=>setCnpj(formatarCNPJ(e.target.value))}
+  className={s.input}
+  maxLength={18}
+/>
 
     <input
       placeholder="Inscrição Estadual"

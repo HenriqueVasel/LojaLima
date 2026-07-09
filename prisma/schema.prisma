@@ -42,34 +42,34 @@ model category {
 }
 
 model order {
-  id            String       @id @default(cuid())
-  createdAt     DateTime     @default(now())
-  status        order_status @default(pending)
+  id                 String       @id @default(cuid())
+  createdAt          DateTime     @default(now())
+  status             order_status @default(pending)
+  customerEmail      String
+  customerObs        String?
+  customerWhats      String
+  customerName       String
+  totalCents         Int
+  userId             String
+  customerCpf        String
+  shippingCents      Int          @default(0)
+  cep                String?
+  street             String?
+  number             String?
+  neighborhood       String?
+  city               String?
+  state              String?
+  carrier            String?
+  lastTrackingUpdate DateTime?
+  shippingStatus     String?      @default("processing")
   trackingCode       String?
   trackingUrl        String?
-  shippingStatus     String? @default("processing")
-  lastTrackingUpdate DateTime?
-  carrier            String?
-  customerEmail String
-  customerObs   String?
-  customerWhats String
-  customerName  String
-  totalCents    Int
-  userId        String
-  customerCpf   String
-customerType  String?
-customerCnpj  String?
-customerIe    String?
-  shippingCents Int          @default(0)
-  cep           String?
-  street        String?
-  number        String?
-  neighborhood  String?
-  city          String?
-  state         String?
-  user          user         @relation(fields: [userId], references: [id])
-  orderitem     orderitem[]
-  payment       payment?
+  customerCnpj       String?
+  customerIe         String?
+  customerType       String?
+  user               user         @relation(fields: [userId], references: [id])
+  orderitem          orderitem[]
+  payment            payment?
 
   @@index([status], map: "Order_status_idx")
   @@index([userId], map: "Order_userId_idx")
@@ -106,50 +106,39 @@ model payment {
 }
 
 model product {
-  id          Int     @id @default(autoincrement())
-  name        String
-  slug        String  @unique(map: "Product_slug_key")
-
+  id               Int               @id @default(autoincrement())
+  name             String
+  slug             String            @unique(map: "Product_slug_key")
   description      String?
-  shortDescription String? @db.Text
-
-  weight           Float?
+  priceCents       Int
+  active           Boolean           @default(true)
+  featured         Boolean           @default(false)
+  brand            String?
+  sku              String?           @unique(map: "Product_sku_key")
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  highlight        Boolean           @default(false)
+  priority         Int               @default(0)
+  ean              String?
+  supplier         String?
+  promotionId      String?
+  shortDescription String?
+  isKit            Boolean           @default(false)
+  coupon_group     String?           @db.VarChar(50)
+  promoMonth       Boolean           @default(false)
   height           Float?
-  width            Float?
   length           Float?
-
-  priceCents  Int
-
-  promotionId String?
-  promotion   Promotion? @relation(fields: [promotionId], references: [id])
-
-  active   Boolean @default(true)
-  featured Boolean @default(false)
-  promoMonth  Boolean @default(false)
-  brand String?
-  sku   String? @unique(map: "Product_sku_key")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  highlight Boolean @default(false)
-  coupon_group String? @db.VarChar(50)
-  priority  Int     @default(0)
-  isKit     Boolean @default(false)
-  kitItems KitItem[] @relation("KitProducts")
-  
-
-usedInKits KitItem[] @relation("KitItemProduct")
-
-  ean      String?
-  supplier String?
-
-  cartitem        cartitem[]
-  orderitem       orderitem[]
-  productcategory productcategory[]
-  productimage    productimage[]
-  productvariant  productvariant[]
-  stock           stock?
+  weight           Float?
+  width            Float?
+  kitItems         KitItem[]         @relation("KitProducts")
+  usedInKits       KitItem[]         @relation("KitItemProduct")
+  cartitem         cartitem[]
+  orderitem        orderitem[]
+  promotion        Promotion?        @relation(fields: [promotionId], references: [id])
+  productcategory  productcategory[]
+  productimage     productimage[]
+  productvariant   productvariant[]
+  stock            stock?
 
   @@index([active, featured], map: "Product_active_featured_idx")
   @@index([name], map: "Product_name_idx")
@@ -217,14 +206,14 @@ model user {
   emailVerified        Boolean    @default(false)
   emailVerifyToken     String?
   emailVerifyExpires   DateTime?
-  emailStatus          String?   @default("pending")
-  emailLastSent        DateTime?
-  emailLastError       String?
   passwordResetToken   String?
+  passwordResetExpires DateTime?
+  emailLastError       String?
+  emailLastSent        DateTime?
+  emailStatus          String?    @default("pending")
   resendEmailId        String?
   emailVerifiedAt      DateTime?
   lastLoginAt          DateTime?
-  passwordResetExpires DateTime?
   cartitem             cartitem[]
   order                order[]
 }
@@ -239,32 +228,32 @@ model Coupon {
   active       Boolean?  @default(true)
   usage_limit  Int?
   used_count   Int?      @default(0)
-
+  created_at   DateTime? @default(now()) @db.Timestamp(6)
   product_id   Int?
   coupon_group String?   @db.VarChar(50)
-
-  created_at   DateTime? @default(now()) @db.Timestamp(6)
 
   @@map("coupons")
 }
 
 model Promotion {
-  id String @id @default(cuid())
-
-  title  String
-  active Boolean @default(true)
-
-  discountType String
-  // percentage | fixed
-
+  id            String    @id @default(cuid())
+  title         String
+  active        Boolean   @default(true)
+  discountType  String
   discountValue Float
+  startsAt      DateTime?
+  endsAt        DateTime?
+  createdAt     DateTime  @default(now())
+  products      product[]
+}
 
-  startsAt DateTime?
-  endsAt   DateTime?
-
-  products product[]
-
-  createdAt DateTime @default(now())
+model KitItem {
+  id        String  @id @default(cuid())
+  kitId     Int
+  productId Int
+  quantity  Int
+  kit       product @relation("KitProducts", fields: [kitId], references: [id])
+  product   product @relation("KitItemProduct", fields: [productId], references: [id])
 }
 
 enum order_status {
@@ -285,19 +274,4 @@ enum payment_status {
 enum user_role {
   ADMIN
   CLIENT
-}
-
-
-model KitItem {
-
-  id String @id @default(cuid())
-
-  kitId Int
-  productId Int
-
-  quantity Int
-
-  kit product @relation("KitProducts", fields: [kitId], references: [id])
-
-  product product @relation("KitItemProduct", fields: [productId], references: [id])
 }

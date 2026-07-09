@@ -117,7 +117,7 @@ export async function sendOrderEmail(order: any) {
         order.customerEmail,
       ],
 
-      subject: `🛒 Pedido confirmado #${order.id.slice(0, 8)}`,
+      subject: `🛒 Pedido #${order.id.slice(0, 8)} • ${order.customerType === "PJ" ? "Pessoa Jurídica" : "Pessoa Física"}`,
 
       html: `
       <div style="background:#f6f6f6;padding:30px 0;">
@@ -154,13 +154,9 @@ export async function sendOrderEmail(order: any) {
               <strong>Email:</strong> ${order.customerEmail}
             </p>
 
-           <p>
-  <strong>Tipo:</strong>{" "}
-  ${
-    order.customerType === "PJ"
-      ? "Pessoa Jurídica"
-      : "Pessoa Física"
-  }
+ <p>
+  <strong>Tipo:</strong>
+  ${order.customerType === "PJ" ? " Pessoa Jurídica" : " Pessoa Física"}
 </p>
 
 ${
