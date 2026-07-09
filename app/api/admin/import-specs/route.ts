@@ -83,47 +83,48 @@ if (produto) {
   encontrados++;
 
   if (atualizados < 10) {
+const peso = Number(String(row.Peso).replace(",", "."));
+const altura = Number(String(row.Alt).replace(",", "."));
+const largura = Number(String(row.Larg).replace(",", "."));
+const comprimento = Number(String(row.Comp).replace(",", "."));
 
-    
+if (
+  Number.isNaN(peso) ||
+  Number.isNaN(altura) ||
+  Number.isNaN(largura) ||
+  Number.isNaN(comprimento)
+) {
 
-     try {
-
-  const peso = Number(String(row.Peso).replace(",", "."));
-  const altura = Number(String(row.Alt).replace(",", "."));
-  const largura = Number(String(row.Larg).replace(",", "."));
-  const comprimento = Number(String(row.Comp).replace(",", "."));
-
-  console.log({
-    peso,
-    altura,
-    largura,
-    comprimento
+  console.log("VALORES INVÁLIDOS", {
+    peso: row.Peso,
+    altura: row.Alt,
+    largura: row.Larg,
+    comprimento: row.Comp
   });
 
-  await prisma.product.update({
-
-    where: {
-      id: produto.id
-    },
-
-    data: {
-
-      weight: peso,
-      height: altura,
-      width: largura,
-      length: comprimento
-
-    }
-
-  });
-
-  atualizados++;
-
-} catch (e) {
-
-  console.error("ERRO AO ATUALIZAR:", e);
+  continue;
 
 }
+
+await prisma.product.update({
+
+  where: {
+    id: produto.id
+  },
+
+  data: {
+
+    weight: peso,
+    height: altura,
+    width: largura,
+    length: comprimento
+
+  }
+
+});
+
+atualizados++;
+
   }
 
 } else {
