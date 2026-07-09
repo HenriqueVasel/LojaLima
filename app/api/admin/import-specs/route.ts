@@ -31,9 +31,9 @@ export async function POST(req: Request) {
       type: "buffer"
     });
 
-    const sheetNames = workbook.SheetNames;
+    
 
- console.log(workbook.SheetNames);
+ 
 
 const firstSheet =
   workbook.Sheets["Tabela"];
@@ -44,9 +44,9 @@ const rows = XLSX.utils.sheet_to_json<any>(firstSheet, {
   raw: false
 });
 
-   const primeiraLinha = rows[0] || {};
+  
 
-const colunas = Object.keys(primeiraLinha);
+
 
 let encontrados = 0;
 let naoEncontrados = 0;
@@ -67,13 +67,26 @@ for (const row of rows) {
     }
   });
 
-  if (produto) {
-    encontrados++;
-  } else {
-    naoEncontrados++;
+ if (produto) {
+
+  encontrados++;
+
+  if (encontrados <= 10) {
+
+    console.log({
+      eanPlanilha: ean,
+      produtoBanco: produto.name
+    });
+
   }
 
+} else {
+
+  naoEncontrados++;
+
 }
+
+} 
 
 return NextResponse.json({
 
@@ -81,7 +94,12 @@ return NextResponse.json({
 
   encontrados,
 
-  naoEncontrados
+  naoEncontrados,
+
+  percentual:
+    (
+      (encontrados / rows.length) * 100
+    ).toFixed(2) + "%"
 
 });
 
