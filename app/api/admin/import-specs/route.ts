@@ -81,7 +81,7 @@ if (produto) {
 
   encontrados++;
 
-  if (atualizados < 10) {
+  
 const peso = Number(String(row.Peso).replace(",", "."));
 const altura = Number(String(row.Alt).replace(",", "."));
 const largura = Number(String(row.Larg).replace(",", "."));
@@ -127,10 +127,6 @@ const resultado = await prisma.product.update({
 console.log(resultado);
 
 atualizados++;
-
-atualizados++;
-
-  }
 
 } else {
 
