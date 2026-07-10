@@ -138,35 +138,35 @@ export default function MeusPedidos() {
               </div>
 
               <div
-                className={`${s.step} ${
-                  order.status !== "pending"
-                    ? s.active
-                    : ""
-                }`}
-              >
+  className={`${s.step} ${
+    order.status === "paid"
+      ? s.active
+      : ""
+  }`}
+>
                 <div className={s.stepCircle}>✓</div>
                 <div className={s.stepLabel}>Pago</div>
               </div>
 
               <div
-                className={`${s.step} ${
-                  order.status === "shipped" ||
-                  order.status === "completed"
-                    ? s.active
-                    : ""
-                }`}
-              >
+  className={`${s.step} ${
+    order.shippingStatus === "shipped" ||
+    order.shippingStatus === "delivered"
+      ? s.active
+      : ""
+  }`}
+>
                 <div className={s.stepCircle}>✓</div>
                 <div className={s.stepLabel}>Enviado</div>
               </div>
 
               <div
-                className={`${s.step} ${
-                  order.status === "completed"
-                    ? s.active
-                    : ""
-                }`}
-              >
+  className={`${s.step} ${
+    order.shippingStatus === "delivered"
+      ? s.active
+      : ""
+  }`}
+>
                 <div className={s.stepCircle}>✓</div>
                 <div className={s.stepLabel}>Entregue</div>
               </div>

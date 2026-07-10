@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { sendTrackingUpdateEmail } from "@/app/lib/email";
 
 export async function POST(req: NextRequest) {
 
@@ -28,27 +29,35 @@ export async function POST(req: NextRequest) {
 
     }
 
-    const order = await prisma.order.update({
+const order = await prisma.order.update({
 
-      where: {
-        id: orderId
-      },
+  where: {
+    id: orderId
+  },
 
-      data: {
+  data: {
 
-        carrier,
+    carrier,
 
-        trackingCode,
+    trackingCode,
 
-        trackingUrl,
+    trackingUrl,
 
-        shippingStatus,
+    shippingStatus,
 
-        lastTrackingUpdate: new Date()
+    lastTrackingUpdate: new Date()
 
-      }
+  },
 
-    });
+  include: {
+
+    orderitem: true
+
+  }
+
+});
+
+await sendTrackingUpdateEmail(order);
 
     return NextResponse.json({
 

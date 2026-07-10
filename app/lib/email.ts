@@ -285,6 +285,144 @@ ${
   }
 }
 
+export async function sendTrackingUpdateEmail(order: any) {
+
+  try {
+
+    const response = await resend.emails.send({
+
+      from: FROM_EMAIL,
+
+      to: order.customerEmail,
+
+      subject: `📦 Atualização do Pedido #${order.id.slice(0,8)}`,
+
+      html: `
+
+      <div style="background:#f6f6f6;padding:30px 0;">
+
+        <div style="max-width:600px;margin:auto;background:#fff;border-radius:10px;font-family:Arial,sans-serif;overflow:hidden;">
+
+          <div
+            style="
+              background:#000;
+              padding:20px;
+              text-align:center;
+            "
+          >
+
+            <img
+              src="https://lojalimaelima.com.br/produtos/logo.png"
+              style="max-height:60px;"
+            />
+
+          </div>
+
+          <div style="padding:30px;">
+
+            <h2>
+              Seu pedido foi atualizado 🚚
+            </h2>
+
+            <p>
+
+              Olá <strong>${order.customerName}</strong>,
+
+            </p>
+
+            <p>
+
+              O status do seu pedido foi atualizado.
+
+            </p>
+
+            <table
+              width="100%"
+              style="
+                margin-top:20px;
+                border-collapse:collapse;
+              "
+            >
+
+              <tr>
+
+                <td><strong>Status:</strong></td>
+
+                <td>${order.shippingStatus}</td>
+
+              </tr>
+
+              <tr>
+
+                <td><strong>Transportadora:</strong></td>
+
+                <td>${order.carrier || "-"}</td>
+
+              </tr>
+
+              <tr>
+
+                <td><strong>Código:</strong></td>
+
+                <td>${order.trackingCode || "-"}</td>
+
+              </tr>
+
+            </table>
+
+            ${
+              order.trackingUrl
+                ? `
+                  <div style="margin-top:30px;">
+
+                    <a
+                      href="${order.trackingUrl}"
+                      style="
+                        display:inline-block;
+                        background:#00c853;
+                        color:white;
+                        padding:14px 22px;
+                        border-radius:8px;
+                        text-decoration:none;
+                        font-weight:bold;
+                      "
+                    >
+                      Acompanhar entrega
+                    </a>
+
+                  </div>
+                `
+                : ""
+            }
+
+            <p style="margin-top:35px;">
+
+              Obrigado por comprar na Loja Lima e Lima.
+
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      `
+
+    });
+
+    return response;
+
+  } catch (error) {
+
+    console.error(error);
+
+    return null;
+
+  }
+
+}
+
 // ================= RESET DE SENHA =================
 export async function sendResetEmail(
   email: string,
