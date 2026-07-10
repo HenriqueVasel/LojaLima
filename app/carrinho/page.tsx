@@ -153,25 +153,32 @@ if(savedCoupon){
     fetchCart();
   }
 
-  async function updateQty(id:number, qty:number){
+async function updateQty(id:number, qty:number){
 
-    if(qty <= 0){
-      removeItem(id);
-      return;
-    }
-
-    await fetch(`/api/cart/item/${id}`,{
-      method:"PUT",
-      credentials:"include",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({qty})
-    });
-
-    window.dispatchEvent(new Event("cartUpdated"));
-    fetchCart();
+  if(qty <= 0){
+    removeItem(id);
+    return;
   }
+
+  const res = await fetch(`/api/cart/item/${id}`,{
+    method:"PUT",
+    credentials:"include",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({qty})
+  });
+
+  const data = await res.json();
+
+  if(!res.ok){
+    alert(data.error);
+    return;
+  }
+
+  window.dispatchEvent(new Event("cartUpdated"));
+  fetchCart();
+}
 
   async function aplicarCupom(){
 
