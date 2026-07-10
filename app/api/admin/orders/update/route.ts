@@ -62,7 +62,15 @@ console.log("📧 Enviando atualização de rastreio...");
 
 const resultado = await sendTrackingUpdateEmail(order);
 
+console.log("EMAIL DESTINO:", order.customerEmail);
+
+console.log("STATUS:", order.shippingStatus);
+
+console.log("TRACKING:", order.trackingCode);
+
 console.log("📧 Resultado:", resultado);
+
+
 
     return NextResponse.json({
 
@@ -75,6 +83,8 @@ console.log("📧 Resultado:", resultado);
   } catch (error) {
 
     console.error(error);
+
+    
 
     return NextResponse.json(
       {
