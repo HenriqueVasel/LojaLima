@@ -468,7 +468,7 @@ export async function sendTrackingUpdateEmail(order: any) {
 
               <br><br>
 
-              📞 (47) 3370-1122
+              📞 (47) 3842-3235
 
               <br>
 
