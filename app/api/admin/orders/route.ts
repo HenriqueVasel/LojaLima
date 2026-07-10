@@ -7,7 +7,17 @@ export async function GET() {
 
     const orders = await prisma.order.findMany({
 
-      include: {
+ where: {
+
+  status: "paid",
+
+  shippingStatus: {
+    not: "delivered"
+  }
+
+},
+
+  include: {
 
         orderitem: true,
 
