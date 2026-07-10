@@ -93,13 +93,84 @@ export default function RastreioPage() {
             <strong>Envio:</strong> {pedido.shippingStatus ?? "processing"}
           </p>
 
-          <p>
-            <strong>Transportadora:</strong> {pedido.carrier ?? "-"}
-          </p>
+       <div style={{ marginTop: 15 }}>
 
-          <p>
-            <strong>Rastreio:</strong> {pedido.trackingCode ?? "-"}
-          </p>
+  <label>Transportadora</label>
+
+  <input
+    defaultValue={pedido.carrier ?? ""}
+    id={`carrier-${pedido.id}`}
+    style={{
+      width: "100%",
+      height: 40,
+      marginTop: 5,
+      marginBottom: 15,
+      borderRadius: 8,
+      border: "1px solid #444",
+      background: "#111827",
+      color: "#fff",
+      padding: "0 10px"
+    }}
+  />
+
+  <label>Código de rastreio</label>
+
+  <input
+    defaultValue={pedido.trackingCode ?? ""}
+    id={`tracking-${pedido.id}`}
+    style={{
+      width: "100%",
+      height: 40,
+      marginTop: 5,
+      marginBottom: 15,
+      borderRadius: 8,
+      border: "1px solid #444",
+      background: "#111827",
+      color: "#fff",
+      padding: "0 10px"
+    }}
+  />
+
+  <label>Link do rastreio</label>
+
+  <input
+    defaultValue={pedido.trackingUrl ?? ""}
+    id={`url-${pedido.id}`}
+    style={{
+      width: "100%",
+      height: 40,
+      marginTop: 5,
+      marginBottom: 15,
+      borderRadius: 8,
+      border: "1px solid #444",
+      background: "#111827",
+      color: "#fff",
+      padding: "0 10px"
+    }}
+  />
+
+  <label>Status do envio</label>
+
+  <select
+    id={`status-${pedido.id}`}
+    defaultValue={pedido.shippingStatus ?? "processing"}
+    style={{
+      width: "100%",
+      height: 40,
+      marginTop: 5,
+      borderRadius: 8,
+      border: "1px solid #444",
+      background: "#111827",
+      color: "#fff",
+      padding: "0 10px"
+    }}
+  >
+    <option value="processing">Processando</option>
+    <option value="shipped">Enviado</option>
+    <option value="delivered">Entregue</option>
+  </select>
+
+</div>
 
         </div>
 
