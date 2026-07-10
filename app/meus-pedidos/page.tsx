@@ -139,7 +139,7 @@ export default function MeusPedidos() {
 
               <div
   className={`${s.step} ${
-    order.status === "paid"
+    order.status !== "pending"
       ? s.active
       : ""
   }`}
@@ -172,6 +172,72 @@ export default function MeusPedidos() {
               </div>
 
             </div>
+{(order.carrier || order.trackingCode || order.shippingStatus) && (
+
+  <div
+    className={s.address}
+    style={{ marginTop: 20 }}
+  >
+
+    <div className={s.addressTitle}>
+      🚚 Informações da entrega
+    </div>
+
+    <div className={s.addressText}>
+
+      <strong>Transportadora:</strong>{" "}
+      {order.carrier}
+
+      <br />
+      <br />
+
+      <strong>Código de rastreio:</strong>{" "}
+      {order.trackingCode || "-"}
+
+      <br />
+      <br />
+
+      <strong>Status:</strong>{" "}
+
+      {
+        order.shippingStatus === "processing"
+          ? "🟡 Preparando pedido"
+          : order.shippingStatus === "shipped"
+          ? "🚚 Pedido enviado"
+          : order.shippingStatus === "delivered"
+          ? "✅ Pedido entregue"
+          : "-"
+      }
+
+      {order.trackingUrl && (
+
+        <>
+
+          <br />
+          <br />
+
+          <a
+            href={order.trackingUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={s.detailsBtn}
+            style={{
+              display: "inline-block",
+              textDecoration: "none"
+            }}
+          >
+            📦 Rastrear Pedido
+          </a>
+
+        </>
+
+      )}
+
+    </div>
+
+  </div>
+
+)}
 
             {/* ENDEREÇO */}
             <div className={s.address}>

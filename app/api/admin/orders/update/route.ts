@@ -4,14 +4,14 @@ import { sendTrackingUpdateEmail } from "@/app/lib/email";
 
 export async function POST(req: NextRequest) {
 
-    console.log("🔥 UPDATE PEDIDO INICIOU");
+    
 
   try {
-        console.log("✅ Pedido atualizado no banco");
+        
 
     const body = await req.json();
 
-    console.log("🔥 UPDATE PEDIDO INICIOU");
+    
 
     const {
       orderId,
@@ -63,19 +63,11 @@ const order = await prisma.order.update({
 });
 
 
-console.log("📧 Enviando atualização de rastreio...");
+
 
 const resultado = await sendTrackingUpdateEmail(order);
 
-    console.log("📧 Resultado:", resultado);
 
-console.log("EMAIL DESTINO:", order.customerEmail);
-
-console.log("STATUS:", order.shippingStatus);
-
-console.log("TRACKING:", order.trackingCode);
-
-console.log("📧 Resultado:", resultado);
 
 
 
