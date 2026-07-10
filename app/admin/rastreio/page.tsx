@@ -7,11 +7,70 @@ export default function RastreioPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+useEffect(() => {
 
-    carregarPedidos();
+  carregarPedidos();
 
-  }, []);
+}, []);
+
+async function salvarPedido(orderId: string) {
+
+  const carrier = (
+    document.getElementById(
+      `carrier-${orderId}`
+    ) as HTMLInputElement
+  ).value;
+
+  const trackingCode = (
+    document.getElementById(
+      `tracking-${orderId}`
+    ) as HTMLInputElement
+  ).value;
+
+  const trackingUrl = (
+    document.getElementById(
+      `url-${orderId}`
+    ) as HTMLInputElement
+  ).value;
+
+  const shippingStatus = (
+    document.getElementById(
+      `status-${orderId}`
+    ) as HTMLSelectElement
+  ).value;
+
+  const res = await fetch(
+    "/api/admin/orders/update",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        orderId,
+        carrier,
+        trackingCode,
+        trackingUrl,
+        shippingStatus
+      })
+    }
+  );
+
+  const data = await res.json();
+
+  if (!res.ok) {
+
+    alert(data.error);
+
+    return;
+
+  }
+
+  alert("Pedido atualizado!");
+
+  carregarPedidos();
+
+}
 
   async function carregarPedidos() {
 
@@ -165,10 +224,45 @@ export default function RastreioPage() {
       padding: "0 10px"
     }}
   >
+
+
+    
     <option value="processing">Processando</option>
     <option value="shipped">Enviado</option>
     <option value="delivered">Entregue</option>
   </select>
+
+  <button
+
+  onClick={() => salvarPedido(pedido.id)}
+
+  style={{
+
+    marginTop:20,
+
+    width:"100%",
+
+    height:45,
+
+    background:"#00c853",
+
+    border:0,
+
+    borderRadius:8,
+
+    color:"#fff",
+
+    cursor:"pointer",
+
+    fontWeight:700
+
+  }}
+
+>
+
+  Salvar Alterações
+
+</button>
 
 </div>
 
