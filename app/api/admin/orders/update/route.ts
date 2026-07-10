@@ -57,7 +57,12 @@ const order = await prisma.order.update({
 
 });
 
-await sendTrackingUpdateEmail(order);
+
+console.log("📧 Enviando atualização de rastreio...");
+
+const resultado = await sendTrackingUpdateEmail(order);
+
+console.log("📧 Resultado:", resultado);
 
     return NextResponse.json({
 
