@@ -289,6 +289,24 @@ export async function sendTrackingUpdateEmail(order: any) {
 
   try {
 
+    const statusTexto =
+      order.shippingStatus === "processing"
+        ? "🟡 Preparando seu pedido"
+        : order.shippingStatus === "shipped"
+        ? "🚚 Pedido enviado"
+        : order.shippingStatus === "delivered"
+        ? "✅ Pedido entregue"
+        : order.shippingStatus;
+
+    const statusMensagem =
+      order.shippingStatus === "processing"
+        ? "Estamos separando e preparando seu pedido para envio."
+        : order.shippingStatus === "shipped"
+        ? "Seu pedido foi despachado e já está a caminho."
+        : order.shippingStatus === "delivered"
+        ? "Seu pedido foi entregue. Esperamos que aproveite sua compra!"
+        : "Seu pedido recebeu uma atualização.";
+
     const response = await resend.emails.send({
 
       from: FROM_EMAIL,
@@ -299,72 +317,91 @@ export async function sendTrackingUpdateEmail(order: any) {
 
       html: `
 
-      <div style="background:#f6f6f6;padding:30px 0;">
+      <div style="background:#f4f6f8;padding:40px 0;">
 
-        <div style="max-width:600px;margin:auto;background:#fff;border-radius:10px;font-family:Arial,sans-serif;overflow:hidden;">
+        <div style="max-width:650px;margin:auto;background:#ffffff;border-radius:14px;overflow:hidden;font-family:Arial,sans-serif;">
 
-          <div
-            style="
-              background:#000;
-              padding:20px;
-              text-align:center;
-            "
-          >
+          <div style="background:#000;padding:28px;text-align:center;">
 
             <img
               src="https://lojalimaelima.com.br/produtos/logo.png"
-              style="max-height:60px;"
+              style="max-height:65px;"
             />
 
           </div>
 
-          <div style="padding:30px;">
+          <div style="padding:35px;">
 
-            <h2>
-              Seu pedido foi atualizado 🚚
+            <h2 style="margin-top:0;color:#222;">
+              📦 Atualização do seu pedido
             </h2>
 
-            <p>
-
+            <p style="font-size:16px;color:#444;">
               Olá <strong>${order.customerName}</strong>,
-
             </p>
 
-            <p>
-
-              O status do seu pedido foi atualizado.
-
+            <p style="font-size:15px;color:#555;line-height:1.8;">
+              ${statusMensagem}
             </p>
+
+            <div
+              style="
+                margin:30px 0;
+                background:#f7f7f7;
+                border-left:6px solid #00c853;
+                padding:20px;
+                border-radius:10px;
+              "
+            >
+
+              <div style="font-size:20px;font-weight:bold;">
+                ${statusTexto}
+              </div>
+
+            </div>
 
             <table
               width="100%"
               style="
-                margin-top:20px;
                 border-collapse:collapse;
+                margin-top:25px;
+                font-size:15px;
               "
             >
 
               <tr>
 
-                <td><strong>Status:</strong></td>
+                <td style="padding:10px 0;">
+                  <strong>📦 Pedido</strong>
+                </td>
 
-                <td>${order.shippingStatus}</td>
-
-              </tr>
-
-              <tr>
-
-                <td><strong>Transportadora:</strong></td>
-
-                <td>${order.carrier || "-"}</td>
+                <td style="text-align:right;">
+                  #${order.id.slice(0,8)}
+                </td>
 
               </tr>
 
               <tr>
 
-                <td><strong>Código:</strong></td>
+                <td style="padding:10px 0;">
+                  <strong>🚚 Transportadora</strong>
+                </td>
 
-                <td>${order.trackingCode || "-"}</td>
+                <td style="text-align:right;">
+                  ${order.carrier || "-"}
+                </td>
+
+              </tr>
+
+              <tr>
+
+                <td style="padding:10px 0;">
+                  <strong>🔎 Código de rastreio</strong>
+                </td>
+
+                <td style="text-align:right;">
+                  ${order.trackingCode || "-"}
+                </td>
 
               </tr>
 
@@ -373,33 +410,89 @@ export async function sendTrackingUpdateEmail(order: any) {
             ${
               order.trackingUrl
                 ? `
-                  <div style="margin-top:30px;">
+                <div style="margin-top:35px;text-align:center;">
 
-                    <a
-                      href="${order.trackingUrl}"
-                      style="
-                        display:inline-block;
-                        background:#00c853;
-                        color:white;
-                        padding:14px 22px;
-                        border-radius:8px;
-                        text-decoration:none;
-                        font-weight:bold;
-                      "
-                    >
-                      Acompanhar entrega
-                    </a>
+                  <a
+                    href="${order.trackingUrl}"
+                    style="
+                      display:inline-block;
+                      background:#00c853;
+                      color:#fff;
+                      padding:16px 30px;
+                      border-radius:8px;
+                      text-decoration:none;
+                      font-size:16px;
+                      font-weight:bold;
+                    "
+                  >
+                    📦 Rastrear Pedido
+                  </a>
 
-                  </div>
+                </div>
                 `
                 : ""
             }
 
-            <p style="margin-top:35px;">
+            <div style="margin-top:20px;text-align:center;">
 
-              Obrigado por comprar na Loja Lima e Lima.
+              <a
+                href="https://lojalimaelima.com.br/meus-pedidos"
+                style="
+                  color:#00a84b;
+                  font-weight:bold;
+                  text-decoration:none;
+                "
+              >
+                Acompanhar em Meus Pedidos
+              </a>
+
+            </div>
+
+            <hr
+              style="
+                margin:35px 0;
+                border:none;
+                border-top:1px solid #eee;
+              "
+            >
+
+            <p
+              style="
+                color:#666;
+                line-height:1.8;
+                font-size:14px;
+              "
+            >
+
+              Caso tenha qualquer dúvida, nossa equipe está à disposição.
+
+              <br><br>
+
+              📞 (47) 3370-1122
+
+              <br>
+
+              📱 WhatsApp
+
+              <br>
+
+              🌐 lojalimaelima.com.br
 
             </p>
+
+          </div>
+
+          <div
+            style="
+              background:#fafafa;
+              padding:20px;
+              text-align:center;
+              font-size:12px;
+              color:#888;
+            "
+          >
+
+            Loja Lima e Lima © ${new Date().getFullYear()}
 
           </div>
 
