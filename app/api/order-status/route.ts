@@ -6,15 +6,25 @@ export async function GET(req: Request) {
   const orderId = searchParams.get("orderId");
 
   if (!orderId) {
-    return NextResponse.json({ error: "Sem orderId" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Sem orderId" },
+      { status: 400 }
+    );
   }
 
   const order = await prisma.order.findUnique({
     where: { id: orderId },
-    select: { status: true }
+    include: {
+      orderitem: true,
+    },
   });
 
-  return NextResponse.json({
-    status: order?.status || "pending"
-  });
-}   
+  if (!order) {
+    return NextResponse.json(
+      { error: "Pedido não encontrado" },
+      { status: 404 }
+    );
+  }
+
+  return NextResponse.json(order);
+}

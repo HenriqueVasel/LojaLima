@@ -57,14 +57,25 @@ export default function RetornoPagamento() {
 
     purchaseSentRef.current = true;
 
-    sendGAEvent("event", "purchase", {
-      transaction_id: String(orderId),
-      currency: "BRL",
-    });
+  sendGAEvent("event", "purchase", {
+  transaction_id: String(order.id),
+  value: order.totalCents / 100,
+  currency: "BRL",
 
-    if (typeof window !== "undefined" && (window as any).fbq) {
-      (window as any).fbq("track", "Purchase");
-    }
+  items: order.orderitem.map((item: any) => ({
+    item_id: item.productId,
+    item_name: item.productName || item.name || "Produto",
+    price: item.priceCents / 100,
+    quantity: item.qty,
+  })),
+});
+
+if (typeof window !== "undefined" && (window as any).fbq) {
+  (window as any).fbq("track", "Purchase", {
+    value: order.totalCents / 100,
+    currency: "BRL",
+  });
+}
   }
 
   setStatus("paid");
