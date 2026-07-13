@@ -16,7 +16,7 @@ type CartItem = {
 
 const cartItems = items as CartItem[];
 
-console.log("BODY:", body);
+console.log(JSON.stringify(body, null, 2));
 console.log("CEP:", cep);
 console.log("ITEMS:", items);
 
