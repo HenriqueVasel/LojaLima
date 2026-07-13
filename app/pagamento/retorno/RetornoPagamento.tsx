@@ -64,18 +64,23 @@ export default function RetornoPagamento() {
 
     console.log("ENVIANDO PURCHASE");
 
-  sendGAEvent("event", "purchase", {
+console.log("gtag:", (window as any).gtag);
+console.log("dataLayer:", (window as any).dataLayer);
+
+(window as any).gtag?.("event", "purchase", {
   transaction_id: String(order.id),
   value: order.totalCents / 100,
   currency: "BRL",
 
   items: order.orderitem.map((item: any) => ({
-    item_id: item.productId,
-    item_name: item.productName || item.name || "Produto",
+    item_id: String(item.productId),
+    item_name: item.name,
     price: item.priceCents / 100,
     quantity: item.qty,
   })),
 });
+
+
 
 if (typeof window !== "undefined" && (window as any).fbq) {
   (window as any).fbq("track", "Purchase", {
