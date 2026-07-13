@@ -32,6 +32,16 @@ export default function FreteCalculator({
   const [endereco, setEndereco] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  console.log("ANTES DO FETCH");
+console.log(items);
+
+console.log(
+  items.map(item => ({
+    productId: item.product.id,
+    quantity: item.qty
+  }))
+);
+
   // 🔥 NOVO
   const [numero, setNumero] = useState("");
   const [retirada, setRetirada] = useState(false);
