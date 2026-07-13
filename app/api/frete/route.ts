@@ -18,7 +18,11 @@ const cartItems = items as CartItem[];
 
 console.log(JSON.stringify(body, null, 2));
 console.log("CEP:", cep);
-console.log("ITEMS:", items);
+console.log("BODY JSON:");
+console.log(JSON.stringify(body, null, 2));
+
+console.log("ITEMS JSON:");
+console.log(JSON.stringify(items, null, 2));
 
     const cepLimpo = cep.replace(/\D/g, "");
 
