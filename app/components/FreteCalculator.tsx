@@ -203,10 +203,11 @@ const opcoesOrdenadas = [...opcoes].sort(
 setFretes(opcoesOrdenadas);
 
 // Continua selecionando automaticamente a primeira
-// para não quebrar o checkout atual.
 const primeira = opcoesOrdenadas[0];
 
-setFreteSelecionado(primeira);
+if (!simple) {
+  setFreteSelecionado(primeira);
+}
 
 const valor = Math.round(
   Number(primeira.price) * 100
@@ -486,9 +487,12 @@ window.dispatchEvent(
 
      {fretes.map((item: any, index) => {
 
-  const ativo =
-    freteSelecionado?.name === item.name &&
-    freteSelecionado?.price === item.price;
+const ativo = simple
+  ? false
+  : (
+      freteSelecionado?.name === item.name &&
+      freteSelecionado?.price === item.price
+    );
 
   return (
 
