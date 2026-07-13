@@ -274,35 +274,35 @@ function nomeServico(item:any){
 
 }
 
-function logoTransportadora(item:any){
+function logoTransportadora(item: any) {
 
   const nome = nomeTransportadora(item).toLowerCase();
 
   if (nome.includes("jadlog"))
-    return "/transportadoras/jadlog.png";
+    return "/produtos/jadlog.png";
 
   if (nome.includes("correios"))
-    return "/transportadoras/correios.png";
+    return "/produtos/correios.png";
 
   if (nome.includes("total"))
-    return "/transportadoras/total-express.png";
+    return "/produtos/total-express.png";
 
   if (nome.includes("loggi"))
-    return "/transportadoras/loggi.png";
+    return "/produtos/loggi.png";
 
   if (nome.includes("azul"))
-    return "/transportadoras/azul-cargo.png";
+    return "/produtos/azul-cargo.png";
 
   if (nome.includes("buslog"))
-    return "/transportadoras/buslog.png";
+    return "/produtos/buslog.png";
 
   if (nome.includes("latam"))
-    return "/transportadoras/latam-cargo.png";
+    return "/produtos/latam-cargo.png";
 
   if (nome.includes("jet"))
-    return "/transportadoras/jet.png";
+    return "/produtos/jet.png";
 
-  return "/transportadoras/default.png";
+  return "/produtos/default.png";
 
 }
 
