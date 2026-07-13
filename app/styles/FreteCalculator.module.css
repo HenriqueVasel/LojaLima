@@ -569,7 +569,7 @@
 
     margin-top:2px;
 
-    font-size:8px;
+    font-size:10px;
 
     color:#8de4ab;
 
@@ -580,16 +580,20 @@
     overflow:hidden;
 
     text-overflow:ellipsis;
+
+   
 }
 .shippingPrice{
 
     color:#22c55e;
 
-    font-size:17px;
+    font-size:12px;
 
     font-weight:800;
 
+    line-height:1;
+
     white-space:nowrap;
 
-    line-height:1;
+    letter-spacing:-0.3px;
 }
