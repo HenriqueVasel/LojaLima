@@ -347,8 +347,7 @@ console.log(
             orderitem: true,
           },
         });
-
-      if (fullOrder) {
+if (fullOrder) {
 
   console.log("📧 Enviando email...");
 
@@ -360,14 +359,13 @@ console.log(
   // 🔥 Envia purchase para o GA4
   await sendPurchaseGA4(fullOrder);
 
+} else {
+
+  console.log(
+    "❌ Pedido não encontrado para email"
+  );
+
 }
-
-      } else {
-
-        console.log(
-          "❌ Pedido não encontrado para email"
-        );
-      }
 
     } else {
 
