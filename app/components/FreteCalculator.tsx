@@ -519,35 +519,33 @@ window.dispatchEvent(
 
       <div className={s.shippingLeft}>
 
-        <div className={s.radio}>
-          {ativo && (
-            <div className={s.radioDot}></div>
-          )}
-        </div>
+    <div className={s.radio}>
+        {ativo && <div className={s.radioDot}></div>}
+    </div>
 
-        <img
-          src={logoTransportadora(item)}
-          className={s.shippingLogo}
-          alt={nomeTransportadora(item)}
-        />
+    <img
+        src={logoTransportadora(item)}
+        className={s.shippingLogo}
+        alt={nomeTransportadora(item)}
+    />
 
-        <div>
+    <div className={s.shippingInfo}>
 
-          <div className={s.shippingCompany}>
+        <div className={s.shippingCompany}>
             {nomeTransportadora(item)}
-          </div>
-
-          <div className={s.shippingService}>
-            {nomeServico(item)}
-          </div>
-
-          <div className={s.shippingTime}>
-            Até {item.delivery_time} dias úteis
-          </div>
-
         </div>
 
-      </div>
+        <div className={s.shippingService}>
+            {nomeServico(item)}
+        </div>
+
+        <div className={s.shippingTime}>
+            Até {item.delivery_time} dias úteis
+        </div>
+
+    </div>
+
+</div>
 
       <div className={s.shippingRight}>
 
