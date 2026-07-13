@@ -526,7 +526,7 @@ window.dispatchEvent(
   }`}
   style={{
     cursor: simple ? "default" : "pointer"
-  }}S
+  }}
 >
 
       <div className={s.shippingLeft}>
