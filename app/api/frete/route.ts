@@ -58,6 +58,8 @@ if (!items || items.length === 0) {
   }
 });
 
+console.log("PRODUTOS DO BANCO:", produtos);
+
 const produtosMap = new Map(
   produtos.map(produto => [produto.id, produto])
 );
@@ -92,6 +94,8 @@ length: produto.length
     quantity: item.quantity
 
   });
+
+  console.log("PRODUCTS ENVIADOS:", products);
 
   console.log("PRODUTOS:", products);
 }
