@@ -19,12 +19,14 @@ type Props = {
   dark?: boolean;
   saveToCart?: boolean;
   items?: CartItem[];
+  simple?: boolean;
 };
 
 export default function FreteCalculator({
   dark = false,
   saveToCart = false,
-  items = []
+  items = [],
+  simple = false
 }: Props) {
 
   const [cep, setCep] = useState("");
@@ -491,41 +493,41 @@ window.dispatchEvent(
   return (
 
     <div
-      key={index}
-      onClick={() => {
+  key={index}
+  onClick={simple ? undefined : () => {
 
-        setFreteSelecionado(item);
+    setFreteSelecionado(item);
 
-        const valor = Math.round(
-          Number(item.price) * 100
-        );
+    const valor = Math.round(
+      Number(item.price) * 100
+    );
 
-        setFrete(valor);
+    setFrete(valor);
 
-        localStorage.setItem(
-          "freteNome",
-          item.name
-        );
+    localStorage.setItem("freteNome", item.name);
 
-        sessionStorage.setItem(
-          "freteCents",
-          String(valor)
-        );
+    sessionStorage.setItem(
+      "freteCents",
+      String(valor)
+    );
 
-        sessionStorage.setItem(
-          "shipping",
-          JSON.stringify(item)
-        );
+    sessionStorage.setItem(
+      "shipping",
+      JSON.stringify(item)
+    );
 
-        window.dispatchEvent(
-          new Event("freteUpdated")
-        );
+    window.dispatchEvent(
+      new Event("freteUpdated")
+    );
 
-      }}
-      className={`${s.shippingCard} ${
-        ativo ? s.shippingCardActive : ""
-      }`}
-    >
+  }}
+  className={`${s.shippingCard} ${
+    ativo ? s.shippingCardActive : ""
+  }`}
+  style={{
+    cursor: simple ? "default" : "pointer"
+  }}S
+>
 
       <div className={s.shippingLeft}>
 
