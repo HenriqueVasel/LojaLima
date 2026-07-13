@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
 import client from "@/app/lib/mercadopago";
 import { Payment } from "mercadopago";
+import { sendPurchaseGA4 } from "@/app/lib/ga4";
 
 import { payment_status } from "@prisma/client";
 import { sendOrderEmail } from "@/app/lib/email";
@@ -349,17 +350,17 @@ console.log(
 
       if (fullOrder) {
 
-        console.log(
-          "📧 Enviando email..."
-        );
+  console.log("📧 Enviando email...");
 
-        const emailResult =
-  await sendOrderEmail(fullOrder);
+  const emailResult =
+    await sendOrderEmail(fullOrder);
 
-console.log(
-  "📧 RESULTADO EMAIL:",
-  emailResult
-);
+  console.log("📧 RESULTADO EMAIL:", emailResult);
+
+  // 🔥 Envia purchase para o GA4
+  await sendPurchaseGA4(fullOrder);
+
+}
 
       } else {
 
