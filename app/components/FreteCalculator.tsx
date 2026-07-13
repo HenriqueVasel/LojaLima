@@ -274,6 +274,38 @@ function nomeServico(item:any){
 
 }
 
+function logoTransportadora(item:any){
+
+  const nome = nomeTransportadora(item).toLowerCase();
+
+  if (nome.includes("jadlog"))
+    return "/transportadoras/jadlog.png";
+
+  if (nome.includes("correios"))
+    return "/transportadoras/correios.png";
+
+  if (nome.includes("total"))
+    return "/transportadoras/total-express.png";
+
+  if (nome.includes("loggi"))
+    return "/transportadoras/loggi.png";
+
+  if (nome.includes("azul"))
+    return "/transportadoras/azul-cargo.png";
+
+  if (nome.includes("buslog"))
+    return "/transportadoras/buslog.png";
+
+  if (nome.includes("latam"))
+    return "/transportadoras/latam-cargo.png";
+
+  if (nome.includes("jet"))
+    return "/transportadoras/jet.png";
+
+  return "/transportadoras/default.png";
+
+}
+
   return (
     <div
   className={`${s.wrapper} ${
@@ -440,149 +472,96 @@ window.dispatchEvent(
         }}
       >
 
-        {fretes.map((item: any, index) => {
+     {fretes.map((item: any, index) => {
 
-          const ativo =
-  freteSelecionado?.name === item.name &&
-  freteSelecionado?.price === item.price;
+  const ativo =
+    freteSelecionado?.name === item.name &&
+    freteSelecionado?.price === item.price;
 
+  return (
 
-            
-
-          return (
-
-            <div
-              key={index}
-              onClick={() => {
-
-                setFreteSelecionado(item);
-
-                const valor =
-                  Math.round(
-                    Number(item.price) * 100
-                  );
-
-                setFrete(valor);
-
-                localStorage.setItem(
-                  "freteNome",
-                  item.name
-                );
-
-                sessionStorage.setItem(
-                  "freteCents",
-                  String(valor)
-                );
-
-                sessionStorage.setItem(
-                  "shipping",
-                  JSON.stringify(item)
-                );
-
-                window.dispatchEvent(
-                  new Event("freteUpdated")
-                );
-
-              }}
-            style={{
-  cursor: "pointer",
-  border: ativo
-    ? "2px solid #22c55e"
-    : "1px solid #333",
-  borderRadius: 16,
-  padding: 20,
-  background: ativo
-    ? "#103320"
-    : "#202020",
-  transition: ".25s",
-  boxShadow: ativo
-    ? "0 0 18px rgba(34,197,94,.25)"
-    : "none"
-}}
-            >
-
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center"
-                }}
-              >
-
-                <div>
-
-                  <strong
-  style={{
-    fontSize:16,
-  color:"#fff"
-    
-  }}
->
-  {nomeTransportadora(item)}
-</strong>
-
-<div
-  style={{
-       fontSize:14,
-    color:"#c8c8c8",
-    marginTop:4
-  }}
->
-  {nomeServico(item)}
-</div>
-                  <div
-                   style={{
-  marginTop: 8,
-  fontSize: 13,
-  color: "#7dd3a7",
-  fontWeight: 500
-}}
-                  >
-                    Entrega em até {item.delivery_time} dias úteis
-                  </div>
-
-                </div>
-
-                <div
-  style={{
-    textAlign: "right"
-  }}
->
-
-  <div
-    style={{
-      fontSize: 24,
-      fontWeight: 700,
-      color: "#22c55e"
-    }}
-  >
-    R$ {Number(item.price).toFixed(2)}
-  </div>
-
-  {ativo && (
     <div
-      style={{
-        marginTop: 8,
-        background: "#16a34a",
-        color: "#fff",
-        padding: "4px 10px",
-        borderRadius: 20,
-        fontSize: 12,
-        fontWeight: 600
+      key={index}
+      onClick={() => {
+
+        setFreteSelecionado(item);
+
+        const valor = Math.round(
+          Number(item.price) * 100
+        );
+
+        setFrete(valor);
+
+        localStorage.setItem(
+          "freteNome",
+          item.name
+        );
+
+        sessionStorage.setItem(
+          "freteCents",
+          String(valor)
+        );
+
+        sessionStorage.setItem(
+          "shipping",
+          JSON.stringify(item)
+        );
+
+        window.dispatchEvent(
+          new Event("freteUpdated")
+        );
+
       }}
+      className={`${s.shippingCard} ${
+        ativo ? s.shippingCardActive : ""
+      }`}
     >
-      ✓ Selecionado
+
+      <div className={s.shippingLeft}>
+
+        <div className={s.radio}>
+          {ativo && (
+            <div className={s.radioDot}></div>
+          )}
+        </div>
+
+        <img
+          src={logoTransportadora(item)}
+          className={s.shippingLogo}
+          alt={nomeTransportadora(item)}
+        />
+
+        <div>
+
+          <div className={s.shippingCompany}>
+            {nomeTransportadora(item)}
+          </div>
+
+          <div className={s.shippingService}>
+            {nomeServico(item)}
+          </div>
+
+          <div className={s.shippingTime}>
+            Até {item.delivery_time} dias úteis
+          </div>
+
+        </div>
+
+      </div>
+
+      <div className={s.shippingRight}>
+
+        <div className={s.shippingPrice}>
+          R$ {Number(item.price).toFixed(2)}
+        </div>
+
+      </div>
+
     </div>
-  )}
 
-</div>
-              </div>
+  );
 
-            </div>
-
-          );
-
-        })}
+})}
 
       </div>
 

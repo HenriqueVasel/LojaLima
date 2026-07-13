@@ -6,7 +6,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = "Loja Lima e Lima <contato@lojalimaelima.com.br>";
 const ADMIN_EMAIL = "marketinglimaelima@gmail.com";
 
-// ================= EMAIL DE VERIFICAÇÃO =================
+
 // ================= EMAIL DE VERIFICAÇÃO =================
 export async function sendVerificationEmail(
   email: string,
