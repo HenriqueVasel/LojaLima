@@ -538,10 +538,10 @@ window.dispatchEvent(
         <div className={s.shippingService}>
             {nomeServico(item)}
         </div>
-
-        <div className={s.shippingTime}>
-            Até {item.delivery_time} dias úteis
-        </div>
+        
+<div className={s.shippingTime}>
+    Até {item.delivery_time} dias úteis
+</div>
 
     </div>
 

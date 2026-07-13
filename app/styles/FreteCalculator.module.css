@@ -444,140 +444,152 @@
     justify-content:space-between;
     align-items:center;
 
-    gap:12px;
+    gap:10px;
 
-    padding:12px 14px;
+    padding:10px 12px;
 
-    border-radius:14px;
+    border-radius:12px;
 
-    background:#1b1b1b;
+    background:#1d1d1d;
 
-    border:1px solid #343434;
+    border:1px solid #313131;
 
     cursor:pointer;
 
-    transition:.25s;
+    transition:.2s;
 }
 
 .shippingCard:hover{
-    transform:translateY(-2px);
     border-color:#22c55e;
+    transform:translateY(-1px);
 }
 
 .shippingCardActive{
+    background:linear-gradient(90deg,#112d1b,#183725);
     border:1px solid #22c55e;
-    background:linear-gradient(90deg,#112d1b,#183826);
-    box-shadow:0 0 18px rgba(34,197,94,.15);
+    box-shadow:0 0 12px rgba(34,197,94,.15);
 }
-
-/* ESQUERDA */
 
 .shippingLeft{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
+
     flex:1;
     min-width:0;
 }
 
-/* RADIO */
+.shippingInfo{
+    flex:1;
+    min-width:0;
+}
+
+.shippingRight{
+    width:58px;
+    text-align:right;
+    flex-shrink:0;
+}
 
 .radio{
-    width:18px;
-    height:18px;
+    width:16px;
+    height:16px;
 
     border-radius:50%;
     border:2px solid #666;
 
     display:flex;
-    justify-content:center;
     align-items:center;
+    justify-content:center;
 
     flex-shrink:0;
 }
 
 .radioDot{
-    width:8px;
-    height:8px;
+    width:7px;
+    height:7px;
+
     border-radius:50%;
+
     background:#22c55e;
 }
 
-/* LOGO */
-
 .shippingLogo{
 
-    width:44px;
-    height:44px;
+    width:34px;
+    height:34px;
 
-    border-radius:10px;
+    background:#fff;
 
-    background:white;
+    border-radius:8px;
 
-    padding:5px;
+    padding:4px;
 
     object-fit:contain;
 
     flex-shrink:0;
 }
 
-/* TEXTOS */
-
 .shippingCompany{
 
     color:#fff;
 
-    font-size:15px;
+    font-size:13px;
 
     font-weight:700;
 
     line-height:1.1;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
 
 .shippingService{
 
     display:inline-block;
 
-    margin-top:5px;
+    margin-top:3px;
 
-    padding:2px 8px;
+    padding:2px 6px;
 
     border-radius:999px;
 
-    background:#2e2e2e;
+    background:#323232;
 
-    color:#d6d6d6;
+    color:#d5d5d5;
 
-    font-size:10px;
+    font-size:9px;
 
     font-weight:600;
 }
 
 .shippingTime{
 
-    margin-top:5px;
+    margin-top:2px;
 
-    font-size:11px;
+    font-size:10px;
 
-    color:#92e3ae;
+    color:#8de4ab;
+
+    line-height:1.2;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
 }
-
-/* DIREITA */
-
-.shippingRight{
-
-    text-align:right;
-
-    flex-shrink:0;
-}
-
 .shippingPrice{
 
     color:#22c55e;
 
-    font-size:24px;
+    font-size:18px;
 
     font-weight:800;
 
     line-height:1;
+
+    white-space:nowrap;
 }
