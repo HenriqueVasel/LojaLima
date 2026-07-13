@@ -453,8 +453,18 @@ const precoPix =
          
 
             <div className={s.freteCard}>
-              <FreteCalculator />
-            </div>
+  <FreteCalculator
+    items={[
+      {
+        id: produto.id,
+        qty: 1,
+        product: {
+          id: produto.id,
+        },
+      },
+    ]}
+  />
+</div>
             
 
         
