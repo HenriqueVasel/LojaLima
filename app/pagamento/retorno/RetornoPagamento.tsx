@@ -50,12 +50,19 @@ export default function RetornoPagamento() {
         }
 
         const order = await res.json();
+        console.log("ORDER:", order);
 
         if (order.status === "paid" || order.status === "approved") {
+          console.log("STATUS PAGO");
 
   if (!purchaseSentRef.current) {
 
+    console.log("ENTROU NO IF");
+
     purchaseSentRef.current = true;
+    console.log("ENVIANDO PURCHASE");
+
+    console.log("ENVIANDO PURCHASE");
 
   sendGAEvent("event", "purchase", {
   transaction_id: String(order.id),
@@ -76,6 +83,8 @@ if (typeof window !== "undefined" && (window as any).fbq) {
     currency: "BRL",
   });
 }
+
+console.log("ORDER RECEBIDA:", order);
   }
 
   setStatus("paid");
