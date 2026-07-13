@@ -538,7 +538,7 @@ window.dispatchEvent(
         <div className={s.shippingService}>
             {nomeServico(item)}
         </div>
-        
+
 <div className={s.shippingTime}>
     Até {item.delivery_time} dias úteis
 </div>
@@ -549,9 +549,12 @@ window.dispatchEvent(
 
       <div className={s.shippingRight}>
 
-        <div className={s.shippingPrice}>
-          R$ {Number(item.price).toFixed(2)}
-        </div>
+       <div className={s.shippingPrice}>
+    {Number(item.price).toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+    })}
+</div>
 
       </div>
 
