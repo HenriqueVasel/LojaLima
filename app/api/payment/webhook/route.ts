@@ -351,8 +351,12 @@ if (fullOrder) {
 
   console.log("🚀 VOU ENVIAR PURCHASE PARA GA4");
 
+  console.log("CHAMANDO SENDPURCHASEGA4");
+
   // 🔥 Envia purchase para o GA4
   await sendPurchaseGA4(fullOrder);
+
+  console.log("VOLTOU DO SENDPURCHASEGA4");
 
   console.log("✅ VOLTEI DO GA4");
 

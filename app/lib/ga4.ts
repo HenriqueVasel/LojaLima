@@ -3,10 +3,15 @@ const API_SECRET = "mK-V7nQITWmSuS6OV8AWlw";
 
 export async function sendPurchaseGA4(order: any) {
 
-    console.log("🔥🔥🔥 GA4 VERSÃO NOVA 🔥🔥🔥");
+  console.log("🔥🔥🔥 GA4 VERSÃO NOVA 🔥🔥🔥");
+
+  console.log("ORDER RECEBIDA:", order);
+
   try {
 
     console.log("ANTES DO FETCH");
+
+    
     const response = await fetch(
 
       `https://www.google-analytics.com/mp/collect?measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}`,
