@@ -18,7 +18,7 @@ export async function sendPurchaseGA4(order: any) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          client_id: order.userId,
+         client_id: `${Date.now()}.${Math.floor(Math.random() * 1000000)}`,
 
           events: [
             {
