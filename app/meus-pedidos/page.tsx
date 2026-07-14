@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import s from "@/app/styles/meus-pedidos.module.css";
+import { sendGAEvent } from "@next/third-parties/google";
 
 export default function MeusPedidos() {
   const router = useRouter();
@@ -24,6 +25,42 @@ export default function MeusPedidos() {
 
         const data = await res.json();
         setOrders(Array.isArray(data) ? data : []);
+
+        if (Array.isArray(data)) {
+
+  for (const order of data) {
+
+    if (order.status !== "paid") continue;
+
+    const key = `purchase_${order.id}`;
+
+    if (localStorage.getItem(key)) continue;
+
+    console.log("🚀 ENVIANDO PURCHASE:", order.id);
+
+    sendGAEvent("event", "purchase", {
+      transaction_id: String(order.id),
+      currency: "BRL",
+      value: order.totalCents / 100,
+
+      items: (order.orderitem || []).map((item: any) => ({
+        item_id: String(item.productId),
+        item_name: item.name,
+        price: item.priceCents / 100,
+        quantity: item.qty,
+      })),
+    });
+
+    if ((window as any).fbq) {
+      (window as any).fbq("track", "Purchase", {
+        value: order.totalCents / 100,
+        currency: "BRL",
+      });
+    }
+
+    localStorage.setItem(key, "1");
+  }
+}
       } catch (error) {
         console.error("Erro ao carregar pedidos:", error);
         setOrders([]);
