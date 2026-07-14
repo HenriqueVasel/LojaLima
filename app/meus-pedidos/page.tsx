@@ -39,9 +39,10 @@ export default function MeusPedidos() {
     console.log("🚀 ENVIANDO PURCHASE:", order.id);
 
     sendGAEvent("event", "purchase", {
-      transaction_id: String(order.id),
-      currency: "BRL",
-      value: order.totalCents / 100,
+  debug_mode: true,
+  transaction_id: String(order.id),
+  currency: "BRL",
+  value: order.totalCents / 100,
 
       items: (order.orderitem || []).map((item: any) => ({
         item_id: String(item.productId),
