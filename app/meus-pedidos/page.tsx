@@ -38,19 +38,19 @@ export default function MeusPedidos() {
 
     console.log("🚀 ENVIANDO PURCHASE:", order.id);
 
-    sendGAEvent("event", "purchase", {
+ (window as any).gtag("event", "purchase", {
   debug_mode: true,
   transaction_id: String(order.id),
   currency: "BRL",
   value: order.totalCents / 100,
 
-      items: (order.orderitem || []).map((item: any) => ({
-        item_id: String(item.productId),
-        item_name: item.name,
-        price: item.priceCents / 100,
-        quantity: item.qty,
-      })),
-    });
+  items: (order.orderitem || []).map((item: any) => ({
+    item_id: String(item.productId),
+    item_name: item.name,
+    price: item.priceCents / 100,
+    quantity: item.qty,
+  })),
+});
 
     if ((window as any).fbq) {
       (window as any).fbq("track", "Purchase", {
