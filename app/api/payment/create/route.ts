@@ -57,7 +57,9 @@ const total = totalCents / 100;
 
     const preference = new Preference(client);
 
-   const baseUrl = "https://loja-lima-gxcl-hw0yfc32n-henriquevasels-projects.vercel.app";
+   const baseUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ||
+  "https://lojalimaelima.com.br";
 
 const response = await preference.create({
 body: {

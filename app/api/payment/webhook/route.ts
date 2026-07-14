@@ -349,8 +349,12 @@ if (fullOrder) {
 
   console.log("📧 RESULTADO EMAIL:", emailResult);
 
+  console.log("🚀 VOU ENVIAR PURCHASE PARA GA4");
+
   // 🔥 Envia purchase para o GA4
   await sendPurchaseGA4(fullOrder);
+
+  console.log("✅ VOLTEI DO GA4");
 
 } else {
 
