@@ -90,39 +90,32 @@ async function processWebhook(
     /* =========================
     🔥 FILTRO FLEXÍVEL
     ========================= */
-    if (
-      body.type !== "payment" &&
-      body.action !==
-        "payment.created" &&
-      body.action !==
-        "payment.updated"
-    ) {
+    
 
-      console.log(
-        "⛔ Evento ignorado:",
-        body
-      );
+  /* =========================
+🔥 ACEITA TODOS OS FORMATOS DO MP
+========================= */
 
-      return;
-    }
+const isPayment =
+  body.type === "payment" ||
+  body.topic === "payment" ||
+  body.action === "payment.created" ||
+  body.action === "payment.updated";
 
-    const paymentId =
-      body?.data?.id ||
-      body?.id;
+if (!isPayment) {
 
-    if (!paymentId) {
+  console.log(
+    "⛔ Evento ignorado:",
+    body
+  );
 
-      console.log(
-        "❌ Sem paymentId"
-      );
+  return;
+}
 
-      return;
-    }
-
-    console.log(
-      "💳 Payment ID:",
-      paymentId
-    );
+const paymentId =
+  body?.data?.id ||
+  body?.id ||
+  body?.resource;
 
     /* =========================
     💳 BUSCA PAGAMENTO
