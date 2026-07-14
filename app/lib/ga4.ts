@@ -11,10 +11,8 @@ export async function sendPurchaseGA4(order: any) {
 
     console.log("ANTES DO FETCH");
 
-    
     const response = await fetch(
-
-      `https://www.google-analytics.com/mp/collect?measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}`,
+  `https://www.google-analytics.com/debug/mp/collect?measurement_id=${MEASUREMENT_ID}&api_secret=${API_SECRET}`,
       {
 
         
@@ -48,10 +46,10 @@ export async function sendPurchaseGA4(order: any) {
     );
 
     console.log("DEPOIS DO FETCH");
-    const text = await response.text();
+   const json = await response.json();
 
 console.log("GA4 STATUS:", response.status);
-console.log("GA4 RESPONSE:", text);
+console.log("GA4 DEBUG:", JSON.stringify(json, null, 2));
 
 console.log("✅ Purchase enviado para GA4");
     console.log("✅ Purchase enviado para GA4");
