@@ -728,8 +728,7 @@ shortDescription:
       .slice(0, 180),
 };
 
-// Não atualiza o preço da câmera VIPW 1210 C
-if (product.sku !== "17389") {
+if (existing.sku !== "17389") {
   updateData.priceCents = product.price;
 }
 
