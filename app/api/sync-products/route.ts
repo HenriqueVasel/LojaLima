@@ -717,23 +717,26 @@ shortDescription:
         // UPDATE PRODUTO
         // =========================
 
-        await prisma.product.update({
-          
-          where: {
-            id: existing.id,
-          },
-          data: {
-            name: product.name,
-            brand: product.brand,
-            ean: product.ean,
-            description: product.description,
+      const updateData: any = {
+  name: product.name,
+  brand: product.brand,
+  ean: product.ean,
+  description: product.description,
 
-shortDescription:
-  stripHtml(product.description)
-    .slice(0, 180),
-            priceCents: product.price,
-          },
-        });
+  shortDescription:
+    stripHtml(product.description).slice(0, 180),
+};
+
+if (existing.id !== 5891) {
+  updateData.priceCents = product.price;
+}
+
+await prisma.product.update({
+  where: {
+    id: existing.id,
+  },
+  data: updateData,
+});
         
 
         // =========================
