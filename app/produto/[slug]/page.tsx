@@ -688,12 +688,34 @@ PRODUTOS RELACIONADOS
           .replace(/<[^>]*>/g, "")
           .slice(0, 500),
 
-      sku: String(produto.id),
+      sku: produto.sku,
+
+      gtin13: produto.ean,
+
+      category:
+        produto.productcategory?.length
+          ? produto.productcategory
+              .map(c => c.category.name)
+              .join(" > ")
+          : "",
 
       brand: {
         "@type": "Brand",
-        name: "Intelbras",
+        name: produto.brand || "Intelbras",
       },
+
+      manufacturer: {
+        "@type": "Organization",
+        name: produto.brand || "Intelbras",
+      },
+
+      weight: produto.weight
+        ? {
+            "@type": "QuantitativeValue",
+            value: produto.weight,
+            unitCode: "KGM",
+          }
+        : undefined,
 
       offers: {
         "@type": "Offer",
@@ -702,6 +724,11 @@ PRODUTOS RELACIONADOS
         price: precoFinal,
         availability: "https://schema.org/InStock",
         itemCondition: "https://schema.org/NewCondition",
+
+        seller: {
+          "@type": "Organization",
+          name: "Lima e Lima",
+        },
       },
     }),
   }}

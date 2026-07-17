@@ -274,6 +274,12 @@ ${
 
         <g:google_product_category>${googleCategory}</g:google_product_category>
 
+        ${
+  product.weight
+    ? `<g:shipping_weight>${product.weight} kg</g:shipping_weight>`
+    : ""
+}
+
       </item>
       `;
     })
