@@ -692,12 +692,7 @@ PRODUTOS RELACIONADOS
 
       gtin13: produto.ean,
 
-      category:
-        produto.productcategory?.length
-          ? produto.productcategory
-              .map(c => c.category.name)
-              .join(" > ")
-          : "",
+     
 
       brand: {
         "@type": "Brand",
