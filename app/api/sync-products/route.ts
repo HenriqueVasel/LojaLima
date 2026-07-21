@@ -728,9 +728,7 @@ shortDescription:
       .slice(0, 180),
 };
 
-if (existing.sku !== "17389") {
-  updateData.priceCents = product.price;
-}
+
 
 await prisma.product.update({
   where: {
