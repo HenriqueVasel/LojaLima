@@ -133,7 +133,26 @@ export async function GET() {
     },
   });
 
-  const items = products
+  const filteredProducts = products.filter((product) => {
+  const category = product.productcategory
+    .map((c) => c.category.name.toLowerCase())
+    .join(" ");
+
+  const finalPrice = Math.round(product.priceCents * 1.35) / 100;
+
+  const isCamera =
+    category.includes("camera") ||
+    category.includes("câmera") ||
+    category.includes("cftv");
+
+  return (
+    isCamera &&
+    finalPrice >= 200 &&
+    finalPrice <= 1500
+  );
+});
+
+  const items = filteredProducts
     .map((product) => {
       const image = product.productimage[0];
 
