@@ -7,7 +7,6 @@ export function middleware(req: NextRequest){
 
   const protectedRoutes = [
     "/checkout",
-    "/carrinho",
     "/meus-pedidos",
     "/admin"
   ];
