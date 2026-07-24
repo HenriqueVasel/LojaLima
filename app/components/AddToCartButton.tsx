@@ -83,13 +83,13 @@ if (res.status === 401) {
 
   }
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+localStorage.setItem("cart", JSON.stringify(cart));
 
-  toast.success("Produto adicionado ao carrinho!");
+window.dispatchEvent(new Event("cartUpdated"));
 
-  router.push("/carrinho");
+toast.success("Produto adicionado ao carrinho!");
 
-  return;
+return;
 }
       // 🔴 ERRO
       if (!res.ok) {

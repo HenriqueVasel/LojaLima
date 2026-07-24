@@ -44,18 +44,48 @@ export default function Header() {
     { label: "Quem somos", href: ROUTES.quemSomos },
   ];
 
-  async function fetchCartCount() {
-    const res = await fetch("/api/cart", {
-      credentials: "include",
-    });
+async function fetchCartCount() {
 
-    const data = await res.json();
+  const res = await fetch("/api/cart", {
+    credentials: "include",
+  });
 
-    if (Array.isArray(data)) {
-      const total = data.reduce((acc, item) => acc + item.qty, 0);
-      setCartCount(total);
-    }
+  // 👤 Visitante
+  if (res.status === 401) {
+
+    const cart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
+
+    const total = cart.reduce(
+      (acc: number, item: any) => acc + item.qty,
+      0
+    );
+
+    setCartCount(total);
+
+    return;
   }
+
+  // 👤 Logado
+  const data = await res.json();
+
+  if (Array.isArray(data)) {
+
+    const total = data.reduce(
+      (acc: number, item: any) => acc + item.qty,
+      0
+    );
+
+    setCartCount(total);
+
+  } else {
+
+    setCartCount(0);
+
+  }
+
+}
 
   useEffect(() => {
     async function fetchUser() {
