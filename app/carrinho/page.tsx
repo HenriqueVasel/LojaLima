@@ -156,15 +156,19 @@ async function removeItem(id: number) {
   });
 
   // 👤 Visitante
-  if (res.status === 401) {
-
+  if (res.status === 401 ) {
+console.log("VISITANTE REMOVENDO", id);
     const cart = JSON.parse(
       localStorage.getItem("cart") || "[]"
     );
 
+    console.log("Carrinho atual:", cart);
+
     const novoCarrinho = cart.filter(
       (item: any) => item.id !== id
     );
+
+    console.log("Novo carrinho:", novoCarrinho);
 
     localStorage.setItem(
       "cart",
