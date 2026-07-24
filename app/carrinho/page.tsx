@@ -149,15 +149,49 @@ if(savedCoupon){
 
 }, []);
 
-  async function removeItem(id:number){
-    await fetch(`/api/cart/item/${id}`,{
-      method:"DELETE",
-      credentials:"include"
-    });
+async function removeItem(id: number) {
 
-    window.dispatchEvent(new Event("cartUpdated"));
-    fetchCart();
+  const res = await fetch("/api/cart", {
+    credentials: "include"
+  });
+
+  // 👤 Visitante
+  if (res.status === 401) {
+
+    const cart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
+
+    const novoCarrinho = cart.filter(
+      (item: any) => item.id !== id
+    );
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(novoCarrinho)
+    );
+
+    setItems(novoCarrinho);
+
+    window.dispatchEvent(
+      new Event("cartUpdated")
+    );
+
+    return;
   }
+
+  // 👤 Logado
+  await fetch(`/api/cart/item/${id}`, {
+    method: "DELETE",
+    credentials: "include"
+  });
+
+  window.dispatchEvent(
+    new Event("cartUpdated")
+  );
+
+  fetchCart();
+}
 
 async function updateQty(id:number, qty:number){
 
