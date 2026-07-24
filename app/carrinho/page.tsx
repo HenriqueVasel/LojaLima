@@ -157,18 +157,14 @@ async function removeItem(id: number) {
 
   // 👤 Visitante
   if (res.status === 401 ) {
-console.log("VISITANTE REMOVENDO", id);
+
     const cart = JSON.parse(
       localStorage.getItem("cart") || "[]"
     );
 
-    console.log("Carrinho atual:", cart);
-
     const novoCarrinho = cart.filter(
       (item: any) => item.id !== id
     );
-
-    console.log("Novo carrinho:", novoCarrinho);
 
     localStorage.setItem(
       "cart",
@@ -203,6 +199,41 @@ async function updateQty(id:number, qty:number){
     removeItem(id);
     return;
   }
+
+  const check = await fetch("/api/cart", {
+  credentials: "include"
+});
+
+if (check.status === 401) {
+
+  const cart = JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
+
+  const index = cart.findIndex(
+    (item: any) => item.id === id
+  );
+
+  if (index >= 0) {
+
+    cart[index].qty = qty;
+
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart)
+    );
+
+    setItems(cart);
+
+    window.dispatchEvent(
+      new Event("cartUpdated")
+    );
+
+  }
+
+  return;
+
+}
 
   const res = await fetch(`/api/cart/item/${id}`,{
     method:"PUT",
