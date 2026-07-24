@@ -35,23 +35,23 @@ export default function BuyNowButton({
 
       const data = await res.json();
 
-      if (res.status === 401) {
+if (res.status === 401) {
 
-        localStorage.setItem(
-          "pendingCart",
-          JSON.stringify({
-            productId,
-            variantId,
-            qty: 1,
-          })
-        );
+  localStorage.setItem(
+    "guestCart",
+    JSON.stringify({
+      productId,
+      variantId,
+      qty: 1,
+    })
+  );
 
-        router.push(
-          `/login?redirect=${window.location.pathname}`
-        );
+  toast.success("Produto adicionado! Finalize a compra no carrinho.");
 
-        return;
-      }
+  router.push("/carrinho");
+
+  return;
+}
 
       if (!res.ok) {
 

@@ -8,6 +8,8 @@ type Props = {
   productId: number;
   productName: string;
   productPrice: number;
+  productSlug: string;
+  productImage: string;
   variantId?: number;
 };
 
@@ -15,6 +17,8 @@ export default function AddToCartButton({
   productId,
   productName,
   productPrice,
+  productSlug,
+  productImage,
   variantId,
 }: Props) {
 
@@ -43,26 +47,50 @@ export default function AddToCartButton({
       const data = await res.json();
 
       // 🔴 NÃO LOGADO
-      if (res.status === 401) {
+if (res.status === 401) {
 
-        localStorage.setItem(
-          "pendingCart",
-          JSON.stringify({
-            productId,
-            variantId,
-            qty: 1
-          })
-        );
+  const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-        toast("Faça login para continuar");
+  const index = cart.findIndex(
+    (item: any) =>
+      item.product.id === productId &&
+      item.variantId === (variantId ?? null)
+  );
 
-        router.push(
-          `/login?redirect=${window.location.pathname}`
-        );
+  if (index >= 0) {
 
-        return;
-      }
+    cart[index].qty += 1;
 
+  } else {
+
+    cart.push({
+      id: -(cart.length + 1),
+      qty: 1,
+      product: {
+        id: productId,
+        name: productName,
+        slug: productSlug,
+        priceCents: Math.round(productPrice * 100),
+        sku: "",
+        images: [
+          {
+            url: productImage,
+          },
+        ],
+      },
+      variantId: variantId ?? null,
+    });
+
+  }
+
+  localStorage.setItem("cart", JSON.stringify(cart));
+
+  toast.success("Produto adicionado ao carrinho!");
+
+  router.push("/carrinho");
+
+  return;
+}
       // 🔴 ERRO
       if (!res.ok) {
 
