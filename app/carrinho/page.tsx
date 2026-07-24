@@ -94,10 +94,16 @@ useEffect(() => {
     credentials: "include"
   });
 
-  if (res.status === 401) {
-    setItems([]);
-    return;
-  }
+ if (res.status === 401) {
+
+  const cart = JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
+
+  setItems(cart);
+
+  return;
+}
 
   const data = await res.json();
 
