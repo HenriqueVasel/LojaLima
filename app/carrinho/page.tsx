@@ -384,7 +384,27 @@ if (!retirada && !numero) {
 
 
 
+    fetch("/api/me")
+  .then((res) => {
+
+    if (!res.ok) {
+
+      window.location.href =
+        "/login?redirect=/checkout";
+
+      return;
+
+    }
+
     window.location.href = "/checkout";
+
+  })
+  .catch(() => {
+
+    window.location.href =
+      "/login?redirect=/checkout";
+
+  });
   }
 
   return (
