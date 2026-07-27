@@ -765,22 +765,21 @@
 }
 
 .galleryThumbs{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
-  flex-shrink:0;
+    width:90px;
+    flex-shrink:0;
+
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+
+    align-self:flex-start;
 }
-
 .mainImage{
-  flex:1;
+    flex:1;
 
-  display:flex;
-  align-items:center;
-  justify-content:center;
-
-  min-height:520px;
-
-  padding:40px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 .mainPhoto{
