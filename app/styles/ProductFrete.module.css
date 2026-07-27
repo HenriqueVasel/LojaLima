@@ -2,7 +2,7 @@
     background:#fff;
     border:1px solid #e5e7eb;
     border-radius:18px;
-    padding:24px;
+    padding:16px;
     margin-top:24px;
 }
 
@@ -10,7 +10,7 @@
     display:flex;
     align-items:center;
     gap:14px;
-    margin-bottom:22px;
+    margin-bottom:12px;
 }
 
 .header svg{
@@ -20,7 +20,7 @@
 
 .header h3{
     margin:0;
-    font-size:20px;
+    font-size:16px;
     font-weight:700;
     color:#111827;
 }
@@ -28,7 +28,7 @@
 .header p{
     margin-top:4px;
     color:#6b7280;
-    font-size:14px;
+    font-size:12px;
 }
 
 .searchBox{
@@ -101,7 +101,7 @@ transform:rotate(360deg);
 .shippingList{
     display:flex;
     flex-direction:column;
-    gap:14px;
+    gap:8px;
 }
 
 .shippingCard{
@@ -111,7 +111,7 @@ transform:rotate(360deg);
     align-items:center;
     border:1px solid #e5e7eb;
     border-radius:16px;
-    padding:18px;
+    padding:10px 14px;
     cursor:pointer;
     transition:.25s;
     background:#fff;
@@ -131,25 +131,27 @@ transform:rotate(360deg);
 .cardLeft{
     display:flex;
     align-items:center;
-    gap:18px;
+     gap:10px;
 }
 
 .logo{
-    width:56px;
-    height:56px;
+    width:34px;
+    height:34px;
     object-fit:contain;
     background:#fff;
     border-radius:10px;
 }
 
 .company{
-    font-size:17px;
+      font-size:14px;
+    font-weight:700;
     font-weight:700;
     color:#111827;
 }
 
 .service{
-    font-size:14px;
+        font-size:12px;
+    margin-top:2px;
     color:#6b7280;
     margin-top:3px;
 }
@@ -166,7 +168,7 @@ transform:rotate(360deg);
 }
 
 .price{
-    font-size:24px;
+    font-size:18px;
     font-weight:800;
     color:#111827;
 }

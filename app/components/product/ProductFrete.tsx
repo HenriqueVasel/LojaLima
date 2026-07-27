@@ -20,13 +20,11 @@ export default function ProductFrete({ items }: Props) {
 
   const [cep, setCep] = useState("");
   const [loading, setLoading] = useState(false);
+  
 
   const [endereco, setEndereco] = useState<any>(null);
 
   const [fretes, setFretes] = useState<any[]>([]);
-
-  const [freteSelecionado, setFreteSelecionado] =
-    useState<any>(null);
 
 
     function nomeTransportadora(item: any) {
@@ -172,30 +170,6 @@ async function calcularFrete() {
 
 }
 
-function selecionarFrete(item: any) {
-
-  setFreteSelecionado(item);
-
-  sessionStorage.setItem(
-    "shipping",
-    JSON.stringify(item)
-  );
-
-  sessionStorage.setItem(
-    "freteCents",
-    String(Math.round(Number(item.price) * 100))
-  );
-
-  localStorage.setItem(
-    "freteNome",
-    item.name
-  );
-
-  window.dispatchEvent(
-    new Event("freteUpdated")
-  );
-
-}
 
 return (
   <div className={s.wrapper}>
@@ -255,29 +229,18 @@ return (
 
       <div className={s.shippingList}>
 
-        {fretes.map((item, index) => {
+        {fretes.slice(0, 4).map((item, index) => {
 
-          const ativo =
-            freteSelecionado?.name === item.name &&
-            freteSelecionado?.price === item.price;
+          
 
           return (
 
             <div
-              key={index}
-              onClick={() =>
-                selecionarFrete(item)
-              }
-              className={`${s.shippingCard} ${
-                ativo ? s.active : ""
-              }`}
-            >
+    key={index}
+    className={s.shippingCard}
+>
 
-              {index === 0 && (
-                <div className={s.bestBadge}>
-                  Melhor opção
-                </div>
-              )}
+              
 
               <div className={s.cardLeft}>
 
@@ -318,11 +281,7 @@ return (
                   )}
                 </div>
 
-                {ativo && (
-                  <div className={s.selected}>
-                    Selecionado
-                  </div>
-                )}
+                
 
               </div>
 
