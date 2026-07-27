@@ -128,8 +128,8 @@ function handleZoom(
 <Image
   src={selected}
   alt={name}
-  width={1000}
-height={1000}
+  width={1100}
+height={1100}
   priority
   className={s.mainPhoto}
   style={{
