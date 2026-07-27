@@ -8,7 +8,7 @@ const questions = [
   {
     question: "O produto é original?",
     answer:
-      "Sim. Todos os produtos comercializados pela Lima & Lima são originais e possuem garantia oficial do fabricante.",
+      "Sim. Todos os produtos comercializados pela Lima e Lima são originais e possuem garantia oficial do fabricante.",
   },
   {
     question: "Acompanha nota fiscal?",

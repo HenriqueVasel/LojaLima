@@ -436,29 +436,7 @@ const precoPix =
 />
 
 
-<div className={s.trustRow}>
 
-  <div className={s.trustItem}>
-    <ShieldCheck size={22} />
-    <small>Compra 100% segura</small>
-  </div>
-
-  <div className={s.trustItem}>
-    <Truck size={22} />
-    <small>Entrega rápida para todo Brasil</small>
-  </div>
-
- <div className={s.trustItem}>
-  <BadgeCheck size={22} />
-  <small>Suporte técnico especializado</small>
-</div>
-
-<div className={s.trustItem}>
-  <MessageSquare size={22} />
-  <small>Atendimento via WhatsApp</small>
-</div>
-
-</div>
           </div>
 
          
