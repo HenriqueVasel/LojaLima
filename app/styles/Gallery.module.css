@@ -37,30 +37,3 @@
   color: var(--text-strong);
 }
 
-.mainImage{
-
-    overflow:hidden;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    cursor:zoom-in;
-
-}
-
-.mainPhoto{
-
-    width:100%;
-
-    max-width:420px;
-
-    height:auto;
-
-    transition:transform .15s ease;
-
-    will-change:transform;
-
-}
