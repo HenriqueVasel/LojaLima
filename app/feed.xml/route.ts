@@ -145,11 +145,12 @@ export async function GET() {
     category.includes("câmera") ||
     category.includes("cftv");
 
-  return (
-    isCamera &&
-    finalPrice >= 200 &&
-    finalPrice <= 1500
-  );
+ return (
+  isCamera &&
+  finalPrice >= 200 &&
+  finalPrice <= 1500 &&
+  (product.stock?.quantity ?? 0) > 0
+);
 });
 
   const items = filteredProducts
@@ -274,12 +275,7 @@ if (
 
         <g:condition>new</g:condition>
 
-        <g:availability>${
-          (product.stock?.quantity ?? 0) > 0
-            ? "in_stock"
-            : "out_of_stock"
-        }</g:availability>
-
+     <g:availability>in_stock</g:availability>
         <g:price>${price} BRL</g:price>
 
 ${
