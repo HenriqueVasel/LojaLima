@@ -484,15 +484,17 @@ const precoPix =
 
           {/* BLOCO CONFIANÇA */}
 
-          <TrustCard />
-
-          <Benefits />
+          
 
          
 
         </div>
 
       </div>
+
+      <TrustCard />
+
+          <Benefits />
 
          {/* DESCRIÇÃO */}
 <div className={s.description}>
