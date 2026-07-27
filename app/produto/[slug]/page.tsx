@@ -29,20 +29,22 @@ export default async function ProdutoPage({ params }: any) {
 
   const { slug } = await params;
 
- const produto = await prisma.product.findUnique({
+const produto = await prisma.product.findUnique({
   where: { slug },
-include: {
+  include: {
 
-  promotion: true,
+    promotion: true,
 
-  productimage: {
-    orderBy: {
-      sortOrder: "asc"
-    }
-  },
+    stock: true,
 
-  productcategory: true
-}
+    productimage: {
+      orderBy: {
+        sortOrder: "asc"
+      }
+    },
+
+    productcategory: true
+  }
 });
 
   if (!produto) {
@@ -414,7 +416,7 @@ const precoPix =
           {/* BOTÃO COMPRAR */}
 
           <div className={s.buyButtonWrap}>
-     <AddToCartButton
+ <AddToCartButton
   productId={produto.id}
   productName={produto.name}
   productPrice={precoFinal}
@@ -423,6 +425,7 @@ const precoPix =
     produto.productimage?.[0]?.url ||
     "/produtos/placeholder.jpg"
   }
+  stock={produto.stock?.quantity ?? 0}
 />
 
 <BuyNowButton

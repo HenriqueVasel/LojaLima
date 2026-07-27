@@ -10,21 +10,27 @@ type Props = {
   productPrice: number;
   productSlug: string;
   productImage: string;
+  stock: number;
   variantId?: number;
 };
-
 export default function AddToCartButton({
   productId,
   productName,
   productPrice,
   productSlug,
   productImage,
+  stock,
   variantId,
 }: Props) {
 
   const router = useRouter();
 
   async function handleAdd() {
+
+    if (stock <= 0) {
+  toast.error("Produto sem estoque.");
+  return;
+}
 
     const retirada =
       sessionStorage.getItem("retiradaLoja") === "true";
@@ -147,7 +153,8 @@ return;
   }
 
  return (
- <button
+<button
+  disabled={stock <= 0}
   type="button"
   onClick={handleAdd}
   style={{
@@ -171,7 +178,9 @@ return;
     e.currentTarget.style.transform = "translateY(0)";
   }}
 >
-  🛒 ADICIONAR AO CARRINHO
+  {stock <= 0
+  ? "PRODUTO SEM ESTOQUE"
+  : "🛒 ADICIONAR AO CARRINHO"}
 </button>
 );
 }
