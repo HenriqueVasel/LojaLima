@@ -1,6 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import AddToCartButton from "@/app/components/AddToCartButton";
-import ProductImage from "@/app/components/ProductImage";
+import HelpIncludes from "@/app/components/product/HelpIncludes";
 import s from "@/app/styles/product.module.css";
 import ProductGallery from "@/app/components/ProductGallery";
 import FreteCalculator from "@/app/components/FreteCalculator";
@@ -495,6 +495,8 @@ const precoPix =
       <TrustCard />
 
           <Benefits />
+
+          <HelpIncludes />
 
          {/* DESCRIÇÃO */}
 <div className={s.description}>
