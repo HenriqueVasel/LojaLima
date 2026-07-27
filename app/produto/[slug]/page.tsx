@@ -3,7 +3,7 @@ import AddToCartButton from "@/app/components/AddToCartButton";
 import HelpIncludes from "@/app/components/product/HelpIncludes";
 import s from "@/app/styles/product.module.css";
 import ProductGallery from "@/app/components/ProductGallery";
-import FreteCalculator from "@/app/components/FreteCalculator";
+import ProductFrete from "@/app/components/product/ProductFrete";
 import { calcularPrecoVenda } from "@/app/lib/pricing";
 import Link from "next/link";
 import { getFinalPrice } from "@/app/lib/price";
@@ -441,19 +441,18 @@ const precoPix =
 
          
 
-            <div className={s.freteCard}>
- <FreteCalculator
-  simple
-  items={[
-    {
-      id: produto.id,
-      qty: 1,
-      product: {
+           <div className={s.freteCard}>
+  <ProductFrete
+    items={[
+      {
         id: produto.id,
+        qty: 1,
+        product: {
+          id: produto.id,
+        },
       },
-    },
-  ]}
-/>
+    ]}
+  />
 </div>
             
 
