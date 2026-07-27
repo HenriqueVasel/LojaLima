@@ -772,11 +772,28 @@
 
 .mainImage{
   flex:1;
+
   display:flex;
   align-items:center;
   justify-content:center;
 
-   min-height:520px;
+  min-height:520px;
+
+  padding:40px;
+}
+
+.mainPhoto{
+    max-width: 85%;
+    max-height: 85%;
+
+    width: auto;
+    height: auto;
+
+    object-fit: contain;
+
+    transition: transform .15s ease;
+
+    will-change: transform;
 }
 
 
