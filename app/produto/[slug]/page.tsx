@@ -11,6 +11,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import ProductAnalytics from "@/app/components/ProductAnalytics";
 import Script from "next/script";
 import BuyNowButton from "@/app/components/BuyNowButton";
+import TrustCard from "@/app/components/product/TrustCard";
 
 import {
   CreditCard,
@@ -482,6 +483,8 @@ const precoPix =
 
 
           {/* BLOCO CONFIANÇA */}
+
+          <TrustCard />
 
          
 

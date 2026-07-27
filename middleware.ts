@@ -34,11 +34,10 @@ export function middleware(req: NextRequest){
 }
 
 export const config = {
-  matcher: [
-    "/checkout/:path*",
-    "/carrinho/:path*",
-    "/meus-pedidos/:path*",
-    "/admin/:path*"
-  ],
+ matcher: [
+  "/checkout/:path*",
+  "/meus-pedidos/:path*",
+  "/admin/:path*"
+],
 };
 
