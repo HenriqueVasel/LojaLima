@@ -133,7 +133,7 @@ export async function GET() {
     },
   });
 
-  const filteredProducts = products.filter((product) => {
+const filteredProducts = products.filter((product) => {
   const category = product.productcategory
     .map((c) => c.category.name.toLowerCase())
     .join(" ");
@@ -145,12 +145,18 @@ export async function GET() {
     category.includes("câmera") ||
     category.includes("cftv");
 
- return (
-  isCamera &&
-  finalPrice >= 200 &&
-  finalPrice <= 1500 &&
-  (product.stock?.quantity ?? 0) > 0
-);
+  // Nunca envia produto sem estoque
+  if ((product.stock?.quantity ?? 0) <= 0) {
+    return false;
+  }
+
+  // Para CFTV aplica a faixa de preço
+  if (isCamera) {
+    return finalPrice >= 200 && finalPrice <= 1500;
+  }
+
+  // Todas as outras categorias entram
+  return true;
 });
 
   const items = filteredProducts
