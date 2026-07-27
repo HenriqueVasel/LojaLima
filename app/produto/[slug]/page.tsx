@@ -12,6 +12,8 @@ import ProductAnalytics from "@/app/components/ProductAnalytics";
 import Script from "next/script";
 import BuyNowButton from "@/app/components/BuyNowButton";
 import TrustCard from "@/app/components/product/TrustCard";
+import SpecsFaq from "@/app/components/product/SpecsFaq";
+
 
 import {
   CreditCard,
@@ -492,11 +494,13 @@ const precoPix =
 
       </div>
 
-      <TrustCard />
+  <TrustCard />
 
-          <Benefits />
+<Benefits />
 
-          <HelpIncludes />
+<HelpIncludes />
+
+<SpecsFaq product={produto} />
 
          {/* DESCRIÇÃO */}
 <div className={s.description}>
