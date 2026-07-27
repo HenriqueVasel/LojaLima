@@ -43,15 +43,40 @@ useEffect(() => {
 }, [sku, images]);
 
 const [selected, setSelected] = useState(
+
+  
   images?.[0]?.url ||
   "/produtos/placeholder.jpg"
 );
+
+const [zoom, setZoom] = useState(false);
+
+const [position, setPosition] = useState({
+  x: 50,
+  y: 50,
+});
 
 useEffect(() => {
   if (allImages.length > 0) {
     setSelected(allImages[0].url);
   }
 }, [allImages]);
+
+
+function handleZoom(
+  e: React.MouseEvent<HTMLDivElement>
+) {
+  const { left, top, width, height } =
+    e.currentTarget.getBoundingClientRect();
+
+  const x = ((e.clientX - left) / width) * 100;
+  const y = ((e.clientY - top) / height) * 100;
+
+  setPosition({
+    x,
+    y,
+  });
+}
 
   return (
     <div className={s.galleryWrapper}>
@@ -88,16 +113,27 @@ useEffect(() => {
       </div>
 
       {/* IMAGEM PRINCIPAL */}
-     <div className={s.mainImage}>
- <Image
+     <div
+  className={s.mainImage}
+  onMouseMove={handleZoom}
+  onMouseEnter={() => setZoom(true)}
+  onMouseLeave={() => setZoom(false)}
+>
+
+
+<Image
   src={selected}
   alt={name}
   width={1200}
   height={1200}
   priority
+  className={s.mainPhoto}
   style={{
-    width: "350px",
-    height: "auto",
+    transform: zoom
+      ? "scale(2)"
+      : "scale(1)",
+
+    transformOrigin: `${position.x}% ${position.y}%`,
   }}
 />
 </div>

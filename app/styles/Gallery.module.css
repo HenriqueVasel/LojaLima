@@ -36,3 +36,17 @@
   font-weight: 700;
   color: var(--text-strong);
 }
+
+.mainImage{
+
+    overflow:hidden;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    cursor:zoom-in;
+
+}
