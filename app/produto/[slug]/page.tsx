@@ -7,7 +7,7 @@ import FreteCalculator from "@/app/components/FreteCalculator";
 import { calcularPrecoVenda } from "@/app/lib/pricing";
 import Link from "next/link";
 import { getFinalPrice } from "@/app/lib/price";
-import { FaWhatsapp } from "react-icons/fa";
+import Benefits from "@/app/components/product/Benefits";
 import ProductAnalytics from "@/app/components/ProductAnalytics";
 import Script from "next/script";
 import BuyNowButton from "@/app/components/BuyNowButton";
@@ -485,6 +485,8 @@ const precoPix =
           {/* BLOCO CONFIANÇA */}
 
           <TrustCard />
+
+          <Benefits />
 
          
 

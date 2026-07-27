@@ -1,0 +1,131 @@
+.container{
+
+    margin-top:24px;
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:16px;
+
+}
+
+.card{
+
+    background:#fff;
+
+    border:1px solid #e5e7eb;
+
+    border-radius:16px;
+
+    padding:18px;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    transition:.25s;
+
+    cursor:default;
+
+}
+
+.card:hover{
+
+    transform:translateY(-4px);
+
+    box-shadow:0 10px 22px rgba(0,0,0,.06);
+
+    border-color:#16a34a;
+
+}
+
+.icon{
+
+    width:54px;
+
+    height:54px;
+
+    border-radius:14px;
+
+    background:#f0fdf4;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    color:#16a34a;
+
+    flex-shrink:0;
+
+}
+
+.content{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.content h4{
+
+    font-size:15px;
+
+    color:#111827;
+
+    margin:0;
+
+    font-weight:700;
+
+}
+
+.content span{
+
+    font-size:13px;
+
+    color:#6b7280;
+
+    margin-top:4px;
+
+    line-height:1.4;
+
+}
+
+@media(max-width:1024px){
+
+.container{
+
+    grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+@media(max-width:768px){
+
+.container{
+
+    grid-template-columns:1fr;
+
+}
+
+.card{
+
+    padding:16px;
+
+}
+
+.icon{
+
+    width:48px;
+
+    height:48px;
+
+}
+
+}
