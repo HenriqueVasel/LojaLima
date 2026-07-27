@@ -81,11 +81,7 @@ function handleZoom(
   return (
     <div
   className={s.galleryWrapper}
-  style={{
-    width: "100%",
-    height: "100%",
-    background: "yellow"
-  }}
+
 >
       {/* MINIATURAS */}
       <div className={s.galleryThumbs}>
@@ -122,9 +118,7 @@ function handleZoom(
       {/* IMAGEM PRINCIPAL */}
      <div
   className={s.mainImage}
-  style={{
-  background: "blue"
-}}
+  
   onMouseMove={handleZoom}
   onMouseEnter={() => setZoom(true)}
   onMouseLeave={() => setZoom(false)}
