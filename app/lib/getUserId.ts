@@ -5,15 +5,20 @@ export async function getUserId() {
   const cookieStore = await cookies();
   const token = cookieStore.get("token")?.value;
 
+  // Visitante
   if (!token) {
-    throw new Error("UNAUTHORIZED");
+    return null;
   }
 
-  const decoded: any = verifyToken(token);
+  try {
+    const decoded: any = verifyToken(token);
 
-  if (!decoded || !decoded.userId) {
-    throw new Error("INVALID_TOKEN");
+    if (!decoded?.userId) {
+      return null;
+    }
+
+    return decoded.userId;
+  } catch {
+    return null;
   }
-
-  return decoded.userId;
 }
