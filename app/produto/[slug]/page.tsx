@@ -506,9 +506,12 @@ PRODUTOS RELACIONADOS
 ========================= */}
 
 <div className={s.relatedSection}>
-  <h2 className={s.relatedTitle}>
-    Você também pode gostar
-  </h2>
+  <div className={s.relatedHeader}>
+    <div>
+      <h2>Produtos relacionados</h2>
+      <p>Complete sua compra com outros produtos compatíveis.</p>
+    </div>
+  </div>
 
   <div className={s.relatedGrid}>
     {relacionados.map((p) => {
@@ -523,148 +526,80 @@ PRODUTOS RELACIONADOS
           href={`/produto/${p.slug}`}
           style={{ textDecoration: "none" }}
         >
-          <div
-            className={s.relatedCard}
-            style={{
-              padding: 0,
-              borderRadius: 18,
-          
-              overflow: "hidden",
-            }}
-          >
+          <div className={s.relatedCard}>
 
             {/* IMAGEM */}
-            <div
-              className={s.relatedImageWrap}
-              style={{
-                height: 140,
-                padding: 12,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <div className={s.relatedImageWrap}>
               <img
                 src={img}
                 alt={p.name}
                 className={s.relatedImage}
-                style={{
-                  width: "120%",
-                  height: "120%",
-                  objectFit: "contain",
-                }}
               />
             </div>
 
             {/* CONTEÚDO */}
-            <div
-              className={s.relatedContent}
-              style={{
-                padding: 14,
-                display: "flex",
-                flexDirection: "column",
-                gap: 6,
-              }}
-            >
+            <div className={s.relatedContent}>
 
               {/* MARCA */}
-              <div
-                style={{
-                  fontSize: 12,
-                  color: "#6b7280",
-                  textTransform: "uppercase",
-                  marginBottom: 2,
-                  fontWeight: 700,
-                  letterSpacing: ".5px",
-                }}
-              >
-                INTELBRAS
-              </div>
+              <span className={s.relatedBrand}>
+                {p.brand || "Intelbras"}
+              </span>
 
-              {/* TÍTULO */}
-              <div
-                className={s.relatedTitle}
-                style={{
-                  fontSize: 15,
-                  lineHeight: 1.35,
-                  fontWeight: 500,
-                  color: "#222",
-                  minHeight: 50,
-                }}
-              >
+              {/* NOME */}
+              <h3 className={s.relatedProductName}>
                 {p.name}
-              </div>
-
-              {/* DESCRIÇÃO */}
-              <div
-                style={{
-                  fontSize: 13,
-                  color: "#4b5563",
-                  marginTop: 2,
-                  lineHeight: 1.4,
-                  fontWeight: 500,
-                }}
-              >
-                {(p.description || "Produto profissional de alta qualidade.")
-                  .replace(/<[^>]+>/g, "")
-                  .slice(0, 58)}
-                ...
-              </div>
+              </h3>
 
               {/* PREÇO */}
-              <div
-                style={{
-                  color: "#16a34a",
-                  fontSize: 18,
-                  fontWeight: 800,
-                  marginTop: 8,
-                }}
-              >
+              <div className={s.relatedPrice}>
                 {(
-  (
-    p.isKit
-      ? p.priceCents
-      : calcularPrecoVenda(
-          p.priceCents
-        )
-  ) / 100
-).toLocaleString("pt-BR", {
+                  (
+                    p.isKit
+                      ? p.priceCents
+                      : calcularPrecoVenda(
+                          p.priceCents
+                        )
+                  ) / 100
+                ).toLocaleString("pt-BR", {
                   style: "currency",
                   currency: "BRL",
                 })}
               </div>
 
-              {/* PARCELAMENTO */}
-              <div
-                style={{
-                  marginTop: 0,
-                  color: "#9ca3af",
-                  fontSize: 13,
-                }}
-              >
-{p.isKit
-
-  ? "Parcelamento disponível"
-
-  : `3x de ${(
-      calcularPrecoVenda(
-        p.priceCents
-      ) /
-      100 /
-      3
-    ).toLocaleString("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    })} sem juros`
-}
+              {/* PIX */}
+              <div className={s.relatedPix}>
+                no PIX com 5% OFF
               </div>
+
+              {/* PARCELAMENTO */}
+              <div className={s.relatedInstallments}>
+                {p.isKit
+                  ? "Parcelamento disponível"
+                  : `3x de ${(
+                      calcularPrecoVenda(
+                        p.priceCents
+                      ) /
+                      100 /
+                      3
+                    ).toLocaleString("pt-BR", {
+                      style: "currency",
+                      currency: "BRL",
+                    })} sem juros`}
+              </div>
+
+              <button
+                className={s.relatedButton}
+                type="button"
+              >
+                Ver produto
+              </button>
 
             </div>
           </div>
         </Link>
       );
     })}
-   </div>
+  </div>
 </div>
 <Script
   id="product-schema"
