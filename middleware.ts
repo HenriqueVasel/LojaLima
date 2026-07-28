@@ -6,7 +6,6 @@ export function middleware(req: NextRequest){
   const token = req.cookies.get("token")?.value;
 
   const protectedRoutes = [
-    "/checkout",
     "/meus-pedidos",
     "/admin"
   ];
@@ -35,7 +34,7 @@ export function middleware(req: NextRequest){
 
 export const config = {
  matcher: [
-  "/checkout/:path*",
+  
   "/meus-pedidos/:path*",
   "/admin/:path*"
 ],
