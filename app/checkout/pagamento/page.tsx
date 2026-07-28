@@ -75,15 +75,44 @@ init();
 
 async function finalizar(){
 
+  if (loading) return;
+
   if(!customer){
     toast.error("Dados não encontrados");
     return;
   }
 
+  const nome = customer.nome?.trim() || "";
+
+if (nome.length < 3) {
+  toast.error("Informe um nome válido.");
+  return;
+}
+
+const phone = customer.whats.replace(/\D/g, "");
+
+if (phone.length < 10 || phone.length > 11) {
+  toast.error("WhatsApp inválido.");
+  return;
+}
+
+if (customer.email) {
+
+  const emailRegex =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(customer.email)) {
+    toast.error("E-mail inválido.");
+    return;
+  }
+
+}
   
 
 const retiradaLoja =
   sessionStorage.getItem("retiradaLoja") === "true";
+
+
 
 if (!retiradaLoja && !customer.endereco) {
   toast.error("Endereço não informado");
@@ -106,6 +135,12 @@ if (typeof window !== "undefined" && (window as any).fbq) {
     const guestCart = JSON.parse(
   localStorage.getItem("cart") || "[]"
 );
+
+if (guestCart.length === 0) {
+  toast.error("Seu carrinho está vazio.");
+  setLoading(false);
+  return;
+}
 
     const res = await fetch("/api/checkout", {
       method:"POST",
