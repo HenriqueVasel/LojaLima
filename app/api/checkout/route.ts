@@ -19,12 +19,7 @@ export async function POST(req: Request) {
 
 const userId = await getUserId();
 
-  if (!userId) {
-  return NextResponse.json(
-    { error: "Usuário não autenticado" },
-    { status: 401 }
-  );
-}
+  
 
     
 
@@ -48,9 +43,11 @@ const {
     endereco,
     numero,
     couponCode,
-    shipping
-} = body;
+    shipping,
 
+    guestCart = []
+
+} = body;
     
 
 
@@ -98,27 +95,90 @@ if (customerType === "PJ" && (!customerCnpj || !customerIe)) {
 
     // ================= CARRINHO =================
 
-    const cartItems = await prisma.cartitem.findMany({
-      where: { userId },
-      include: {
-       product: {
-  include: {
-    promotion: true,
-    productimage: true,
-    stock: true
+  let cartItems: any[] = [];
+
+if (userId) {
+
+  cartItems = await prisma.cartitem.findMany({
+    where: { userId },
+    include: {
+      product: {
+        include: {
+          promotion: true,
+          productimage: true,
+          stock: true,
+        },
+      },
+      productvariant: true,
+    },
+  });
+
+} else {
+
+  if (!Array.isArray(guestCart) || guestCart.length === 0) {
+    return NextResponse.json(
+      { error: "Carrinho vazio" },
+      { status: 400 }
+    );
   }
-},
-        productvariant: true
+
+  cartItems = await Promise.all(
+
+    guestCart.map(async (item: any) => {
+
+     const product = await prisma.product.findUnique({
+  where: {
+    id: Number(item.productId),
+  },
+        include: {
+          promotion: true,
+          productimage: true,
+          stock: true,
+        },
+      });
+
+      if (!product) {
+        throw new Error("Produto não encontrado");
       }
-    });
 
-    if (!cartItems.length) {
-      return NextResponse.json(
-        { error: "Carrinho vazio" },
-        { status: 400 }
-      );
+      let productvariant = null;
+
+      if (item.variantId) {
+        productvariant =
+          await prisma.productvariant.findUnique({
+            where: {
+              id: item.variantId,
+            },
+          });
+      }
+
+      return {
+        id: item.id,
+        qty: item.qty,
+        productId: product.id,
+        variantId: item.variantId,
+        product,
+        productvariant,
+      };
+
+    })
+
+  );
+
+}
+
+if (!cartItems.length) {
+
+  return NextResponse.json(
+    {
+      error: "Carrinho vazio",
+    },
+    {
+      status: 400,
     }
+  );
 
+}
     
 
 let freteCents = 0;

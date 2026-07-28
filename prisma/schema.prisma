@@ -50,7 +50,7 @@ model order {
   customerWhats      String
   customerName       String
   totalCents         Int
-  userId             String
+  userId             String?
   customerCpf        String
   shippingCents      Int          @default(0)
   cep                String?
@@ -67,7 +67,7 @@ model order {
   customerCnpj       String?
   customerIe         String?
   customerType       String?
-  user               user         @relation(fields: [userId], references: [id])
+  user               user?        @relation(fields:[userId], references:[id])
   orderitem          orderitem[]
   payment            payment?
 

@@ -94,13 +94,30 @@ useEffect(() => {
     credentials: "include"
   });
 
- if (res.status === 401) {
+if (res.status === 401) {
 
-  const cart = JSON.parse(
+  const guestCart = JSON.parse(
     localStorage.getItem("cart") || "[]"
   );
 
-  setItems(cart);
+  if (guestCart.length === 0) {
+    setItems([]);
+    return;
+  }
+
+  const guestRes = await fetch("/api/cart/guest", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      guestCart,
+    }),
+  });
+
+  const guestItems = await guestRes.json();
+
+  setItems(guestItems);
 
   return;
 }
@@ -162,16 +179,49 @@ async function removeItem(id: number) {
       localStorage.getItem("cart") || "[]"
     );
 
-    const novoCarrinho = cart.filter(
-      (item: any) => item.id !== id
-    );
+    if (res.status === 401) {
 
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(novoCarrinho)
-    );
+  const cart = JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
 
-    setItems(novoCarrinho);
+  const novoCarrinho = cart.filter(
+    (item: any) => item.id !== id
+  );
+
+  localStorage.setItem(
+    "cart",
+    JSON.stringify(novoCarrinho)
+  );
+
+  if (novoCarrinho.length === 0) {
+
+    setItems([]);
+
+  } else {
+
+    const guestRes = await fetch("/api/cart/guest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        guestCart: novoCarrinho,
+      }),
+    });
+
+    const guestItems = await guestRes.json();
+
+    setItems(guestItems);
+
+  }
+
+  window.dispatchEvent(
+    new Event("cartUpdated")
+  );
+
+  return;
+}
 
     window.dispatchEvent(
       new Event("cartUpdated")
@@ -223,7 +273,19 @@ if (check.status === 401) {
       JSON.stringify(cart)
     );
 
-    setItems(cart);
+    const guestRes = await fetch("/api/cart/guest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        guestCart: cart,
+      }),
+    });
+
+    const guestItems = await guestRes.json();
+
+    setItems(guestItems);
 
     window.dispatchEvent(
       new Event("cartUpdated")
@@ -384,27 +446,7 @@ if (!retirada && !numero) {
 
 
 
-    fetch("/api/me")
-  .then((res) => {
-
-    if (!res.ok) {
-
-      window.location.href =
-        "/login?redirect=/checkout";
-
-      return;
-
-    }
-
     window.location.href = "/checkout";
-
-  })
-  .catch(() => {
-
-    window.location.href =
-      "/login?redirect=/checkout";
-
-  });
   }
 
   return (

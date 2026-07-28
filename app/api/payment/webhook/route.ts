@@ -312,12 +312,13 @@ console.log(
           /* =========================
           🛒 LIMPA CARRINHO
           ========================= */
-          await tx.cartitem.deleteMany({
-            where: {
-              userId:
-                order.userId,
-            },
-          });
+       if (order.userId) {
+  await tx.cartitem.deleteMany({
+    where: {
+      userId: order.userId,
+    },
+  });
+}
 
           shouldSendEmail =
             true;

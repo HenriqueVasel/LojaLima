@@ -22,24 +22,56 @@ const [inscricaoEstadual, setInscricaoEstadual] = useState("");
   // 🔥 NOVO
   const [endereco, setEndereco] = useState<any>(null);
 
-  useEffect(() => {
+useEffect(() => {
 
-    async function checkCart() {
-      const res = await fetch("/api/cart", {
-        credentials: "include"
-      });
+  async function checkCart() {
 
-      const data = await res.json();
+    let cart = [];
 
-      if (!Array.isArray(data) || data.length === 0) {
+    const res = await fetch("/api/cart", {
+      credentials: "include",
+    });
+
+    if (res.ok) {
+
+      cart = await res.json();
+
+    } else if (res.status === 401) {
+
+      const guestCart = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      );
+
+      if (guestCart.length === 0) {
         alert("Seu carrinho está vazio");
         router.push("/carrinho");
+        return;
       }
+
+      const guestRes = await fetch("/api/cart/guest", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          guestCart,
+        }),
+      });
+
+      cart = await guestRes.json();
+
     }
 
-    checkCart();
+    if (!Array.isArray(cart) || cart.length === 0) {
+      alert("Seu carrinho está vazio");
+      router.push("/carrinho");
+    }
 
-  }, []);
+  }
+
+  checkCart();
+
+}, []);
 
   // 🔥 FRETE
   useEffect(() => {

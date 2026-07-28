@@ -57,11 +57,11 @@ if (res.status === 401) {
 
   const cart = JSON.parse(localStorage.getItem("cart") || "[]");
 
-  const index = cart.findIndex(
-    (item: any) =>
-      item.product.id === productId &&
-      item.variantId === (variantId ?? null)
-  );
+ const index = cart.findIndex(
+  (item: any) =>
+    item.productId === productId &&
+    item.variantId === (variantId ?? null)
+);
 
   if (index >= 0) {
 
@@ -70,22 +70,11 @@ if (res.status === 401) {
   } else {
 
     cart.push({
-      id: -(cart.length + 1),
-      qty: 1,
-      product: {
-        id: productId,
-        name: productName,
-        slug: productSlug,
-        priceCents: Math.round(productPrice * 100),
-        sku: "",
-        images: [
-          {
-            url: productImage,
-          },
-        ],
-      },
-      variantId: variantId ?? null,
-    });
+  id: -(cart.length + 1),
+  productId,
+  variantId: variantId ?? null,
+  qty: 1,
+});
 
   }
 

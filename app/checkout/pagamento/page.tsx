@@ -25,23 +25,31 @@ useEffect(()=>{
 
 async function init(){
 
-  // 🔒 valida carrinho
-  const res = await fetch("/api/cart", {
-    credentials: "include"
-  });
+ let cart = [];
 
+ 
 
-  
+const res = await fetch("/api/cart", {
+  credentials: "include",
+});
 
-  
+if (res.ok) {
 
-  const data = await res.json();
+  cart = await res.json();
 
-  if(!Array.isArray(data) || data.length === 0){
-    alert("Seu carrinho está vazio");
-    router.push("/carrinho");
-    return;
-  }
+} else if (res.status === 401) {
+
+  cart = JSON.parse(
+    localStorage.getItem("cart") || "[]"
+  );
+
+}
+
+if (!Array.isArray(cart) || cart.length === 0) {
+  alert("Seu carrinho está vazio");
+  router.push("/carrinho");
+  return;
+}
 
   // 📦 pega dados do cliente
   const raw = sessionStorage.getItem("checkout_customer");
@@ -95,6 +103,10 @@ if (typeof window !== "undefined" && (window as any).fbq) {
 
   try {
 
+    const guestCart = JSON.parse(
+  localStorage.getItem("cart") || "[]"
+);
+
     const res = await fetch("/api/checkout", {
       method:"POST",
       headers:{
@@ -123,10 +135,13 @@ body: JSON.stringify({
 
   endereco: customer.endereco,
   numero: customer.numero,
+  guestCart,
 
   shipping: JSON.parse(
     sessionStorage.getItem("shipping") || "null"
+    
   )
+  
 })
   
     });
@@ -153,12 +168,7 @@ if (data.freeOrder) {
 
 
     // 🔴 NÃO LOGADO
-    if (res.status === 401) {
-      toast.error("Faça login para continuar");
-      router.push("/login?redirect=/checkout");
-      return;
-    }
-
+    
     // 🔴 ERRO NORMAL
     if(!res.ok){
       toast.error(data.error || "Erro ao finalizar compra");
