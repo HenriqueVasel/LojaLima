@@ -91,49 +91,49 @@ useEffect(() => {
 
 }, []);
 
-  async function fetchCart() {
+async function fetchCart() {
 
-// 👤 Visitante
-if (isGuest) {
+  // Visitante
+  if (isGuest) {
 
-  setIsGuest(true);
+    const guestCart = JSON.parse(
+      localStorage.getItem("cart") || "[]"
+    );
 
-  const guestCart = JSON.parse(
-    localStorage.getItem("cart") || "[]"
-  );
+    if (guestCart.length === 0) {
+      setItems([]);
+      return;
+    }
 
-  
+    const guestRes = await fetch("/api/cart/guest", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        guestCart,
+      }),
+    });
 
-  if (guestCart.length === 0) {
-    setItems([]);
+    const guestItems = await guestRes.json();
+
+    setItems(guestItems);
+
     return;
   }
 
-  const guestRes = await fetch("/api/cart/guest", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      guestCart,
-    }),
+  // Logado
+  const res = await fetch("/api/cart", {
+    credentials: "include",
   });
 
-  const guestItems = await guestRes.json();
+  const data = await res.json();
 
-  setItems(guestItems);
-
-  return;
-}
-
-setIsGuest(false);
-
-const data = await res.json();
-
-if (Array.isArray(data)) {
-  setItems(data);
-} else {
-  setItems([]);
+  if (Array.isArray(data)) {
+    setItems(data);
+  } else {
+    setItems([]);
+  }
 }
 
   // 🔥 pega frete do localStorage
@@ -343,7 +343,11 @@ if (!res.ok) {
 
 window.dispatchEvent(new Event("cartUpdated"));
 
-  async function aplicarCupom(){
+fetchCart();
+
+}
+
+async function aplicarCupom(){
 
   if(!coupon){
     alert("Digite um cupom");
