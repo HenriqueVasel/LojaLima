@@ -1,4 +1,6 @@
-import Link from "next/link";
+"use client";
+
+import { useState } from "react";
 import {
   ShieldCheck,
   Wrench,
@@ -7,129 +9,83 @@ import {
 } from "lucide-react";
 
 import s from "@/app/styles/HomeSolutionSection.module.css";
+import ProjectModal from "@/app/components/ProjectModal";
 
 export default function HomeSolutionSection() {
+  const [openModal, setOpenModal] = useState(false);
+
   return (
-    <section className={s.section}>
-      <div className={s.container}>
+    <>
+      <section className={s.section}>
+        <div className={s.container}>
+          <div className={s.content}>
+            <span className={s.badge}>
+              <ShieldCheck size={18} />
+              Soluções completas
+            </span>
 
-        <div className={s.content}>
+            <h2>
+              Proteja o que é importante com uma solução completa.
+            </h2>
 
-          <span className={s.badge}>
-            <ShieldCheck size={18} />
-            Soluções completas
-          </span>
+            <p>
+              Não vendemos apenas equipamentos. Nossa equipe desenvolve o
+              projeto, realiza a instalação e oferece suporte para residências,
+              empresas e indústrias.
+            </p>
 
-          <h2>
-            Proteja o que é importante com uma solução completa.
-          </h2>
+            <div className={s.features}>
+              <div>
+                <BadgeCheck size={18} />
+                Projeto personalizado
+              </div>
 
-          <p>
-            Não vendemos apenas equipamentos. Nossa equipe desenvolve o
-            projeto, realiza a instalação e oferece suporte para residências,
-            empresas e indústrias.
-          </p>
+              <div>
+                <Wrench size={18} />
+                Instalação profissional
+              </div>
 
-          <div className={s.features}>
+              <div>
+                <BadgeCheck size={18} />
+                Produtos Intelbras Originais
+              </div>
 
-            <div>
-              <BadgeCheck size={18} />
-              Projeto personalizado
+              <div>
+                <BadgeCheck size={18} />
+                Suporte especializado
+              </div>
             </div>
 
-            <div>
-              <Wrench size={18} />
-              Instalação profissional
-            </div>
+            <button
+              className={s.button}
+              onClick={() => setOpenModal(true)}
+            >
+              Solicite um projeto gratuitamente
+              <ArrowRight size={18} />
+            </button>
 
-            <div>
-              <BadgeCheck size={18} />
-              Produtos Intelbras Originais
-            </div>
-
-            <div>
-              <BadgeCheck size={18} />
-              Suporte especializado
-            </div>
-
+            <span className={s.info}>
+              ✓ Sem compromisso • Atendimento rápido pelo WhatsApp
+            </span>
           </div>
 
-      <div className={s.services}>
-  <h3>Como podemos ajudar você hoje?</h3>
+          <div className={s.preview}>
+            <ShieldCheck size={70} />
 
-  <div className={s.servicesGrid}>
+            <h3>Seu projeto começa aqui</h3>
 
-    <a
-      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de solicitar um orçamento para instalação de câmeras."
-      target="_blank"
-      rel="noopener noreferrer"
-      className={s.serviceCard}
-    >
-      📹
-      <span>Instalar câmeras</span>
-    </a>
-
-    <a
-      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de melhorar minha rede Wi-Fi."
-      target="_blank"
-      rel="noopener noreferrer"
-      className={s.serviceCard}
-    >
-      📶
-      <span>Melhorar meu Wi-Fi</span>
-    </a>
-
-    <a
-      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de um sistema de controle de acesso."
-      target="_blank"
-      rel="noopener noreferrer"
-      className={s.serviceCard}
-    >
-      🚪
-      <span>Controle de acesso</span>
-    </a>
-
-    <a
-      href="https://wa.me/5547SEUNUMERO?text=Olá! Preciso de suporte técnico."
-      target="_blank"
-      rel="noopener noreferrer"
-      className={s.serviceCard}
-    >
-      🛠️
-      <span>Suporte técnico</span>
-    </a>
-
-  </div>
-
-  <a
-    href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de solicitar um projeto gratuito."
-    target="_blank"
-    rel="noopener noreferrer"
-    className={s.button}
-  >
-    Não encontrou o que procura?
-  </a>
-
-</div>
-
+            <p>
+              Em breve adicionaremos uma foto da equipe realizando instalações
+              profissionais.
+            </p>
+          </div>
         </div>
+      </section>
 
-        <div className={s.preview}>
-
-          <ShieldCheck size={70} />
-
-          <h3>
-            Seu projeto começa aqui
-          </h3>
-
-          <p>
-            Em breve adicionaremos uma foto da equipe realizando instalações
-            profissionais.
-          </p>
-
-        </div>
-
-      </div>
-    </section>
+      <ProjectModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+      />
+    </>
   );
 }

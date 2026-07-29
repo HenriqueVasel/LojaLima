@@ -1,0 +1,171 @@
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, .55);
+    backdrop-filter: blur(7px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+    animation: fade .25s;
+    padding: 20px;
+}
+
+.modal {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    position: relative;
+    animation: popup .3s;
+    box-shadow: 0 25px 60px rgba(0,0,0,.18);
+}
+
+.close {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background: #f3f4f6;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .25s;
+}
+
+.close:hover{
+    background:#e5e7eb;
+}
+
+.badge{
+    display:inline-block;
+    padding:.45rem 1rem;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#15803d;
+    font-size:.85rem;
+    font-weight:600;
+    margin-bottom:18px;
+}
+
+.modal h2{
+    font-size:2rem;
+    color:#111827;
+    margin-bottom:10px;
+}
+
+.modal p{
+    color:#6b7280;
+    line-height:1.7;
+    margin-bottom:35px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.card{
+    display:flex;
+    gap:18px;
+    align-items:flex-start;
+    text-decoration:none;
+    color:#111827;
+    padding:20px;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    transition:.25s;
+    background:white;
+}
+
+.card svg{
+    color:#16a34a;
+    flex-shrink:0;
+    margin-top:2px;
+}
+
+.card strong{
+    display:block;
+    margin-bottom:6px;
+    font-size:1rem;
+}
+
+.card span{
+    color:#6b7280;
+    font-size:.9rem;
+    line-height:1.5;
+}
+
+.card:hover{
+    border-color:#22c55e;
+    transform:translateY(-4px);
+    box-shadow:0 18px 35px rgba(34,197,94,.15);
+}
+
+.specialist{
+    margin-top:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    text-decoration:none;
+    background:#16a34a;
+    color:white;
+    padding:18px;
+    border-radius:14px;
+    font-weight:700;
+    transition:.25s;
+}
+
+.specialist:hover{
+    background:#15803d;
+    transform:translateY(-2px);
+}
+
+@keyframes popup{
+
+    from{
+        opacity:0;
+        transform:scale(.92);
+    }
+
+    to{
+        opacity:1;
+        transform:scale(1);
+    }
+
+}
+
+@keyframes fade{
+
+    from{
+        opacity:0;
+    }
+
+    to{
+        opacity:1;
+    }
+
+}
+
+@media(max-width:700px){
+
+    .modal{
+        padding:28px;
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .modal h2{
+        font-size:1.6rem;
+    }
+
+}
