@@ -16,7 +16,7 @@ interface Props {
   onClose: () => void;
 }
 
-const PHONE = "5547999999999"; // coloque o número da empresa
+const PHONE = "554738423235"; // coloque o número da empresa
 
 export default function ProjectModal({ open, onClose }: Props) {
   if (!open) return null;

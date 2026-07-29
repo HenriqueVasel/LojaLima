@@ -133,7 +133,7 @@ if (!order) {
 }
 
   // ✅ seu número (55 + DDD + número, sem espaços)
-  const PHONE = "5547999999999";
+  const PHONE = "554738423235";
 
   // monta mensagem pra WhatsApp (útil pra compra e projeto)
   const msgLines: string[] = [];
