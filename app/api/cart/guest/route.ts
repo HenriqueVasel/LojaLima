@@ -80,16 +80,18 @@ export async function POST(req: Request) {
       cart.filter(Boolean)
     );
 
-  } catch {
+} catch (error) {
 
-    return NextResponse.json(
-      {
-        error: "Erro ao montar carrinho",
-      },
-      {
-        status: 500,
-      }
-    );
+  console.error("ERRO CART GUEST:", error);
 
-  }
+  return NextResponse.json(
+    {
+      error: "Erro ao montar carrinho",
+    },
+    {
+      status: 500,
+    }
+  );
+
+}
 }
