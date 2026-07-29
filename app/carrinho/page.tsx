@@ -93,8 +93,14 @@ useEffect(() => {
 
 async function fetchCart() {
 
+  const res = await fetch("/api/cart", {
+    credentials: "include",
+  });
+
   // Visitante
-  if (isGuest) {
+  if (res.status === 401) {
+
+    setIsGuest(true);
 
     const guestCart = JSON.parse(
       localStorage.getItem("cart") || "[]"
@@ -122,6 +128,17 @@ async function fetchCart() {
     return;
   }
 
+  // Usuário logado
+  setIsGuest(false);
+
+  const data = await res.json();
+
+  if (Array.isArray(data)) {
+    setItems(data);
+  } else {
+    setItems([]);
+  }
+}
   // Logado
   const res = await fetch("/api/cart", {
     credentials: "include",
