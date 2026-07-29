@@ -54,17 +54,63 @@ export default function HomeSolutionSection() {
 
           </div>
 
-          <Link
-            href="/contato"
-            className={s.button}
-          >
-            Solicite um projeto gratuitamente
-            <ArrowRight size={18}/>
-          </Link>
+      <div className={s.services}>
+  <h3>Como podemos ajudar você hoje?</h3>
 
-          <span className={s.info}>
-            ✓ Sem compromisso • Atendimento rápido pelo WhatsApp
-          </span>
+  <div className={s.servicesGrid}>
+
+    <a
+      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de solicitar um orçamento para instalação de câmeras."
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.serviceCard}
+    >
+      📹
+      <span>Instalar câmeras</span>
+    </a>
+
+    <a
+      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de melhorar minha rede Wi-Fi."
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.serviceCard}
+    >
+      📶
+      <span>Melhorar meu Wi-Fi</span>
+    </a>
+
+    <a
+      href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de um sistema de controle de acesso."
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.serviceCard}
+    >
+      🚪
+      <span>Controle de acesso</span>
+    </a>
+
+    <a
+      href="https://wa.me/5547SEUNUMERO?text=Olá! Preciso de suporte técnico."
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.serviceCard}
+    >
+      🛠️
+      <span>Suporte técnico</span>
+    </a>
+
+  </div>
+
+  <a
+    href="https://wa.me/5547SEUNUMERO?text=Olá! Gostaria de solicitar um projeto gratuito."
+    target="_blank"
+    rel="noopener noreferrer"
+    className={s.button}
+  >
+    Não encontrou o que procura?
+  </a>
+
+</div>
 
         </div>
 
