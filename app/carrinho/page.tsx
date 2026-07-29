@@ -254,6 +254,8 @@ async function updateQty(id:number, qty:number){
 
   const item = items.find(i => i.id === id);
 
+console.log("ITEM DO CARRINHO:", item);
+
 if (!item) return;
 
 if (!item.product.isKit && qty > item.product.stock) {

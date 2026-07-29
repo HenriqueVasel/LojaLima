@@ -58,13 +58,14 @@ export async function POST(req: Request) {
           variantId: item.variantId ?? null,
 
           product: {
-            ...product,
+  ...product,
 
-            images: product.productimage,
+  stock: product.stock?.quantity || 0,
 
-            priceCents,
-          },
+  images: product.productimage,
 
+  priceCents,
+},
           productvariant: variant
             ? {
                 ...variant,
