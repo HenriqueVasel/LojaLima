@@ -17,18 +17,26 @@ export async function POST(req: Request) {
       return NextResponse.json([], { status: 200 });
     }
 
-    const cart = await Promise.all(
-      guestCart.map(async (item, index) => {
-        const product = await prisma.product.findUnique({
-          where: {
-            id: Number(item.productId),
-          },
-          include: {
-  promotion: true,
-  productimage: true,
-  stock: true,
-},
-        });
+  const cart = await Promise.all(
+  guestCart.map(async (item, index) => {
+
+    // Ignora itens inválidos do localStorage
+    if (!item.productId || isNaN(Number(item.productId))) {
+      return null;
+    }
+
+    const product = await prisma.product.findUnique({
+      where: {
+        id: Number(item.productId),
+      },
+      include: {
+        promotion: true,
+        productimage: true,
+        stock: true,
+      },
+    });
+
+    
 
         if (!product) return null;
 
