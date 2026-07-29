@@ -32,6 +32,7 @@ const [discount,setDiscount] = useState(0);
 const [couponLoading,setCouponLoading] = useState(false);
 const [couponCode,setCouponCode] = useState("");
 const [isMobile, setIsMobile] = useState(false);
+const [isGuest, setIsGuest] = useState(false);
 const [frete, setFrete] = useState(0);
 
 const hasKit =
@@ -92,15 +93,16 @@ useEffect(() => {
 
   async function fetchCart() {
 
-  const res = await fetch("/api/cart", {
-    credentials: "include"
-  });
+// 👤 Visitante
+if (isGuest) {
 
-if (res.status === 401) {
+  setIsGuest(true);
 
   const guestCart = JSON.parse(
     localStorage.getItem("cart") || "[]"
   );
+
+  
 
   if (guestCart.length === 0) {
     setItems([]);
@@ -124,13 +126,14 @@ if (res.status === 401) {
   return;
 }
 
-  const data = await res.json();
+setIsGuest(false);
 
-  if (Array.isArray(data)) {
-    setItems(data);
-  } else {
-    setItems([]);
-  }
+const data = await res.json();
+
+if (Array.isArray(data)) {
+  setItems(data);
+} else {
+  setItems([]);
 }
 
   // 🔥 pega frete do localStorage
@@ -265,11 +268,7 @@ if (!item.product.isKit && qty > item.product.stock) {
   return;
 }
 
-  const check = await fetch("/api/cart", {
-  credentials: "include"
-});
-
-if (check.status === 401) {
+ if (isGuest) {
 
   const cart = JSON.parse(
     localStorage.getItem("cart") || "[]"
@@ -312,25 +311,37 @@ if (check.status === 401) {
 
 }
 
-  const res = await fetch(`/api/cart/item/${id}`,{
-    method:"PUT",
-    credentials:"include",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({qty})
-  });
+ // Guarda o estado antigo caso a API dê erro
+const oldItems = items;
 
-  const data = await res.json();
+// Atualiza a tela imediatamente
+setItems(prev =>
+  prev.map(item =>
+    item.id === id
+      ? { ...item, qty }
+      : item
+  )
+);
 
-  if(!res.ok){
-    alert(data.error);
-    return;
-  }
+const res = await fetch(`/api/cart/item/${id}`, {
+  method: "PUT",
+  credentials: "include",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({ qty }),
+});
 
-  window.dispatchEvent(new Event("cartUpdated"));
-  fetchCart();
+const data = await res.json();
+
+if (!res.ok) {
+  // Se der erro, volta o estado anterior
+  setItems(oldItems);
+  alert(data.error);
+  return;
 }
+
+window.dispatchEvent(new Event("cartUpdated"));
 
   async function aplicarCupom(){
 

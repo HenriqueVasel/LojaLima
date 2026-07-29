@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import s from "@/app/styles/ProjectModal.module.css";
+import { useEffect } from "react";
 
 interface Props {
   open: boolean;
@@ -19,6 +20,22 @@ interface Props {
 const PHONE = "554738423235"; // coloque o número da empresa
 
 export default function ProjectModal({ open, onClose }: Props) {
+
+
+    useEffect(() => {
+  if (open) {
+    document.body.style.overflow = "hidden";
+  } else {
+    document.body.style.overflow = "";
+  }
+
+  return () => {
+    document.body.style.overflow = "";
+  };
+}, [open]);
+
+
+
   if (!open) return null;
 
   const whatsapp = (message: string) =>

@@ -1,27 +1,37 @@
 .overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 23, 42, .55);
-    backdrop-filter: blur(7px);
+    z-index: 999999;
+
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 99999;
-    animation: fade .25s;
-    padding: 20px;
-}
 
+    background: rgba(15,23,42,.55);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+
+    overscroll-behavior: contain;
+    touch-action: none;
+}
 .modal {
     width: 100%;
     max-width: 700px;
+
     background: white;
     border-radius: 24px;
     padding: 40px;
     position: relative;
-    animation: popup .3s;
-    box-shadow: 0 25px 60px rgba(0,0,0,.18);
-}
 
+    box-shadow: 0 25px 60px rgba(0,0,0,.18);
+
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+
+    -webkit-overflow-scrolling: touch;
+
+    animation: popup .3s;
+}
 .close {
     position: absolute;
     right: 20px;
@@ -158,6 +168,9 @@
 
     .modal{
         padding:28px;
+           max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+
     }
 
     .grid{
