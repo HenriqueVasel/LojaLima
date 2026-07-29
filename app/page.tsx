@@ -9,6 +9,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import TrustBar from "@/app/components/TrustBar";
 import CompanyStats from "@/app/components/CompanyStats";
 import CustomerReviews from "@/app/components/CustomerReviews";
+import HomeSolutionSection from "@/app/components/HomeSolutionSection";
 
 
 
@@ -89,7 +90,9 @@ export default function HomePage() {
       {/* Banner superior da página */}
       <HomeBannerCarousel />
 
-      
+      <HomeSolutionSection />
+
+      <section className={`${s.productsSection} shopScope`}></section>
 
      
 
