@@ -34,10 +34,11 @@ export async function GET() {
 
         include: {
           product: {
-            include: {
-              promotion: true,
-              productimage: true,
-            },
+           include: {
+  promotion: true,
+  productimage: true,
+  stock: true,
+},
           },
 
           productvariant: true,
@@ -88,33 +89,36 @@ else {
           priceCents,
 
           // produto atualizado
-          product: {
-            ...item.product,
+         product: {
+  ...item.product,
 
-            slug: item.product.slug,
+  stock:
+    item.product.stock?.quantity || 0,
 
-            sku:
-              item.product.sku,
+  slug: item.product.slug,
 
-            images:
-              item.product
-                .productimage,
+  sku:
+    item.product.sku,
 
-            priceCents:
+  images:
+    item.product
+      .productimage,
 
-  item.product.isKit
+  priceCents:
 
-    ? item.product.priceCents
+    item.product.isKit
 
-    : getFinalPrice({
-        ...item.product,
+      ? item.product.priceCents
 
-        priceCents:
-          calcularPrecoVenda(
-            item.product.priceCents
-          ),
-      }),
-          },
+      : getFinalPrice({
+          ...item.product,
+
+          priceCents:
+            calcularPrecoVenda(
+              item.product.priceCents
+            ),
+        }),
+},
 
           // variante
           productvariant:

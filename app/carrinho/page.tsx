@@ -15,6 +15,8 @@ product: {
   slug: string;
   priceCents: number;
   sku: string;
+  stock: number;
+  isKit: boolean;
   images?: { url: string }[];
 }
 };
@@ -249,6 +251,17 @@ async function updateQty(id:number, qty:number){
     removeItem(id);
     return;
   }
+
+  const item = items.find(i => i.id === id);
+
+if (!item) return;
+
+if (!item.product.isKit && qty > item.product.stock) {
+  alert(
+    `Apenas ${item.product.stock} unidade${item.product.stock !== 1 ? "s" : ""} disponível${item.product.stock !== 1 ? "is" : ""} em estoque.`
+  );
+  return;
+}
 
   const check = await fetch("/api/cart", {
   credentials: "include"

@@ -24,9 +24,10 @@ export async function POST(req: Request) {
             id: Number(item.productId),
           },
           include: {
-            promotion: true,
-            productimage: true,
-          },
+  promotion: true,
+  productimage: true,
+  stock: true,
+},
         });
 
         if (!product) return null;

@@ -63,20 +63,32 @@ if (res.status === 401) {
     item.variantId === (variantId ?? null)
 );
 
-  if (index >= 0) {
+ if (index >= 0) {
 
-    cart[index].qty += 1;
-
-  } else {
-
-    cart.push({
-  id: -(cart.length + 1),
-  productId,
-  variantId: variantId ?? null,
-  qty: 1,
-});
-
+  if (cart[index].qty >= stock) {
+    toast.error(
+      `Apenas ${stock} unidade${stock !== 1 ? "s" : ""} disponível${stock !== 1 ? "is" : ""} em estoque.`
+    );
+    return;
   }
+
+  cart[index].qty += 1;
+
+} else {
+
+  if (stock <= 0) {
+    toast.error("Produto sem estoque.");
+    return;
+  }
+
+  cart.push({
+    id: -(cart.length + 1),
+    productId,
+    variantId: variantId ?? null,
+    qty: 1,
+  });
+
+}
 
 localStorage.setItem("cart", JSON.stringify(cart));
 
