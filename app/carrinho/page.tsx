@@ -139,19 +139,6 @@ async function fetchCart() {
     setItems([]);
   }
 }
-  // Logado
-  const res = await fetch("/api/cart", {
-    credentials: "include",
-  });
-
-  const data = await res.json();
-
-  if (Array.isArray(data)) {
-    setItems(data);
-  } else {
-    setItems([]);
-  }
-}
 
   // 🔥 pega frete do localStorage
   useEffect(() => {
