@@ -25,12 +25,11 @@ export default function HomeSolutionSection() {
             </span>
 
             <h2>
-              Proteja o que é importante com uma solução completa.
-            </h2>
+  Soluções completas em segurança eletrônica.
+</h2>
 
             <p>
-              Não vendemos apenas equipamentos. Nossa equipe desenvolve o
-              projeto, realiza a instalação e oferece suporte para residências,
+              Projeto, instalação e suporte especializado para residências,
               empresas e indústrias.
             </p>
 
