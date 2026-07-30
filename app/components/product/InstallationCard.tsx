@@ -1,6 +1,6 @@
 "use client";
 
-import { Wrench, MessageCircle } from "lucide-react";
+import { ChevronRight, Wrench } from "lucide-react";
 import { sendGAEvent } from "@next/third-parties/google";
 import s from "@/app/styles/InstallationCard.module.css";
 
@@ -31,7 +31,7 @@ Tenho interesse neste produto:
 
 🔗 https://lojalimaelima.com.br/produto/${productSlug}
 
-Gostaria de solicitar um orçamento para a instalação desse equipamento.`;
+Gostaria de solicitar um orçamento para adquirir o equipamento com a instalação.`;
 
     window.open(
       `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`,
@@ -41,21 +41,24 @@ Gostaria de solicitar um orçamento para a instalação desse equipamento.`;
 
   return (
     <div className={s.card}>
-      <div className={s.icon}>
-        <Wrench size={22} />
+      <div className={s.header}>
+        <Wrench size={18} />
+
+        <span>Equipamento + Instalação</span>
       </div>
 
-      <div className={s.content}>
-        <h3>Precisa da instalação?</h3>
+      <p>
+        Receba este equipamento instalado e configurado por nossa equipe
+        especializada.
+      </p>
 
-        <p>
-          Nossa equipe instala e configura este equipamento para você.
-        </p>
-      </div>
-
-      <button onClick={handleClick} className={s.button}>
-        <MessageCircle size={18} />
+      <button
+        type="button"
+        onClick={handleClick}
+        className={s.link}
+      >
         Solicitar orçamento
+        <ChevronRight size={16} />
       </button>
     </div>
   );
