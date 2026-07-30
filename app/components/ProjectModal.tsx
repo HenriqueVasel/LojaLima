@@ -12,29 +12,36 @@ import {
 import s from "@/app/styles/ProjectModal.module.css";
 import { useEffect } from "react";
 
+import {
+  sendHomeSolutionClick,
+  sendHomeSolutionModalOpen,
+  sendWhatsappClick,
+} from "@/app/components/HomeSolutionAnalytics";
+
 interface Props {
   open: boolean;
   onClose: () => void;
 }
 
-const PHONE = "554738423235"; // coloque o número da empresa
+const PHONE = "554738423235";
 
 export default function ProjectModal({ open, onClose }: Props) {
 
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
 
-    useEffect(() => {
-  if (open) {
-    document.body.style.overflow = "hidden";
-  } else {
-    document.body.style.overflow = "";
-  }
+      // Evento: Modal aberto
+      sendHomeSolutionModalOpen();
 
-  return () => {
-    document.body.style.overflow = "";
-  };
-}, [open]);
+    } else {
+      document.body.style.overflow = "";
+    }
 
-
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   if (!open) return null;
 
@@ -64,6 +71,10 @@ export default function ProjectModal({ open, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className={s.card}
+            onClick={() => {
+              sendHomeSolutionClick("cameras");
+              sendWhatsappClick("home_solution_modal");
+            }}
           >
             <Camera size={26} />
 
@@ -80,6 +91,10 @@ export default function ProjectModal({ open, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className={s.card}
+            onClick={() => {
+              sendHomeSolutionClick("wifi");
+              sendWhatsappClick("home_solution_modal");
+            }}
           >
             <Wifi size={26} />
 
@@ -96,6 +111,10 @@ export default function ProjectModal({ open, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className={s.card}
+            onClick={() => {
+              sendHomeSolutionClick("access_control");
+              sendWhatsappClick("home_solution_modal");
+            }}
           >
             <ShieldCheck size={26} />
 
@@ -112,6 +131,10 @@ export default function ProjectModal({ open, onClose }: Props) {
             target="_blank"
             rel="noopener noreferrer"
             className={s.card}
+            onClick={() => {
+              sendHomeSolutionClick("support");
+              sendWhatsappClick("home_solution_modal");
+            }}
           >
             <Wrench size={26} />
 
@@ -129,6 +152,10 @@ export default function ProjectModal({ open, onClose }: Props) {
           target="_blank"
           rel="noopener noreferrer"
           className={s.specialist}
+          onClick={() => {
+            sendHomeSolutionClick("specialist");
+            sendWhatsappClick("home_solution_modal");
+          }}
         >
           <MessageCircle size={20} />
           Falar com um especialista
