@@ -237,7 +237,7 @@ if (newQty > stockQty) {
 
   return NextResponse.json(
     {
-      error: `Apenas ${stockQty} unidade${stockQty !== 1 ? "s" : ""} disponível${stockQty !== 1 ? "is" : ""} em estoque.`,
+      error: `Apenas ${stockQty} unidade${stockQty } catch (error) {!== 1 ? "s" : ""} disponível${stockQty !== 1 ? "is" : ""} em estoque.`,
       stock: stockQty
     },
     {

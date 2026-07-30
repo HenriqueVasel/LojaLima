@@ -15,6 +15,7 @@ import HomeSolutionSection from "@/app/components/HomeSolutionSection";
 
 
 
+
 // Define o tipo de dados de um card de categoria da home
 type HomeCard = {
   title: string;   // título da categoria

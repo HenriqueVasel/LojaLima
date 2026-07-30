@@ -13,6 +13,7 @@ import Script from "next/script";
 import BuyNowButton from "@/app/components/BuyNowButton";
 import TrustCard from "@/app/components/product/TrustCard";
 import SpecsFaq from "@/app/components/product/SpecsFaq";
+import InstallationCard from "@/app/components/product/InstallationCard";
 
 
 import {
@@ -433,6 +434,12 @@ const precoPix =
 
 <BuyNowButton
   productId={produto.id}
+/>
+
+<InstallationCard
+  productId={produto.id}
+  productName={produto.name}
+  productSlug={produto.slug}
 />
 
 
