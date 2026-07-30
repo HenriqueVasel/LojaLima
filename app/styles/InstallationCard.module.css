@@ -2,10 +2,16 @@
   margin: 16px 0;
   padding: 18px;
 
+  background: #fff;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
 
-  background: #fff;
+  transition: .2s;
+}
+
+.card:hover {
+  border-color: #16a34a;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, .08);
 }
 
 .header {
@@ -15,8 +21,8 @@
 
   color: #16a34a;
 
-  font-weight: 700;
   font-size: 16px;
+  font-weight: 700;
 }
 
 .header svg {
@@ -26,25 +32,26 @@
 .card p {
   margin: 10px 0 14px;
 
-  color: #555;
   font-size: 14px;
   line-height: 1.5;
+
+  color: #555;
 }
 
 .link {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
 
-  background: none;
+  background: transparent;
   border: none;
 
   padding: 0;
 
   color: #16a34a;
 
-  font-weight: 700;
   font-size: 14px;
+  font-weight: 700;
 
   cursor: pointer;
 
@@ -61,4 +68,206 @@
 
 .link:hover svg {
   transform: translateX(4px);
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 992px) {
+
+  .card {
+    padding: 16px;
+  }
+
+}
+
+/* ---------- Celular ---------- */
+
+@media (max-width: 768px) {
+
+  .card {
+    padding: 14px;
+    margin: 14px 0;
+  }
+
+  .header {
+    font-size: 15px;
+  }
+
+  .card p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .link {
+    width: 100%;
+    justify-content: center;
+
+    padding: 10px 0;
+
+    border-top: 1px solid #f1f5f9;
+
+    margin-top: 8px;
+
+    font-size: 14px;
+  }
+
+}
+
+/* ---------- Celulares pequenos ---------- */
+
+@media (max-width: 480px) {
+
+  .card {
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .header {
+    font-size: 14px;
+  }
+
+  .card p {
+    font-size: 12.5px;
+  }
+
+  .link {
+    font-size: 13px;
+  }
+
+}.card {
+  margin: 16px 0;
+  padding: 18px;
+
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+
+  transition: .2s;
+}
+
+.card:hover {
+  border-color: #16a34a;
+  box-shadow: 0 6px 16px rgba(22, 163, 74, .08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  color: #16a34a;
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.header svg {
+  flex-shrink: 0;
+}
+
+.card p {
+  margin: 10px 0 14px;
+
+  font-size: 14px;
+  line-height: 1.5;
+
+  color: #555;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  background: transparent;
+  border: none;
+
+  padding: 0;
+
+  color: #16a34a;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: .2s;
+}
+
+.link:hover {
+  color: #15803d;
+}
+
+.link svg {
+  transition: .2s;
+}
+
+.link:hover svg {
+  transform: translateX(4px);
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 992px) {
+
+  .card {
+    padding: 16px;
+  }
+
+}
+
+/* ---------- Celular ---------- */
+
+@media (max-width: 768px) {
+
+  .card {
+    padding: 14px;
+    margin: 14px 0;
+  }
+
+  .header {
+    font-size: 15px;
+  }
+
+  .card p {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .link {
+    width: 100%;
+    justify-content: center;
+
+    padding: 10px 0;
+
+    border-top: 1px solid #f1f5f9;
+
+    margin-top: 8px;
+
+    font-size: 14px;
+  }
+
+}
+
+/* ---------- Celulares pequenos ---------- */
+
+@media (max-width: 480px) {
+
+  .card {
+    border-radius: 10px;
+    padding: 12px;
+  }
+
+  .header {
+    font-size: 14px;
+  }
+
+  .card p {
+    font-size: 12.5px;
+  }
+
+  .link {
+    font-size: 13px;
+  }
+
 }
