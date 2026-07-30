@@ -23,15 +23,23 @@ export default function InstallationCard({
       product_name: productName,
     });
 
-    const message = `Olá! 👋
+const message = `Olá!
 
-Tenho interesse neste produto:
+Tenho interesse em adquirir o seguinte equipamento com instalação:
 
-📦 ${productName}
+Produto: ${productName}
 
-🔗 https://lojalimaelima.com.br/produto/${productSlug}
+Link:
+https://lojalimaelima.com.br/produto/${productSlug}
 
-Gostaria de solicitar um orçamento para adquirir o equipamento com a instalação.`;
+Gostaria de receber um orçamento contendo:
+
+• Valor do equipamento;
+• Valor da instalação;
+• Prazo para instalação.
+
+
+Obrigado!`;
 
     window.open(
       `https://wa.me/${PHONE}?text=${encodeURIComponent(message)}`,
@@ -48,9 +56,8 @@ Gostaria de solicitar um orçamento para adquirir o equipamento com a instalaç�
       </div>
 
       <p>
-        Receba este equipamento instalado e configurado por nossa equipe
-        especializada.
-      </p>
+  Adquira este equipamento com instalação profissional realizada por nossa equipe.
+</p>
 
       <button
         type="button"
