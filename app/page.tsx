@@ -91,9 +91,7 @@ export default function HomePage() {
       {/* Banner superior da página */}
       <HomeBannerCarousel />
 
-      <HomeSolutionSection />
-
-      <section className={`${s.productsSection} shopScope`}></section>
+      
 
      
 
@@ -107,6 +105,10 @@ export default function HomePage() {
           <CategoriesSection />
 
         <TrustBar />
+
+        <HomeSolutionSection />
+
+      <section className={`${s.productsSection} shopScope`}></section>
           
 
           
