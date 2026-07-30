@@ -422,7 +422,7 @@ async function fetchCartCount() {
             </a>
 
             <a
-              href="https://instagram.com"
+              href="https://www.instagram.com/lojalimaelima"
               target="_blank"
               rel="noopener noreferrer"
               className={s.iconLink}

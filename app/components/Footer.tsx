@@ -5,9 +5,9 @@ import s from "@/app/styles/footer.module.css";
 const WHATSAPP = "https://wa.me/554738423235"; // <- TROQUE
 
 const SOCIALS = {
-  facebook: "https://www.facebook.com/limaelimainstalacao",   // <- TROQUE
-  instagram: "https://www.instagram.com/limaelimainstalacao", // <- TROQUE
-  linkedin: "https://www.linkedin.com/company/lima-e-lima-instala%C3%A7%C3%A3o-e-manuten%C3%A7%C3%A3o/",   // <- TROQUE
+  facebook: "https://www.facebook.com/lojalimaelima",   // <- TROQUE
+  instagram: "https://www.instagram.com/lojalimaelima", // <- TROQUE
+  linkedin: "https://www.linkedin.com/company/lima-e-lima-instala%C3%A7%C3%A3o-e-manuten%C3%A7%C3%A3o/",// <- TROQUE
 };
 
 export default function Footer() {
