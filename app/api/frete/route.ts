@@ -74,23 +74,25 @@ for (const item of items as any[]) {
 
   if (!produto) continue;
 
+  // Se faltar qualquer dimensão ou peso, não calcula frete
+if (
+  !produto.height ||
+  !produto.width ||
+  !produto.length ||
+  !produto.weight
+) {
+  return NextResponse.json({
+    manualFreight: true,
+    message:
+      "Este produto precisa de cotação manual de frete."
+  });
+}
+
   products.push({
 
     id: String(produto.id),
 
-width: produto.width
-  ? Number((produto.width / 10).toFixed(1))
-  : 20,
 
-height: produto.height
-  ? Number((produto.height / 10).toFixed(1))
-  : 5,
-
-length: produto.length
-  ? Number((produto.length / 10).toFixed(1))
-  : 30,
-
-    weight: produto.weight || 1,
 
     insurance_value:
   (produto.priceCents / 100) * item.quantity,

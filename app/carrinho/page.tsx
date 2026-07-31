@@ -444,6 +444,9 @@ const frete =
     sessionStorage.getItem("freteCents") || 0
   );
 
+  const manualFreight =
+  sessionStorage.getItem("manualFreight") === "true";
+
   const cep =
   localStorage.getItem("cep");
 
@@ -453,6 +456,23 @@ const numero =
 if (!cep) {
 
   alert("Informe o CEP");
+
+  return;
+
+}
+
+if (!retirada && manualFreight) {
+
+  const telefone = "5547996204434";
+
+  const mensagem = encodeURIComponent(
+    "Olá! Gostaria de solicitar uma cotação de frete para os produtos do meu carrinho."
+  );
+
+  window.open(
+    `https://wa.me/${telefone}?text=${mensagem}`,
+    "_blank"
+  );
 
   return;
 

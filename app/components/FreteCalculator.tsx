@@ -50,6 +50,8 @@ console.log(
 
   const [fretes, setFretes] = useState<any[]>([]);
 const [freteSelecionado, setFreteSelecionado] = useState<any>(null);
+const [manualFreight, setManualFreight] = useState(false);
+const [manualMessage, setManualMessage] = useState("");
 
 
 useEffect(() => {
@@ -162,6 +164,10 @@ localStorage.setItem("bairro", data.bairro || "");
       }
 
       setEndereco(data);
+      
+      // limpa uma consulta anterior
+setManualFreight(false);
+setManualMessage("");
 
      const freteRes = await fetch("/api/frete", {
   method: "POST",
@@ -178,6 +184,29 @@ localStorage.setItem("bairro", data.bairro || "");
 });
 
 const freteData = await freteRes.json();
+
+if (freteData.manualFreight) {
+
+  setManualFreight(true);
+
+  setManualMessage(freteData.message);
+
+  setFretes([]);
+
+  setFrete(null);
+
+  sessionStorage.setItem("manualFreight", "true");
+
+  sessionStorage.removeItem("freteCents");
+sessionStorage.removeItem("shipping");
+
+window.dispatchEvent(
+  new Event("freteUpdated")
+);
+
+  return;
+
+}
 console.log(freteData);
 
 console.log("FRETE:", freteData);
@@ -208,6 +237,8 @@ const primeira = opcoesOrdenadas[0];
 if (!simple) {
   setFreteSelecionado(primeira);
 }
+
+sessionStorage.removeItem("manualFreight");
 
 const valor = Math.round(
   Number(primeira.price) * 100
@@ -421,6 +452,58 @@ window.dispatchEvent(
       Necessário para validar disponibilidade da retirada.
     </div>
   )}
+
+  {manualFreight && (
+
+<div
+  style={{
+    marginTop:20,
+    padding:18,
+    borderRadius:12,
+    border:"1px solid #facc15",
+    background:"#1f1b0b"
+  }}
+>
+
+<h3
+style={{
+color:"#facc15",
+marginBottom:10
+}}
+>
+📦 Frete sob consulta
+</h3>
+
+<p
+style={{
+color:"#fff",
+marginBottom:20
+}}
+>
+{manualMessage}
+</p>
+
+<a
+href="https://wa.me/5547996204434?text=Olá,%20gostaria%20de%20calcular%20o%20frete."
+target="_blank"
+style={{
+display:"inline-block",
+padding:"12px 20px",
+background:"#22c55e",
+color:"#fff",
+borderRadius:8,
+textDecoration:"none",
+fontWeight:700
+}}
+>
+
+Calcular pelo WhatsApp
+
+</a>
+
+</div>
+
+)}
 
 </div>
 
