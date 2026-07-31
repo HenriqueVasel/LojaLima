@@ -463,11 +463,26 @@ if (!cep) {
 
 if (!retirada && manualFreight) {
 
-  const telefone = "5547996204434";
+  const telefone = "554738423235";
 
-  const mensagem = encodeURIComponent(
-    "Olá! Gostaria de solicitar uma cotação de frete para os produtos do meu carrinho."
-  );
+const cep = localStorage.getItem("cep") || "";
+
+const produtos = items
+  .map(
+    item =>
+      `• ${item.product.name} (Qtd: ${item.qty})`
+  )
+  .join("\n");
+
+const mensagem = encodeURIComponent(
+`Olá!
+
+Gostaria de solicitar uma cotação de frete para os seguintes produtos:
+
+${produtos}
+
+CEP: ${cep}`
+);
 
   window.open(
     `https://wa.me/${telefone}?text=${mensagem}`,
