@@ -174,7 +174,10 @@ let products = await prisma.product.findMany({
 if (
   category === "cftv" &&
   page === 1 &&
-  !search
+  !search &&
+  !min &&
+  !max &&
+  !sort
 ) {
 
   const destaqueIds = [
