@@ -484,7 +484,7 @@ marginBottom:20
 </p>
 
 <a
-href="https://wa.me/5547996204434?text=Olá,%20gostaria%20de%20calcular%20o%20frete."
+href="https://wa.me/554738423235?text=Olá,%20gostaria%20de%20calcular%20o%20frete."
 target="_blank"
 style={{
 display:"inline-block",
