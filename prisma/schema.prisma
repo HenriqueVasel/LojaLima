@@ -139,9 +139,18 @@ model product {
   productimage     productimage[]
   productvariant   productvariant[]
   stock            stock?
+brandRefId Int?
+brandRef Brand? @relation("ProductBrand", fields: [brandRefId], references: [id])
+
+lineId Int?
+line ProductLine? @relation(fields: [lineId], references: [id])
+
+attributes ProductAttribute[]
 
   @@index([active, featured], map: "Product_active_featured_idx")
   @@index([name], map: "Product_name_idx")
+  @@index([brandRefId])
+  @@index([lineId])
 }
 
 model productcategory {
@@ -254,6 +263,63 @@ model KitItem {
   quantity  Int
   kit       product @relation("KitProducts", fields: [kitId], references: [id])
   product   product @relation("KitItemProduct", fields: [productId], references: [id])
+}
+
+model Brand {
+  id        Int       @id @default(autoincrement())
+  name      String    @unique
+  slug      String    @unique
+  active    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+
+  products  product[] @relation("ProductBrand")
+}
+
+model ProductLine {
+  id        Int      @id @default(autoincrement())
+  name      String
+  slug      String   @unique
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  products  product[]
+
+  @@unique([name])
+}
+
+model Attribute {
+  id          Int              @id @default(autoincrement())
+  name        String
+  slug        String           @unique
+  description String?
+  active      Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+
+  values      AttributeValue[]
+}
+
+model AttributeValue {
+  id          Int                @id @default(autoincrement())
+  attributeId Int
+  value       String
+  slug        String
+  sortOrder   Int                @default(0)
+
+  attribute   Attribute          @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  products    ProductAttribute[]
+
+  @@unique([attributeId, slug])
+}
+
+model ProductAttribute {
+  productId        Int
+  attributeValueId Int
+
+  product          product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  attributeValue   AttributeValue @relation(fields: [attributeValueId], references: [id], onDelete: Cascade)
+
+  @@id([productId, attributeValueId])
 }
 
 enum order_status {
