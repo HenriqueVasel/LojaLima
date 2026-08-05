@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import * as xlsx from "xlsx";
 import { prisma } from "@/lib/prisma";
+import { analyzeProduct } from "@/app/lib/catalogEngine";
 
 /* =========================
 FORÇA RUNTIME (não roda no build)
@@ -196,6 +197,46 @@ export async function POST(req: Request) {
         const categorySlug =
           getCategorySlug(name);
 
+          const catalog = analyzeProduct({
+  name,
+  brand: item.MARCA,
+});
+
+let brandId: number | null = null;
+
+if (catalog.brand) {
+
+  const slug = catalog.brand
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+
+  const brand = await prisma.brand.upsert({
+
+    where: {
+      slug,
+    },
+
+    update: {},
+
+    create: {
+      name: catalog.brand,
+      slug,
+    },
+
+  });
+
+  brandId = brand.id;
+
+}
+
+console.log("CATALOG:", {
+  produto: name,
+  resultado: catalog,
+});
+
         /* =========================
         🔥 CACHE CATEGORY
         ========================= */
@@ -256,6 +297,7 @@ export async function POST(req: Request) {
             priceCents,
 
             brand: item.MARCA,
+            brandRefId: brandId,
 
             active:
               item.FORA_LINHA !== "S",
@@ -281,6 +323,7 @@ export async function POST(req: Request) {
             priceCents,
 
             brand: item.MARCA,
+            brandRefId: brandId,
 
             sku,
 

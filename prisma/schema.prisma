@@ -36,6 +36,7 @@ model category {
   category        category?         @relation("categoryTocategory", fields: [parentId], references: [id])
   other_category  category[]        @relation("categoryTocategory")
   productcategory productcategory[]
+  attributes      CategoryAttribute[]
 
   @@index([active, sortOrder], map: "Category_active_sortOrder_idx")
   @@index([parentId], map: "Category_parentId_idx")
@@ -296,6 +297,7 @@ model Attribute {
   createdAt   DateTime         @default(now())
 
   values      AttributeValue[]
+  categories  CategoryAttribute[]
 }
 
 model AttributeValue {
@@ -310,6 +312,18 @@ model AttributeValue {
   products    ProductAttribute[]
 
   @@unique([attributeId, slug])
+}
+
+model CategoryAttribute {
+
+  categoryId  Int
+  attributeId Int
+
+  category     category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  attribute    Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@id([categoryId, attributeId])
+
 }
 
 model ProductAttribute {
