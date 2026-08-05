@@ -1,0 +1,618 @@
+/* ===========================
+   PAGE
+=========================== */
+
+.page {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+}
+
+.title{
+    font-size:34px;
+    font-weight:900;
+    color:#111827;
+    margin-bottom:28px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) 380px;
+    gap:28px;
+    align-items:start;
+}
+
+/* ===========================
+   LEFT SIDE
+=========================== */
+
+.left{
+    display:flex;
+    flex-direction:column;
+    gap:24px;
+}
+
+/* ===========================
+   CARD
+=========================== */
+
+.card{
+
+    background:#fff;
+
+    border:1px solid #e7ecf3;
+
+    border-radius:22px;
+
+    box-shadow:
+        0 8px 18px rgba(15,23,42,.04),
+        0 20px 45px rgba(15,23,42,.06);
+
+}
+
+/* ===========================
+   CARD HEADER
+=========================== */
+
+.cardHeader{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:22px 26px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.cardTitle{
+
+    font-size:21px;
+
+    font-weight:800;
+
+    color:#111827;
+
+}
+
+/* ===========================
+   PRODUCTS
+=========================== */
+
+.products{
+
+    display:flex;
+
+    flex-direction:column;
+
+}
+
+.product{
+
+    display:grid;
+
+    grid-template-columns:120px 1fr auto;
+
+    gap:22px;
+
+    padding:22px 26px;
+
+    border-bottom:1px solid #eef2f6;
+
+    transition:.25s;
+
+}
+
+.product:last-child{
+
+    border-bottom:none;
+
+}
+
+.product:hover{
+
+    background:#fafbfd;
+
+}
+
+.image{
+
+    width:120px;
+
+    height:120px;
+
+    border-radius:18px;
+
+    background:#fff;
+
+    border:1px solid #eceff4;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    overflow:hidden;
+
+}
+
+.image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:contain;
+
+}
+
+.info{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+}
+
+.nameLink{
+    text-decoration:none;
+}
+
+.name{
+
+    font-size:18px;
+
+    font-weight:800;
+
+    color:#111827;
+
+    line-height:1.4;
+
+}
+
+.unitPrice{
+
+    margin-top:8px;
+
+    font-size:14px;
+
+    color:#6b7280;
+
+}
+
+/* ===========================
+   QUANTITY
+=========================== */
+
+.quantity{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:20px;
+
+}
+
+.qtyBtn{
+
+    width:42px;
+
+    height:42px;
+
+    border-radius:12px;
+
+    border:1px solid #dbe2ea;
+
+    background:white;
+
+    cursor:pointer;
+
+    font-size:20px;
+
+    font-weight:700;
+
+    transition:.2s;
+
+}
+
+.qtyBtn:hover{
+
+    background:#f3f6fa;
+
+}
+
+.qtyValue{
+
+    width:45px;
+
+    text-align:center;
+
+    font-weight:800;
+
+    font-size:17px;
+
+}
+
+/* ===========================
+   RIGHT PRODUCT
+=========================== */
+
+.priceArea{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+}
+
+.price{
+
+    font-size:24px;
+
+    font-weight:900;
+
+    color:#16a34a;
+
+}
+
+.remove{
+
+    border:none;
+
+    background:none;
+
+    color:#6b7280;
+
+    cursor:pointer;
+
+    font-weight:700;
+
+    transition:.2s;
+
+}
+
+.remove:hover{
+
+    color:#ef4444;
+
+}
+
+.emptyCart{
+    padding:60px 26px;
+    text-align:center;
+    color:#9ca3af;
+    font-size:15px;
+}
+
+/* ===========================
+   SUMMARY
+=========================== */
+
+.summary{
+
+    position:sticky;
+
+    top:25px;
+
+}
+
+.summaryCard{
+
+    background:white;
+
+    border-radius:22px;
+
+    border:1px solid #e8edf4;
+
+    box-shadow:
+        0 8px 18px rgba(15,23,42,.04),
+        0 20px 45px rgba(15,23,42,.06);
+
+    overflow:hidden;
+
+}
+
+.summaryHeader{
+
+    padding:22px 24px;
+
+    border-bottom:1px solid #edf2f7;
+
+}
+
+.summaryHeader h2{
+
+    margin:0;
+
+    font-size:22px;
+
+    font-weight:900;
+
+    color:#111827;
+
+}
+
+.summaryContent{
+
+    padding:24px;
+
+}
+
+/* ===========================
+   CUPOM
+=========================== */
+
+.couponBox{
+    margin-bottom:20px;
+}
+
+.couponRow{
+    display:flex;
+    gap:10px;
+}
+
+.couponInput{
+    flex:1;
+    height:46px;
+    border-radius:12px;
+    border:1px solid #dbe2ea;
+    background:#fff;
+    color:#111827;
+    padding:0 14px;
+    font-size:14px;
+    outline:none;
+    transition:.2s;
+}
+
+.couponInput:focus{
+    border-color:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,0.12);
+}
+
+.couponButton{
+    border:none;
+    padding:0 20px;
+    border-radius:12px;
+    background:#16a34a;
+    color:#fff;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.couponButton:hover{
+    background:#15803d;
+}
+
+.couponButton:disabled{
+    opacity:.6;
+    cursor:not-allowed;
+}
+
+.couponApplied{
+    margin-top:10px;
+    color:#16a34a;
+    font-size:13px;
+    font-weight:700;
+}
+
+.wifiBanner{
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:10px;
+    background:#fffbeb;
+    border:1px solid #fde68a;
+    color:#b45309;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* ===========================
+   FRETE (wrapper do FreteCalculator)
+=========================== */
+
+.freteWrapper{
+    margin-bottom:20px;
+}
+
+/* ===========================
+   TOTAIS
+=========================== */
+
+.summaryRow{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    color:#6b7280;
+    font-size:14px;
+}
+
+.summaryRowValue{
+    color:#111827;
+    font-weight:700;
+}
+
+.summaryRowDiscount{
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+    color:#16a34a;
+    font-size:14px;
+    font-weight:700;
+}
+
+.totalRow{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    border-top:1px solid #eef2f6;
+    padding-top:18px;
+    margin-top:14px;
+}
+
+.totalLabel{
+    color:#111827;
+    font-size:16px;
+    font-weight:800;
+}
+
+.totalValue{
+    color:#111827;
+    font-size:30px;
+    font-weight:900;
+    line-height:1;
+}
+
+/* ===========================
+   PIX
+=========================== */
+
+.pixCard{
+    margin-top:18px;
+    padding:16px 18px;
+    border-radius:16px;
+    background:rgba(22,163,74,0.06);
+    border:1px solid rgba(22,163,74,0.2);
+}
+
+.pixLabel{
+    color:#16a34a;
+    font-weight:700;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.pixValue{
+    color:#16a34a;
+    font-size:28px;
+    font-weight:900;
+    line-height:1;
+}
+
+.pixNote{
+    color:#6b7280;
+    font-weight:500;
+    font-size:12px;
+    margin-top:6px;
+}
+
+/* ===========================
+   BOTÃO FINALIZAR
+=========================== */
+
+.checkoutBtn{
+    margin-top:22px;
+    width:100%;
+    height:54px;
+    border-radius:14px;
+    border:none;
+    font-weight:800;
+    font-size:16px;
+    background:#16a34a;
+    color:#fff;
+    cursor:pointer;
+    transition:.2s;
+}
+
+.checkoutBtn:hover{
+    background:#15803d;
+}
+
+.checkoutBtnDisabled{
+    background:#d1d5db;
+    color:#6b7280;
+    cursor:not-allowed;
+}
+
+.checkoutBtnDisabled:hover{
+    background:#d1d5db;
+}
+
+/* ===========================
+   COMPRA SEGURA
+=========================== */
+
+.secureBox{
+    margin-top:20px;
+    padding:16px 18px;
+    border-radius:16px;
+    background:#f0fdf4;
+    border:1px solid #dcfce7;
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+}
+
+.secureIcon{
+    font-size:20px;
+    line-height:1;
+}
+
+.secureTitle{
+    color:#111827;
+    font-size:14px;
+    font-weight:800;
+    margin-bottom:4px;
+}
+
+.secureText{
+    color:#6b7280;
+    font-size:12px;
+    line-height:1.5;
+}
+
+/* ===========================
+   RESPONSIVO
+=========================== */
+
+@media (max-width: 900px){
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    .summary{
+        position:static;
+        top:auto;
+    }
+
+    .product{
+        grid-template-columns:90px 1fr;
+        grid-template-areas:
+            "image info"
+            "price price";
+    }
+
+    .image{
+        grid-area:image;
+        width:90px;
+        height:90px;
+    }
+
+    .info{
+        grid-area:info;
+    }
+
+    .priceArea{
+        grid-area:price;
+        flex-direction:row;
+        justify-content:space-between;
+        align-items:center;
+        margin-top:14px;
+    }
+
+}

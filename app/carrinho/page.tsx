@@ -1,6 +1,6 @@
 "use client";
 
-import s from "@/app/styles/form.module.css";
+import s from "@/app/styles/carinho.module.css";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import FreteCalculator from "@/app/components/FreteCalculator";
@@ -39,16 +39,6 @@ const hasKit =
     items.some(
       item => (item.product as any).isKit
     );
-
-  const qtyBtnStyle = {
-  width:32,
-  height:32,
-  borderRadius:8,
-  border:"1px solid rgba(255,255,255,0.1)",
-  background:"#1a222c",
-  color:"#fff",
-  cursor:"pointer"
-};
 
 useEffect(() => {
 
@@ -520,454 +510,259 @@ if (!retirada && !numero) {
 
   return (
 
-  <div
-  style={{
-    maxWidth:1200,
-    margin:"60px auto",
-    padding:"0 16px",
-    display:"grid",
-   gridTemplateColumns: isMobile
-  ? "1fr"
-  : "1fr 340px",
-    gap:24,
-    alignItems:"start"
-  }}
->
+  <div className={s.page}>
 
- <h1 style={{
-  color:"#fff",
-  marginBottom:30,
-  fontSize:28,
-  fontWeight:800,
-  gridColumn:"1 / -1"
-}}>
+    <h1 className={s.title}>
       Carrinho
     </h1>
 
-    <div>
+    <div className={s.grid}>
 
-    {items.map((item)=>(
+      {/* PRODUTOS */}
+      <div className={s.left}>
 
-      <div
-        key={item.id}
-        style={{
-          display:"flex",
-          gap:20,
-          background:"#11161d",
-          padding:16,
-          marginBottom:16,
-          borderRadius:14,
-          border:"1px solid rgba(255,255,255,0.05)",
-          transition:"0.2s"
-        }}
-      >
+        <div className={s.card}>
 
-
-
-<Link href={`/produto/${item.product.slug}`}>
-
-<img
-  src={
-  item.product.images?.[0]?.url ||
-  "/produtos/placeholder.jpg"
-}
-  alt={item.product.name}
-  style={{
-  width:100,
-  height:100,
-  objectFit:"contain",
-  borderRadius:10,
-  background:"#fff",
-  padding:8
-  }}
-/>
-</Link>
-
-        {/* INFO */}
-        <div style={{flex:1,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
-
-          <div>
-            <Link
-  href={`/produto/${item.product.slug}`}
-  style={{
-    textDecoration:"none"
-  }}
->
-
-<h3 style={{
-              color:"#fff",
-              margin:0,
-              fontSize:16,
-              fontWeight:700
-            }}>
-              {item.product.name}
-            </h3>
-            </Link>
-
-            <p style={{
-              color:"#9ca3af",
-              fontSize:13,
-              marginTop:6
-            }}>
-              R$ {(item.product.priceCents/100).toFixed(2)} / unidade
-            </p>
+          <div className={s.cardHeader}>
+            <div className={s.cardTitle}>
+              Produtos {items.length > 0 && `(${items.length})`}
+            </div>
           </div>
 
-           
+          <div className={s.products}>
 
-          {/* QTD */}
+            {items.map((item) => (
 
-          
-          <div style={{
-            display:"flex",
-            alignItems:"center",
-            gap:10,
-            marginTop:10
-          }}>
+              <div key={item.id} className={s.product}>
 
+                <Link
+                  href={`/produto/${item.product.slug}`}
+                  className={s.image}
+                >
+                  <img
+                    src={
+                      item.product.images?.[0]?.url ||
+                      "/produtos/placeholder.jpg"
+                    }
+                    alt={item.product.name}
+                  />
+                </Link>
 
-            
+                {/* INFO */}
+                <div className={s.info}>
 
-            <button
-              onClick={()=>updateQty(item.id,item.qty-1)}
-              style={qtyBtnStyle}
-            >
-              -
-            </button>
+                  <div>
+                    <Link
+                      href={`/produto/${item.product.slug}`}
+                      className={s.nameLink}
+                    >
+                      <h3 className={s.name}>
+                        {item.product.name}
+                      </h3>
+                    </Link>
 
-            <span style={{color:"#fff",fontWeight:700}}>
-              {item.qty}
-            </span>
+                    <p className={s.unitPrice}>
+                      R$ {(item.product.priceCents / 100).toFixed(2)} / unidade
+                    </p>
+                  </div>
 
-            <button
-              onClick={()=>updateQty(item.id,item.qty+1)}
-              style={qtyBtnStyle}
-            >
-              +
-            </button>
+                  {/* QTD */}
+                  <div className={s.quantity}>
+
+                    <button
+                      onClick={() => updateQty(item.id, item.qty - 1)}
+                      className={s.qtyBtn}
+                    >
+                      -
+                    </button>
+
+                    <span className={s.qtyValue}>
+                      {item.qty}
+                    </span>
+
+                    <button
+                      onClick={() => updateQty(item.id, item.qty + 1)}
+                      className={s.qtyBtn}
+                    >
+                      +
+                    </button>
+
+                  </div>
+
+                </div>
+
+                {/* PREÇO + REMOVE */}
+                <div className={s.priceArea}>
+
+                  <div className={s.price}>
+                    R$ {((item.product.priceCents / 100) * item.qty).toFixed(2)}
+                  </div>
+
+                  <button
+                    onClick={() => removeItem(item.id)}
+                    className={s.remove}
+                  >
+                    Remover
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+            {items.length === 0 && (
+              <p className={s.emptyCart}>
+                Seu carrinho está vazio
+              </p>
+            )}
 
           </div>
 
         </div>
 
-        
+      </div>
 
-        
+      {/* RESUMO */}
+      <div className={s.summary}>
 
-        {/* PREÇO + REMOVE */}
-        <div style={{
-          display:"flex",
-          flexDirection:"column",
-          justifyContent:"space-between",
-          alignItems:"flex-end"
-        }}>
+        <div className={s.summaryCard}>
 
-          <div style={{
-            color:"#39ff14",
-            fontWeight:800,
-            fontSize:16
-          }}>
-            R$ {((item.product.priceCents/100)*item.qty).toFixed(2)}
+          <div className={s.summaryHeader}>
+            <h2>Resumo do Pedido</h2>
           </div>
 
-          <button
-            onClick={()=>removeItem(item.id)}
-           style={{
-  background:"transparent",
-  border:"none",
-  color:"#888",
-  cursor:"pointer",
-  fontSize:13,
-  transition:"0.2s"
-}}
-onMouseEnter={(e)=>(
-  e.currentTarget.style.color="#ef4444"
-)}
-onMouseLeave={(e)=>(
-  e.currentTarget.style.color="#888"
-)}
-          >
-            Remover
-          </button>
+          <div className={s.summaryContent}>
+
+            {/* CUPOM */}
+            <div className={s.couponBox}>
+
+              <div className={s.couponRow}>
+
+                <input
+                  type="text"
+                  placeholder="Cupom"
+                  value={coupon}
+                  onChange={(e) =>
+                    setCoupon(e.target.value.toUpperCase())
+                  }
+                  className={s.couponInput}
+                />
+
+                <button
+                  onClick={aplicarCupom}
+                  disabled={couponLoading}
+                  className={s.couponButton}
+                >
+                  {couponLoading ? "..." : "Aplicar"}
+                </button>
+
+              </div>
+
+              {discount > 0 && (
+                <div className={s.couponApplied}>
+                  Cupom {couponCode} aplicado (-R$ {discount.toFixed(2)})
+                </div>
+              )}
+
+              {couponCode === "WIFI25" && discount > 0 && (
+                <div className={s.wifiBanner}>
+                  🎉 Este produto já está com a condição promocional máxima disponível.
+                </div>
+              )}
+
+            </div>
+
+            {/* FRETE */}
+            <div className={s.freteWrapper}>
+              <FreteCalculator
+                dark
+                saveToCart
+                items={items}
+              />
+            </div>
+
+            {/* SUBTOTAL */}
+            <div className={s.summaryRow}>
+              <span>Subtotal</span>
+              <span className={s.summaryRowValue}>
+                R$ {total.toFixed(2)}
+              </span>
+            </div>
+
+            {/* DESCONTO */}
+            {discount > 0 && (
+              <div className={s.summaryRowDiscount}>
+                <span>Desconto</span>
+                <span>-R$ {discount.toFixed(2)}</span>
+              </div>
+            )}
+
+            {/* TOTAL */}
+            <div className={s.totalRow}>
+              <div className={s.totalLabel}>Total</div>
+              <div className={s.totalValue}>
+                R$ {totalFinal.toFixed(2)}
+              </div>
+            </div>
+
+            {/* PIX */}
+            <div className={s.pixCard}>
+
+              <div className={s.pixLabel}>
+                {hasKit ? "Pagamento à vista" : "À vista no PIX"}
+              </div>
+
+              <div className={s.pixValue}>
+                R$ {(
+                  hasKit
+                    ? total + (frete / 100)
+                    : ((total - discount) * 0.95 + (frete / 100))
+                ).toFixed(2)}
+              </div>
+
+              <div className={s.pixNote}>
+                {hasKit
+                  ? "Pagamento sem desconto adicional"
+                  : "Economia instantânea de 5%"}
+              </div>
+
+            </div>
+
+            {/* BOTÃO */}
+            <button
+              onClick={handleCheckout}
+              disabled={items.length === 0}
+              className={
+                items.length === 0
+                  ? `${s.checkoutBtn} ${s.checkoutBtnDisabled}`
+                  : s.checkoutBtn
+              }
+            >
+              Finalizar compra
+            </button>
+
+            {/* COMPRA SEGURA */}
+            <div className={s.secureBox}>
+              <span className={s.secureIcon}>🔒</span>
+              <div>
+                <div className={s.secureTitle}>Ambiente seguro</div>
+                <div className={s.secureText}>
+                  Seus dados estão protegidos com criptografia SSL de 256 bits.
+                </div>
+              </div>
+            </div>
+
+          </div>
 
         </div>
 
       </div>
 
-    ))}
-
-    </div>
-
-    {/* RESUMO */}
-<div
-  style={{
-    width:"100%",
-    position:"sticky",
-    top:20,
-    height:"fit-content",
-    background:"#0f141a",
-    padding:24,
-    borderRadius:16,
-    border:"1px solid rgba(255,255,255,0.05)"
-  }}
->
-
-  {/* CUPOM */}
-  <div style={{ marginBottom:20 }}>
-
-    <div
-      style={{
-        display:"flex",
-        gap:10
-      }}
-    >
-
-      <input
-        type="text"
-        placeholder="Cupom"
-        value={coupon}
-        onChange={(e)=>
-          setCoupon(e.target.value.toUpperCase())
-        }
-        style={{
-          flex:1,
-          height:44,
-          borderRadius:10,
-          border:"1px solid rgba(255,255,255,0.08)",
-          background:"#11161d",
-          color:"#fff",
-          padding:"0 12px",
-          fontSize:14
-        }}
-      />
-
-      <button
-        onClick={aplicarCupom}
-        disabled={couponLoading}
-        style={{
-          border:"none",
-          padding:"0 18px",
-          borderRadius:10,
-          background:"#22c55e",
-          color:"#022c22",
-          fontWeight:700,
-          cursor:"pointer"
-        }}
-      >
-        {couponLoading
-          ? "..."
-          : "Aplicar"}
-      </button>
-
-    </div>
-
-    {discount > 0 && (
-      <div
-        style={{
-          marginTop:10,
-          color:"#22c55e",
-          fontSize:13,
-          fontWeight:700
-        }}
-      >
-        Cupom {couponCode} aplicado
-        {" "}
-        (-R$ {discount.toFixed(2)})
-      </div>
-    )}
-
- {couponCode === "WIFI25" && discount > 0 && (
-  <div
-    style={{
-      marginTop:8,
-      padding:"10px 12px",
-      borderRadius:"8px",
-      background:"rgba(250,204,21,0.08)",
-      border:"1px solid rgba(250,204,21,0.2)",
-      color:"#facc15",
-      fontSize:"12px",
-      lineHeight:1.5
-    }}
-  >
-    🎉 Este produto já está com a condição promocional máxima disponível.
-  </div>
-)}
-
-  </div>
-  
-  <FreteCalculator
-  dark
-  saveToCart
-  items={items}
-/>
-  {/* FRETE */}
-  
-
-
-  {/* SUBTOTAL */}
-  <div
-    style={{
-      display:"flex",
-      justifyContent:"space-between",
-      marginBottom:8,
-      color:"#9ca3af",
-      fontSize:14
-    }}
-  >
-    <span>Subtotal</span>
-
-    <span style={{ color:"#fff" }}>
-      R$ {total.toFixed(2)}
-    </span>
-  </div>
-
-  {/* DESCONTO */}
-  {discount > 0 && (
-    <div
-      style={{
-        display:"flex",
-        justifyContent:"space-between",
-        marginBottom:8,
-        color:"#22c55e",
-        fontSize:14,
-        fontWeight:700
-      }}
-    >
-      <span>Desconto</span>
-
-      <span>
-        -R$ {discount.toFixed(2)}
-      </span>
-    </div>
-  )}
-
-  {/* TOTAL */}
-  <div
-    style={{
-      display:"flex",
-      justifyContent:"space-between",
-      alignItems:"flex-end",
-      borderTop:"1px solid rgba(255,255,255,0.06)",
-      paddingTop:16,
-      marginTop:14
-    }}
-  >
-
-    <div
-      style={{
-        color:"#fff",
-        fontSize:15,
-        fontWeight:700
-      }}
-    >
-      Total
-    </div>
-
-    <div
-      style={{
-        color:"#fff",
-        fontSize:32,
-        fontWeight:900,
-        lineHeight:1
-      }}
-    >
-      R$ {totalFinal.toFixed(2)}
     </div>
 
   </div>
 
-  {items.length === 0 && (
-    <p style={{ color: "#888", marginTop: 20 }}>
-      Seu carrinho está vazio
-    </p>
-  )}
-
-  {/* PIX */}
-<div
-  style={{
-    marginTop:16,
-    padding:14,
-    borderRadius:14,
-    background:"rgba(34,197,94,0.08)",
-    border:"1px solid rgba(34,197,94,0.16)"
-  }}
->
-
-  <div
-    style={{
-      color:"#22c55e",
-      fontWeight:700,
-      fontSize:13,
-      marginBottom:6
-    }}
-  >
-    {hasKit
-      ? "Pagamento à vista"
-      : "À vista no PIX"}
-  </div>
-
-  <div
-    style={{
-      color:"#22c55e",
-      fontSize:28,
-      fontWeight:900,
-      lineHeight:1
-    }}
-  >
-    R$ {
-
-      (
-        hasKit
-
-          ? total + (frete / 100)
-
-          : ((total - discount) * 0.95 + (frete / 100))
-
-      ).toFixed(2)
-
-    }
-  </div>
-
-  <div
-    style={{
-      color:"#888",
-      fontWeight:400,
-      fontSize:11,
-      marginTop:6
-    }}
-  >
-    {hasKit
-      ? "Pagamento sem desconto adicional"
-      : "Economia instantânea de 5%"}
-  </div>
-
-</div>
-  {/* BOTÃO */}
-  <button
-    onClick={handleCheckout}
-    disabled={items.length === 0}
-    style={{
-      marginTop:20,
-      width:"100%",
-      height:50,
-      borderRadius:12,
-      border:"none",
-      fontWeight:700,
-      fontSize:16,
-      background: items.length === 0 ? "#333" : "#22c55e",
-      color:"#022c22",
-      cursor: items.length === 0 ? "not-allowed" : "pointer",
-      transition:"0.2s"
-    }}
-  >
-    Finalizar compra
-  </button>
-
-</div>
-
-  </div>
-
-);
-
+  );
 
 }
