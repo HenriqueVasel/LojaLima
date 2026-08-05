@@ -11,54 +11,111 @@ type Props = {
 };
 
 export function CartItemRow({ item, onUpdateQty, onRemove }: Props) {
+  const unitPrice = item.product.priceCents / 100;
+  const totalPrice = unitPrice * item.qty;
+
   return (
-    <div className={s.product}>
-      <Link href={`/produto/${item.product.slug}`} className={s.image}>
+    <article className={s.productCard}>
+      {/* FOTO */}
+      <Link href={`/produto/${item.product.slug}`} className={s.productImage}>
         <img
           src={item.product.images?.[0]?.url || "/produtos/placeholder.jpg"}
           alt={item.product.name}
         />
       </Link>
 
-      <div className={s.info}>
+
+      <div className={s.productBrand}>
+    Intelbras
+</div>
+
+<div className={s.productSku}>
+    SKU: {item.product.sku}
+</div>
+
+<div className={s.productBadges}>
+
+    <span className={s.badgeGreen}>
+        ✔ Produto Original
+    </span>
+
+    <span className={s.badgeBlue}>
+        📦 Em estoque
+    </span>
+
+</div>
+
+      {/* INFORMAÇÕES */}
+      <div className={s.productInfo}>
         <div>
-          <Link href={`/produto/${item.product.slug}`} className={s.nameLink}>
-            <h3 className={s.name}>{item.product.name}</h3>
+          <Link
+            href={`/produto/${item.product.slug}`}
+            className={s.productName}
+          >
+            {item.product.name}
           </Link>
 
-          <p className={s.unitPrice}>
-            R$ {(item.product.priceCents / 100).toFixed(2)} / unidade
-          </p>
+          <div className={s.productBrand}>
+            Intelbras
+          </div>
+
+          <div className={s.productSku}>
+            SKU: {item.product.sku}
+          </div>
+
+          <div className={s.productBadges}>
+            <span className={s.badgeGreen}>
+              ✔ Produto Original
+            </span>
+
+            <span className={s.badgeBlue}>
+              🚚 Em estoque
+            </span>
+          </div>
         </div>
 
-        <div className={s.quantity}>
-          <button
-            onClick={() => onUpdateQty(item.id, item.qty - 1)}
-            className={s.qtyBtn}
-          >
-            -
-          </button>
+        <div className={s.productBottom}>
+          <div className={s.quantityBox}>
+            <button
+              onClick={() => onUpdateQty(item.id, item.qty - 1)}
+            >
+              −
+            </button>
 
-          <span className={s.qtyValue}>{item.qty}</span>
+            <span>{item.qty}</span>
+
+            <button
+              onClick={() => onUpdateQty(item.id, item.qty + 1)}
+            >
+              +
+            </button>
+          </div>
 
           <button
-            onClick={() => onUpdateQty(item.id, item.qty + 1)}
-            className={s.qtyBtn}
+            className={s.removeButton}
+            onClick={() => onRemove(item.id)}
           >
-            +
+            🗑 Remover
           </button>
         </div>
       </div>
 
-      <div className={s.priceArea}>
-        <div className={s.price}>
-          R$ {((item.product.priceCents / 100) * item.qty).toFixed(2)}
-        </div>
+      {/* PREÇO */}
+      <div className={s.productPrice}>
 
-        <button onClick={() => onRemove(item.id)} className={s.remove}>
-          Remover
-        </button>
-      </div>
-    </div>
+<div className={s.priceLabel}>
+Preço total
+</div>
+
+<div className={s.priceValue}>
+R$ {totalPrice.toFixed(2)}
+</div>
+
+<div className={s.unitValue}>
+R$ {unitPrice.toFixed(2)} / unidade
+</div>
+
+</div>
+    </article>
   );
 }

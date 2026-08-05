@@ -363,55 +363,74 @@ function logoTransportadora(item: any) {
 
       <div className={s.row}>
 
-        <div className={s.methods}>
+       <div className={s.methods}>
 
 <button
-onClick={() => {
+  onClick={() => {
 
-  setRetirada(false);
+    setRetirada(false);
 
-sessionStorage.removeItem("retiradaLoja");
-sessionStorage.removeItem("shipping");
+    sessionStorage.removeItem("retiradaLoja");
+    sessionStorage.removeItem("shipping");
 
+    window.dispatchEvent(
+      new Event("freteUpdated")
+    );
 
-
-  window.dispatchEvent(
-    new Event("freteUpdated")
-  );
-
-}}
-  className={`${s.methodBtn} ${!retirada ? s.active : ""}`}
+  }}
+  className={`${s.methodCard} ${!retirada ? s.methodActive : ""}`}
 >
-  <div className={s.methodContent}>
-    <FaTruck className={s.icon} />
-    <span>Entrega</span>
-  </div>
+
+<div className={s.methodEmoji}>
+🚚
+</div>
+
+<div className={s.methodTitle}>
+Entrega
+</div>
+
+<div className={s.methodText}>
+Receba em seu endereço
+</div>
+
 </button>
 
 <button
- onClick={() => {
-setRetirada(true);
+  onClick={() => {
 
-sessionStorage.setItem("retiradaLoja", "true");
-sessionStorage.setItem("freteCents", "0");
-sessionStorage.removeItem("shipping");
+    setRetirada(true);
 
-localStorage.setItem(
-  "freteNome",
-  "Retirada na loja"
-);
+    sessionStorage.setItem("retiradaLoja","true");
 
-window.dispatchEvent(
-  new Event("freteUpdated")
-);
+    sessionStorage.setItem("freteCents","0");
 
-}}
-  className={`${s.methodBtn} ${retirada ? s.active : ""}`}
+    sessionStorage.removeItem("shipping");
+
+    localStorage.setItem(
+      "freteNome",
+      "Retirada na loja"
+    );
+
+    window.dispatchEvent(
+      new Event("freteUpdated")
+    );
+
+  }}
+  className={`${s.methodCard} ${retirada ? s.methodActive : ""}`}
 >
-  <div className={s.methodContent}>
-    <FaStore className={s.icon} />
-    <span>Retirada</span>
-  </div>
+
+<div className={s.methodEmoji}>
+🏬
+</div>
+
+<div className={s.methodTitle}>
+Retirada
+</div>
+
+<div className={s.methodText}>
+Retire em nossa loja
+</div>
+
 </button>
 
 </div>
@@ -453,51 +472,41 @@ window.dispatchEvent(
     </div>
   )}
 
-  {manualFreight && (
+{manualFreight && (
 
-<div
-  style={{
-    marginTop:20,
-    padding:18,
-    borderRadius:12,
-    border:"1px solid #facc15",
-    background:"#1f1b0b"
-  }}
->
+<div className={s.manualFreightCard}>
 
-<h3
-style={{
-color:"#facc15",
-marginBottom:10
-}}
->
-📦 Frete sob consulta
+<div className={s.manualHeader}>
+
+<div className={s.manualIcon}>
+🚚
+</div>
+
+<div>
+
+<h3 className={s.manualTitle}>
+Frete sob medida
 </h3>
 
-<p
-style={{
-color:"#fff",
-marginBottom:20
-}}
->
+<p className={s.manualSubtitle}>
+Este produto precisa de cotação personalizada.
+</p>
+
+</div>
+
+</div>
+
+<p className={s.manualMessage}>
 {manualMessage}
 </p>
 
 <a
 href="https://wa.me/554738423235?text=Olá,%20gostaria%20de%20calcular%20o%20frete."
 target="_blank"
-style={{
-display:"inline-block",
-padding:"12px 20px",
-background:"#22c55e",
-color:"#fff",
-borderRadius:8,
-textDecoration:"none",
-fontWeight:700
-}}
+className={s.manualButton}
 >
 
-Calcular pelo WhatsApp
+Solicitar orçamento
 
 </a>
 
@@ -703,3 +712,4 @@ const ativo = simple
     </div>
   );
 }
+

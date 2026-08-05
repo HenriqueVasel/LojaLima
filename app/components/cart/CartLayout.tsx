@@ -14,10 +14,32 @@ type Props = {
 // (sem novo state) marcando sempre "Carrinho" como ativo.
 export function CartLayout({ productsSlot, summarySlot }: Props) {
   return (
-    <div className={s.page}>
-      <h1 className={s.title}>Carrinho</h1>
+<div className={s.page}>
 
-      <div className={s.grid}>
+<div className={s.pageHeader}>
+
+<div>
+
+<h1 className={s.title}>
+Carrinho de Compras
+</h1>
+
+<p className={s.subtitle}>
+Revise seus produtos antes de finalizar o pedido.
+</p>
+
+</div>
+
+<a
+href="/"
+className={s.backShopping}
+>
+← Continuar comprando
+</a>
+
+</div>
+
+<div className={s.grid}>
         <div className={s.left}>{productsSlot}</div>
         {summarySlot}
       </div>
