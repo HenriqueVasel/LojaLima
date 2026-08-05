@@ -2,13 +2,23 @@
    PAGE
 =========================== */
 
-.page {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-    background: #fff;
+.page{
+
+    width:100%;
+
+    background:#f5f7fb;
+
 }
 
+.pageContent{
+
+    max-width:1500px;
+
+    margin:0 auto;
+
+    padding:40px 30px 80px;
+
+}
 .pageHeader{
     display:flex;
     justify-content:space-between;
