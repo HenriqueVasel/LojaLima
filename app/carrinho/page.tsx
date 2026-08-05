@@ -159,8 +159,6 @@ export default function CarrinhoPage() {
     });
 
     window.dispatchEvent(new Event("cartUpdated"));
-
-    fetchCart();
   }
 
   async function updateQty(id: number, qty: number) {
