@@ -742,6 +742,35 @@ if (!retirada && !numero) {
               Finalizar compra
             </button>
 
+            {/* SELOS DE CONFIANÇA */}
+            <div className={s.perksList}>
+
+              <div className={s.perkItem}>
+                <div className={s.perkIcon}>🛡️</div>
+                <div>
+                  <div className={s.perkTitle}>Compra 100% segura</div>
+                  <div className={s.perkDesc}>Seus dados protegidos</div>
+                </div>
+              </div>
+
+              <div className={s.perkItem}>
+                <div className={s.perkIcon}>💳</div>
+                <div>
+                  <div className={s.perkTitle}>Parcele em até 12x</div>
+                  <div className={s.perkDesc}>No cartão de crédito</div>
+                </div>
+              </div>
+
+              <div className={s.perkItem}>
+                <div className={s.perkIcon}>🎧</div>
+                <div>
+                  <div className={s.perkTitle}>Suporte especializado</div>
+                  <div className={s.perkDesc}>Atendimento via WhatsApp</div>
+                </div>
+              </div>
+
+            </div>
+
             {/* COMPRA SEGURA */}
             <div className={s.secureBox}>
               <span className={s.secureIcon}>🔒</span>
