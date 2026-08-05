@@ -13,21 +13,14 @@ type Props = {
 export function CartProductsCard({ items, onUpdateQty, onRemove }: Props) {
   return (
     <div className={s.card}>
-     <div className={s.cardHeader}>
-
-<div>
-
-<h2 className={s.cardTitle}>
-Produtos no carrinho
-</h2>
-
-<p className={s.cardSubtitle}>
-{items.length} {items.length === 1 ? "item adicionado" : "itens adicionados"}
-</p>
-
-</div>
-
-</div>
+      <div className={s.cardHeader}>
+        <div>
+          <div className={s.cardTitle}>Produtos no carrinho</div>
+          <p className={s.cardSubtitle}>
+            {items.length} {items.length === 1 ? "item adicionado" : "itens adicionados"}
+          </p>
+        </div>
+      </div>
 
       <div className={s.products}>
         {items.map((item) => (

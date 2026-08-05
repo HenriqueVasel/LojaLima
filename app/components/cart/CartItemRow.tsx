@@ -11,12 +11,11 @@ type Props = {
 };
 
 export function CartItemRow({ item, onUpdateQty, onRemove }: Props) {
-  const unitPrice = item.product.priceCents / 100;
-  const totalPrice = unitPrice * item.qty;
+  const inStock = item.product.stock > 0;
 
   return (
-    <article className={s.productCard}>
-      {/* FOTO */}
+    <div className={s.productCard}>
+
       <Link href={`/produto/${item.product.slug}`} className={s.productImage}>
         <img
           src={item.product.images?.[0]?.url || "/produtos/placeholder.jpg"}
@@ -24,98 +23,49 @@ export function CartItemRow({ item, onUpdateQty, onRemove }: Props) {
         />
       </Link>
 
-
-      <div className={s.productBrand}>
-    Intelbras
-</div>
-
-<div className={s.productSku}>
-    SKU: {item.product.sku}
-</div>
-
-<div className={s.productBadges}>
-
-    <span className={s.badgeGreen}>
-        ✔ Produto Original
-    </span>
-
-    <span className={s.badgeBlue}>
-        📦 Em estoque
-    </span>
-
-</div>
-
-      {/* INFORMAÇÕES */}
       <div className={s.productInfo}>
         <div>
-          <Link
-            href={`/produto/${item.product.slug}`}
-            className={s.productName}
-          >
+          <Link href={`/produto/${item.product.slug}`} className={s.productName}>
             {item.product.name}
           </Link>
 
-          <div className={s.productBrand}>
-            Intelbras
-          </div>
-
-          <div className={s.productSku}>
-            SKU: {item.product.sku}
-          </div>
+          <p className={s.productSku}>SKU: {item.product.sku}</p>
 
           <div className={s.productBadges}>
-            <span className={s.badgeGreen}>
-              ✔ Produto Original
-            </span>
+            {/* OBS: "Produto Original" é estático — não existe campo
+                equivalente no CartProduct hoje. Troque por um campo
+                real (ex: item.product.isOriginal) se o backend expuser isso. */}
+            <span className={s.badgeGreen}>✓ Produto Original</span>
 
             <span className={s.badgeBlue}>
-              🚚 Em estoque
+              {inStock ? "Em estoque" : "Sem estoque"}
             </span>
           </div>
         </div>
 
-        <div className={s.productBottom}>
-          <div className={s.quantityBox}>
-            <button
-              onClick={() => onUpdateQty(item.id, item.qty - 1)}
-            >
-              −
-            </button>
-
-            <span>{item.qty}</span>
-
-            <button
-              onClick={() => onUpdateQty(item.id, item.qty + 1)}
-            >
-              +
-            </button>
-          </div>
-
-          <button
-            className={s.removeButton}
-            onClick={() => onRemove(item.id)}
-          >
-            🗑 Remover
-          </button>
+        <div className={s.quantityBox}>
+          <button onClick={() => onUpdateQty(item.id, item.qty - 1)}>-</button>
+          <span>{item.qty}</span>
+          <button onClick={() => onUpdateQty(item.id, item.qty + 1)}>+</button>
         </div>
       </div>
 
-      {/* PREÇO */}
-      <div className={s.productPrice}>
+      <div className={s.priceArea}>
+        <div>
+          <div className={s.priceLabel}>Preço total</div>
+          <div className={s.priceValue}>
+            R$ {((item.product.priceCents / 100) * item.qty).toFixed(2)}
+          </div>
+          <div className={s.unitValue}>
+            R$ {(item.product.priceCents / 100).toFixed(2)} / unidade
+          </div>
+        </div>
 
-<div className={s.priceLabel}>
-Preço total
-</div>
+        <button onClick={() => onRemove(item.id)} className={s.removeButton}>
+          🗑 Remover
+        </button>
+      </div>
 
-<div className={s.priceValue}>
-R$ {totalPrice.toFixed(2)}
-</div>
-
-<div className={s.unitValue}>
-R$ {unitPrice.toFixed(2)} / unidade
-</div>
-
-</div>
-    </article>
+    </div>
   );
 }
