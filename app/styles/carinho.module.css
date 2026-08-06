@@ -679,3 +679,25 @@
     }
 
 }
+
+.manualFreightCard{
+    margin-top:16px;
+    padding:18px;
+    border-radius:16px;
+    background:#fff7ed;
+    border:1px solid #fdba74;
+}
+
+.manualFreightCard h4{
+    margin:0 0 8px;
+    color:#c2410c;
+    font-size:16px;
+    font-weight:700;
+}
+
+.manualFreightCard p{
+    margin:4px 0;
+    color:#7c2d12;
+    font-size:14px;
+    line-height:1.5;
+}

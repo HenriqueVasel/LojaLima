@@ -127,6 +127,11 @@ console.log(products);
   console.log("PRODUTOS:", products);
 }
 
+console.log("================================");
+console.log("ENVIANDO PARA O MELHOR ENVIO");
+console.log(JSON.stringify(products, null, 2));
+console.log("================================");
+
     const response = await fetch(
       "https://www.melhorenvio.com.br/api/v2/me/shipment/calculate",
       {
@@ -162,6 +167,22 @@ console.log(products);
     );
 
     const data = await response.json();
+
+
+    // Se todas as transportadoras retornaram erro,
+// envia para cotação manual.
+const semFrete =
+  Array.isArray(data) &&
+  data.length > 0 &&
+  data.every((item: any) => item.error);
+
+if (semFrete) {
+  return NextResponse.json({
+    manualFreight: true,
+    message:
+      "Este pedido excede os limites de envio automático. Solicite uma cotação personalizada pelo WhatsApp."
+  });
+}
 
     console.log("STATUS MELHOR ENVIO:", response.status);
 console.log("RESPOSTA MELHOR ENVIO:", data);

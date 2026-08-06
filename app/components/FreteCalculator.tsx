@@ -4,6 +4,7 @@
 
 import s from "@/app/styles/FreteCalculator.module.css";
 import { FaTruck, FaStore } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import { useState, useEffect } from "react";
 
@@ -98,6 +99,22 @@ useEffect(() => {
       );
 
       const data = await res.json();
+
+      if (data.manualFreight) {
+
+  sessionStorage.setItem("manualFreight", "true");
+
+  setFretes([]);
+
+  toast(
+    "Este pedido excede os limites de envio automático. Solicite uma cotação personalizada pelo WhatsApp.",
+    {
+      icon: "📦",
+    }
+  );
+
+  return;
+}
 
       if (data.erro) {
         alert("CEP não encontrado");
