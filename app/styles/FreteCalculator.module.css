@@ -990,6 +990,7 @@ text-decoration:none;
 
 .dark .address{
     color:#cbd5e1 !important;
+    opacity:1 !important;
 }
 
 .dark .address *{
