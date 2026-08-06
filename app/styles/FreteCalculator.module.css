@@ -1,11 +1,9 @@
 .wrapper{
-  margin-top: 25px;
-  margin-bottom: 20px;
-  padding: 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(0,0,0,0.08);
-  background: #fff;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    background:#f8fafc;
+    border:1px solid #e7ecf3;
+    border-radius:18px;
+    padding:20px;
+    box-shadow:none;
 }
 
 .icon {
@@ -16,10 +14,9 @@
 }
 
 .title{
-  font-weight: 700;
-  margin-bottom: 14px;
-  font-size: 15px;
-  color: #111;
+    font-size:15px;
+    font-weight:800;
+    color:#111827;
 }
 
 .methods{
@@ -30,9 +27,52 @@
 }
 
 .methodCard{
-    padding:14px 10px;
-    border-radius:14px;
-    gap:6px;
+    background:#fff;
+    border:2px solid #e7ecf3;
+    cursor:pointer;
+    box-shadow:0 1px 3px rgba(15,23,42,.04);
+}
+
+.methodCard:hover{
+    border-color:#16a34a;
+    box-shadow:0 8px 20px rgba(15,23,42,.08);
+}
+
+.methodActive{
+    border:2px solid #16a34a;
+    background:#f0fdf4;
+    box-shadow:0 0 0 3px rgba(22,163,74,.10);
+}
+
+.methodTitle{
+    color:#111827;
+}
+
+.methodText{
+    color:#64748b;
+}
+
+.cepLabel{
+    color:#374151;
+}
+
+.input{
+    background:#fff;
+    border:1px solid #dbe2ea;
+    color:#111827;
+}
+
+.input::placeholder{
+    color:#9ca3af;
+}
+
+.input:focus{
+    border-color:#16a34a;
+    box-shadow:0 0 0 3px rgba(22,163,74,0.12);
+}
+
+.okBtn{
+    cursor:pointer;
 }
 
 .methodEmoji{
