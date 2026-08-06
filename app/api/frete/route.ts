@@ -106,20 +106,18 @@ console.log({
 });
 
 
- products.push({
-
+products.push({
   id: String(produto.id),
 
-  width: Number(produto.width),
-  height: Number(produto.height),
-  length: Number(produto.length),
+  width: Number(produto.width) / 10,
+  height: Number(produto.height) / 10,
+  length: Number(produto.length) / 10,
   weight: Number(produto.weight),
 
   insurance_value:
     (produto.priceCents / 100) * item.quantity,
 
-  quantity: item.quantity
-
+  quantity: item.quantity,
 });
 
 console.log(products);
