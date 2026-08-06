@@ -106,18 +106,23 @@ console.log({
 });
 
 
-  products.push({
+ products.push({
 
-    id: String(produto.id),
+  id: String(produto.id),
 
+  width: Number(produto.width),
+  height: Number(produto.height),
+  length: Number(produto.length),
+  weight: Number(produto.weight),
 
+  insurance_value:
+    (produto.priceCents / 100) * item.quantity,
 
-    insurance_value:
-  (produto.priceCents / 100) * item.quantity,
+  quantity: item.quantity
 
-    quantity: item.quantity
+});
 
-  });
+console.log(products);
 
   console.log("PRODUCTS ENVIADOS:", products);
 
