@@ -382,7 +382,7 @@ function logoTransportadora(item: any) {
 >
 
 <div className={s.methodEmoji}>
-🚚
+  <FaTruck />
 </div>
 
 <div className={s.methodTitle}>
@@ -420,7 +420,7 @@ Receba em seu endereço
 >
 
 <div className={s.methodEmoji}>
-🏬
+  <FaStore />
 </div>
 
 <div className={s.methodTitle}>
