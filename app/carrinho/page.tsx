@@ -325,12 +325,31 @@ export default function CarrinhoPage() {
       const cepWpp = localStorage.getItem("cep") || "";
 
       const produtos = items
-        .map(item => `• ${item.product.name} (Qtd: ${item.qty})`)
-        .join("\n");
+  .map(
+    (item) => `📦 ${item.product.name}
 
-      const mensagem = encodeURIComponent(
-        `Olá!\n\nGostaria de solicitar uma cotação de frete para os seguintes produtos:\n\n${produtos}\n\nCEP: ${cepWpp}`
-      );
+SKU: ${item.product.sku}
+Quantidade: ${item.qty}
+Valor unitário: R$ ${(item.product.priceCents / 100).toFixed(2)}
+Subtotal: R$ ${((item.product.priceCents / 100) * item.qty).toFixed(2)}`
+  )
+  .join("\n\n━━━━━━━━━━━━━━━━━━\n\n");
+
+const mensagem = encodeURIComponent(
+`Olá! 👋
+
+Gostaria de solicitar uma cotação de frete para este pedido.
+
+━━━━━━━━━━━━━━━━━━
+
+${produtos}
+
+━━━━━━━━━━━━━━━━━━
+
+📍 CEP: ${cepWpp}
+
+Obrigado!`
+);
 
       window.open(`https://wa.me/${telefone}?text=${mensagem}`, "_blank");
 
