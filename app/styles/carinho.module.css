@@ -11,14 +11,13 @@
 }
 
 .pageContent{
-
+    width:100%;
     max-width:1500px;
-
     margin:0 auto;
-
     padding:40px 30px 80px;
-
+    box-sizing:border-box;
 }
+
 .pageHeader{
     display:flex;
     justify-content:space-between;
@@ -644,7 +643,9 @@
 @media (max-width:768px){
 
 .pageContent{
-    padding:20px 14px 40px;
+        width:100%;
+    padding:16px;
+    box-sizing:border-box;
 }
 
 .pageHeader{
