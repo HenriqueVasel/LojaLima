@@ -176,6 +176,8 @@ const semFrete =
   data.length > 0 &&
   data.every((item: any) => item.error);
 
+  console.log(">>> ENTRANDO EM MANUAL FREIGHT <<<");
+
 if (semFrete) {
   return NextResponse.json({
     manualFreight: true,
