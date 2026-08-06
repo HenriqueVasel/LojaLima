@@ -641,43 +641,232 @@
    RESPONSIVO
 =========================== */
 
-@media (max-width: 900px){
+@media (max-width:768px){
 
-    .grid{
-        grid-template-columns:1fr;
-    }
+.pageContent{
+    padding:20px 14px 40px;
+}
 
-    .summary{
-        position:static;
-        top:auto;
-    }
+.pageHeader{
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
+    margin-bottom:20px;
+}
 
-    .productCard{
-        grid-template-columns:90px 1fr;
-        grid-template-areas:
-            "image info"
-            "price price";
-        gap:16px;
-    }
+.title{
+    font-size:20px;
+    margin-bottom:4px;
+}
 
-    .productImage{
-        grid-area:image;
-        width:90px;
-        height:90px;
-    }
+.subtitle{
+    font-size:13px;
+}
 
-    .productInfo{
-        grid-area:info;
-    }
+.cardHeader{
+    padding:18px;
+}
 
-    .priceArea{
-        grid-area:price;
-        flex-direction:row;
-        justify-content:space-between;
-        align-items:center;
-        margin-top:14px;
-    }
+.cardTitle{
+    font-size:18px;
+}
 
+.cardSubtitle{
+    font-size:13px;
+}
+
+.products{
+    padding:14px;
+    gap:14px;
+}
+
+.grid{
+    grid-template-columns:1fr;
+    gap:18px;
+}
+
+.summary{
+    position:static;
+}
+
+.productCard{
+
+    display:grid;
+
+    grid-template-columns:80px 1fr;
+
+    grid-template-areas:
+        "image info"
+        "image quantity"
+        "price price";
+
+    gap:14px;
+
+    padding:16px;
+
+    border-radius:18px;
+}
+
+.productImage{
+
+    grid-area:image;
+
+  width:72px;
+height:72px;
+
+    border-radius:14px;
+}
+
+.productInfo{
+
+    grid-area:info;
+
+    justify-content:flex-start;
+
+    gap:6px;
+}
+
+.productBadges{
+    display:none;
+}
+
+.productName{
+
+    font-size:15px;
+
+    line-height:1.35;
+
+    font-weight:800;
+}
+
+.productBrand{
+
+    margin-top:2px;
+
+    font-size:13px;
+}
+
+.productSku{
+
+    font-size:12px;
+}
+
+.productBadges{
+
+    margin-top:8px;
+
+    gap:6px;
+}
+
+.badgeGreen,
+.badgeBlue{
+
+    padding:5px 9px;
+
+    font-size:11px;
+}
+
+.quantityBox{
+
+    grid-area:quantity;
+
+    margin-top:6px;
+
+    padding:4px;
+
+    gap:8px;
+}
+
+.quantityBox button{
+
+    width:34px;
+
+    height:34px;
+
+    font-size:18px;
+
+    border-radius:10px;
+}
+
+.quantityBox span{
+
+    font-size:16px;
+
+    min-width:20px;
+}
+
+.priceArea{
+
+    grid-area:price;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:flex-end;
+
+    margin-top:4px;
+}
+
+.priceLabel{
+
+    font-size:11px;
+
+    margin-bottom:3px;
+}
+
+.priceValue{
+
+    font-size:22px;
+}
+
+.unitValue{
+
+    font-size:11px;
+
+    margin-top:3px;
+}
+
+.removeButton{
+
+    font-size:13px;
+
+    margin-top:0;
+}
+
+.summaryHeader{
+
+    padding:18px;
+}
+
+.summaryHeader h2{
+
+    font-size:20px;
+}
+
+.summaryContent{
+
+    padding:18px;
+
+    gap:18px;
+}
+
+.checkoutBtn{
+
+    height:52px;
+
+    font-size:16px;
+}
+
+.perksList{
+
+    gap:10px;
+}
+
+.secureBox{
+
+    margin-top:6px;
+}
 }
 
 .manualFreightCard{
