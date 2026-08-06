@@ -953,3 +953,20 @@ text-decoration:none;
 .dark .address *{
     color:#cbd5e1 !important;
 }
+
+.pickupTitle{
+    color:#0f172a !important;
+    font-weight:700;
+}
+
+.pickupAddress{
+    color:#475569 !important;
+    font-weight:500;
+    opacity:1 !important;
+}
+
+.pickupFree{
+    color:#16a34a !important;
+    font-weight:700;
+    opacity:1 !important;
+}
