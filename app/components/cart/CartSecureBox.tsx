@@ -1,11 +1,14 @@
 "use client";
 
+import { Lock } from "lucide-react";
 import s from "@/app/styles/carinho.module.css";
 
 export function CartSecureBox() {
   return (
     <div className={s.secureBox}>
-      <span className={s.secureIcon}>🔒</span>
+      <div className={s.secureIcon}>
+        <Lock strokeWidth={2.2} />
+      </div>
       <div>
         <div className={s.secureTitle}>Ambiente seguro</div>
         <div className={s.secureText}>
