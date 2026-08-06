@@ -692,65 +692,86 @@
 
 .productCard{
 
-    display:grid;
+    display:flex;
 
-    grid-template-columns:80px 1fr;
+    align-items:flex-start;
 
-    grid-template-areas:
-        "image info"
-        "image quantity"
-        "price price";
+    gap:12px;
 
-    gap:14px;
-
-    padding:16px;
-
-    border-radius:18px;
-}
-
-.productImage{
-
-    grid-area:image;
-
-  width:72px;
-height:72px;
-
-    border-radius:14px;
+    padding:14px;
 }
 
 .productInfo{
 
-    grid-area:info;
+    flex:1;
 
-    justify-content:flex-start;
+    display:flex;
 
-    gap:6px;
-}
+    flex-direction:column;
 
-.productBadges{
-    display:none;
+    gap:4px;
+
+    min-width:0;
 }
 
 .productName{
 
     font-size:15px;
 
-    line-height:1.35;
+    line-height:1.3;
 
-    font-weight:800;
-}
-
-.productBrand{
-
-    margin-top:2px;
-
-    font-size:13px;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+    overflow:hidden;
 }
 
 .productSku{
 
-    font-size:12px;
+    font-size:11px;
 }
+
+.productImage{
+
+    width:72px;
+
+    height:72px;
+
+    min-width:72px;
+}
+
+.productBadges{
+
+    display:none;
+}
+
+.quantityBox{
+
+    margin-top:8px;
+}
+
+.priceArea{
+
+    margin-top:8px;
+
+    align-items:flex-start;
+}
+
+.priceValue{
+
+    font-size:22px;
+}
+
+.unitValue{
+
+    font-size:11px;
+}
+
+
+
+
+
+
 
 .productBadges{
 
@@ -767,16 +788,7 @@ height:72px;
     font-size:11px;
 }
 
-.quantityBox{
 
-    grid-area:quantity;
-
-    margin-top:6px;
-
-    padding:4px;
-
-    gap:8px;
-}
 
 .quantityBox button{
 
