@@ -88,6 +88,24 @@ if (
   });
 }
 
+console.log({
+  id: produto.id,
+  nome: produto.name,
+
+  width: produto.width,
+  height: produto.height,
+  length: produto.length,
+  weight: produto.weight,
+
+  priceCents: produto.priceCents,
+
+  insurance:
+    (produto.priceCents / 100) * item.quantity,
+
+  quantity: item.quantity
+});
+
+
   products.push({
 
     id: String(produto.id),
