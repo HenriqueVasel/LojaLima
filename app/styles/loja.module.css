@@ -403,11 +403,11 @@ MOBILE SMALL
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 24px 60px;
+  padding: 20px 24px 60px;
 
   display: grid;
-  grid-template-columns: 260px 1fr;
-  gap: 30px;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 28px;
 
   align-items: start;
 }
@@ -421,13 +421,16 @@ MOBILE SMALL
   width: 100%;
 
   background: #ffffff;
+
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
+  border-radius: 14px;
 
   overflow: hidden;
 
   position: sticky;
   top: 20px;
+
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 
@@ -438,35 +441,44 @@ MOBILE SMALL
   align-items: center;
   justify-content: space-between;
 
-  padding: 20px;
+  padding: 18px 20px;
 
-  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  border-bottom: 1px solid #eeeeee;
 }
 
 .sidebarHeader h2 {
   margin: 0;
 
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
+  color: #111827;
 }
 
 .clearFilters {
   border: none;
   background: transparent;
 
-  padding: 0;
+  padding: 4px 0;
 
-  font-size: 13px;
+  color: #16a34a;
+
+  font-size: 12px;
   font-weight: 600;
 
   cursor: pointer;
+}
+
+.clearFilters:hover {
+  text-decoration: underline;
 }
 
 
 /* SEÇÕES */
 
 .filterSection {
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #eeeeee;
 }
 
 .filterTitle {
@@ -476,20 +488,22 @@ MOBILE SMALL
   align-items: center;
   justify-content: space-between;
 
-  padding: 18px 20px;
+  padding: 16px 20px;
 
   border: none;
-  background: transparent;
+  background: #ffffff;
 
-  font-size: 15px;
+  color: #111827;
+
+  font-size: 14px;
   font-weight: 700;
 
   cursor: pointer;
   text-align: left;
 }
 
-.filterContent {
-  padding: 0 20px 20px;
+.filterTitle:hover {
+  background: #fafafa;
 }
 
 
@@ -498,11 +512,18 @@ MOBILE SMALL
 .checkboxItem {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 
-  font-size: 14px;
+  font-size: 13px;
+  color: #374151;
 
   cursor: pointer;
+
+  transition: color 0.15s ease;
+}
+
+.checkboxItem:hover {
+  color: #111827;
 }
 
 .checkboxItem + .checkboxItem {
@@ -510,8 +531,10 @@ MOBILE SMALL
 }
 
 .checkboxItem input {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
+
+  accent-color: #16a34a;
 
   cursor: pointer;
 }
@@ -612,4 +635,18 @@ MOBILE SMALL
 
   max-height: 320px;
   overflow-y: auto;
+}
+
+
+.categoryList::-webkit-scrollbar {
+  width: 5px;
+}
+
+.categoryList::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #d1d5db;
+}
+
+.categoryList::-webkit-scrollbar-track {
+  background: transparent;
 }

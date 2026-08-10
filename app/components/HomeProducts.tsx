@@ -8,6 +8,7 @@ import StoreSidebar from "@/app/components/StoreSidebar";
 import WhatsAppSection from "@/app/components/WhatsAppSection";
 import HomeKitBanner from "@/app/components/HomeKitSection";
 import HomeBreakSection from "@/app/components/HomeBreakSection";
+import styles from "@/app/styles/loja.module.css";
 
 export default function HomeProducts() {
 
@@ -23,11 +24,11 @@ export default function HomeProducts() {
     <>
       {/* RESULTADOS */}
       {isResults && (
-  <div className="storeLayout">
+  <div className={styles.storeLayout}>
 
     <StoreSidebar />
 
-    <div className="storeContent">
+    <div className={styles.storeContent}>
 
       <StoreToolbar />
 

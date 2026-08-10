@@ -1,0 +1,54 @@
+warning: in the working copy of 'prisma/schema.prisma', LF will be replaced by CRLF the next time Git touches it
+[1mdiff --git a/prisma/schema.prisma b/prisma/schema.prisma[m
+[1mindex 15a88b3..c4cb93c 100644[m
+[1m--- a/prisma/schema.prisma[m
+[1m+++ b/prisma/schema.prisma[m
+[36m@@ -355,3 +355,47 @@[m [menum user_role {[m
+   ADMIN[m
+   CLIENT[m
+ }[m
+[32m+[m
+[32m+[m[32mmodel Navigation {[m
+[32m+[m
+[32m+[m[32m  id          Int      @id @default(autoincrement())[m
+[32m+[m
+[32m+[m[32m  title       String[m
+[32m+[m
+[32m+[m[32m  slug        String   @unique[m
+[32m+[m
+[32m+[m[32m  parentId    Int?[m
+[32m+[m
+[32m+[m[32m  parent      Navigation? @relation("NavigationTree", fields: [parentId], references: [id])[m
+[32m+[m
+[32m+[m[32m  children    Navigation[] @relation("NavigationTree")[m
+[32m+[m
+[32m+[m[32m  level       Int      @default(1)[m
+[32m+[m
+[32m+[m[32m  order       Int      @default(0)[m
+[32m+[m
+[32m+[m[32m  visible     Boolean  @default(true)[m
+[32m+[m
+[32m+[m[32m  featured    Boolean  @default(false)[m
+[32m+[m
+[32m+[m[32m  icon        String?[m
+[32m+[m
+[32m+[m[32m  banner      String?[m
+[32m+[m
+[32m+[m[32m  image       String?[m
+[32m+[m
+[32m+[m[32m  url         String?[m
+[32m+[m
+[32m+[m[32m  description String?[m
+[32m+[m
+[32m+[m[32m  createdAt   DateTime @default(now())[m
+[32m+[m
+[32m+[m[32m  updatedAt   DateTime @updatedAt[m
+[32m+[m
+[32m+[m[32m  @@index([parentId])[m
+[32m+[m
+[32m+[m[32m  @@index([visible])[m
+[32m+[m
+[32m+[m[32m  @@index([order])[m
+[32m+[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
