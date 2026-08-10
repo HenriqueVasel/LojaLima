@@ -243,6 +243,247 @@ color: #111827;
   gap: 10px;
 }
 
+/* =====================================================
+   MEGA MENU
+   ===================================================== */
+
+.menuItem {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* Área clicável do item */
+.menuItem > .menuLink {
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Menu que aparece ao passar o mouse */
+.megaMenu {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+
+  width: 620px;
+
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+
+  padding: 22px;
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.22),
+    0 4px 12px rgba(0, 0, 0, 0.08);
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease,
+    visibility 180ms ease;
+
+  z-index: 1000000;
+}
+
+/* Mantém o menu aberto enquanto o mouse estiver no item */
+.menuItem:hover .megaMenu {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+
+  transform: translateX(-50%) translateY(0);
+}
+
+
+/* Pequena seta visual acima do menu */
+.megaMenu::before {
+  content: "";
+
+  position: absolute;
+
+  top: -7px;
+  left: 50%;
+
+  width: 14px;
+  height: 14px;
+
+  background: #ffffff;
+
+  transform: translateX(-50%) rotate(45deg);
+
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+
+/* Conteúdo interno */
+.megaContent {
+  position: relative;
+  z-index: 2;
+}
+
+
+/* Cabeçalho do mega menu */
+.megaHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+
+  border-bottom: 1px solid #eeeeee;
+}
+
+.megaHeader span {
+  color: #111827;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.megaHeader a {
+  color: #16a34a;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.megaHeader a:hover {
+  text-decoration: underline;
+}
+
+
+/* Links das categorias */
+.megaGrid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 8px 12px;
+}
+
+
+.megaLink {
+  display: flex;
+  align-items: center;
+
+  min-height: 42px;
+
+  padding: 10px 12px;
+
+  border-radius: 10px;
+
+  color: #374151;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-decoration: none;
+
+  transition: 160ms ease;
+}
+
+
+.megaLink::before {
+  content: "›";
+
+  margin-right: 8px;
+
+  color: #16a34a;
+
+  font-size: 18px;
+  font-weight: 800;
+}
+
+
+.megaLink:hover {
+  background: #f0fdf4;
+
+  color: #15803d;
+
+  transform: translateX(3px);
+}
+
+
+/* =====================================================
+   INSTALAÇÕES E SOLUÇÕES
+   ===================================================== */
+
+.solutionGrid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  gap: 12px;
+}
+
+
+.solutionCard {
+  display: flex;
+  flex-direction: column;
+
+  padding: 18px;
+
+  min-height: 90px;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  border: 1px solid #e5e7eb;
+
+  text-decoration: none;
+
+  transition: 180ms ease;
+}
+
+
+.solutionCard strong {
+  color: #111827;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  margin-bottom: 6px;
+}
+
+
+.solutionCard span {
+  color: #6b7280;
+
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+
+.solutionCard:hover {
+  background: #f0fdf4;
+
+  border-color: rgba(34, 197, 94, 0.35);
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+
+.solutionCard:hover strong {
+  color: #15803d;
+}
+.menuItem > button.menuLink {
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .menuLink {
   color: rgba(255, 255, 255, 0.92);
   text-decoration: none;

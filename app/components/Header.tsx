@@ -34,15 +34,127 @@ export default function Header() {
   const [user, setUser] = useState<any>(null);
   const [loadingUser, setLoadingUser] = useState(true);
 
-  const menu = [
-    { label: "Loja", href: "/" },
-    { label: "Projetos", href: ROUTES.projetos },
-    { label: "Data center", href: ROUTES.categoria("data-center") },
-    { label: "Sistema de Segurança", href: ROUTES.categoria("sistema-de-seguranca") },
-    { label: "Instalação", href: ROUTES.instalacao },
-    { label: "Fale conosco", href: ROUTES.faleConosco },
-    { label: "Quem somos", href: ROUTES.quemSomos },
-  ];
+const productMenus = [
+  {
+    label: "CFTV",
+    href: ROUTES.categoria("cftv"),
+    items: [
+      { label: "Câmeras", href: ROUTES.categoria("cftv") },
+      { label: "Câmeras Wi-Fi", href: ROUTES.categoria("cameras-wifi") },
+      { label: "Gravadores", href: ROUTES.categoria("cftv") },
+      { label: "Acessórios", href: ROUTES.categoria("cftv") },
+    ],
+  },
+
+  {
+    label: "Alarmes",
+    href: ROUTES.categoria("alarmes"),
+    items: [
+      { label: "Centrais", href: ROUTES.categoria("alarmes") },
+      { label: "Sensores", href: ROUTES.categoria("alarmes") },
+      { label: "Sirenes", href: ROUTES.categoria("alarmes") },
+      { label: "Acessórios", href: ROUTES.categoria("alarmes") },
+    ],
+  },
+
+  {
+    label: "Controle de Acesso",
+    href: ROUTES.categoria("controle-de-acesso"),
+    items: [
+      {
+        label: "Controladoras",
+        href: ROUTES.categoria("controle-de-acesso"),
+      },
+      {
+        label: "Leitores",
+        href: ROUTES.categoria("controle-de-acesso"),
+      },
+      {
+        label: "Biometria",
+        href: ROUTES.categoria("controle-de-acesso"),
+      },
+      {
+        label: "Fechaduras",
+        href: ROUTES.categoria("fechaduras"),
+      },
+    ],
+  },
+
+  {
+    label: "Redes",
+    href: ROUTES.categoria("redes"),
+    items: [
+      { label: "Cabeamento", href: ROUTES.categoria("cabeamento") },
+      { label: "Switches", href: ROUTES.categoria("redes") },
+      { label: "Roteadores", href: ROUTES.categoria("redes") },
+      { label: "Access Points", href: ROUTES.categoria("redes") },
+    ],
+  },
+
+  {
+    label: "Energia",
+    href: ROUTES.categoria("energia"),
+    items: [
+      { label: "Fontes", href: ROUTES.categoria("energia") },
+      { label: "Nobreaks", href: ROUTES.categoria("energia") },
+      { label: "Baterias", href: ROUTES.categoria("energia") },
+    ],
+  },
+];
+
+const solutionsMenu = [
+  {
+    label: "Data Center",
+    href: ROUTES.categoria("data-center"),
+  },
+
+  {
+    label: "Projetos",
+    href: ROUTES.projetos,
+  },
+
+  {
+    label: "Sistemas de Segurança",
+    href: ROUTES.categoria("sistema-de-seguranca"),
+  },
+
+  {
+    label: "Instalações",
+    href: ROUTES.instalacao,
+  },
+];
+
+const menu = [
+  ...productMenus.map((item) => ({
+    label: item.label,
+    href: item.href,
+  })),
+
+  {
+    label: "Data Center",
+    href: ROUTES.categoria("data-center"),
+  },
+
+  {
+    label: "Projetos",
+    href: ROUTES.projetos,
+  },
+
+  {
+    label: "Instalações e Soluções",
+    href: ROUTES.instalacao,
+  },
+
+  {
+    label: "Fale conosco",
+    href: ROUTES.faleConosco,
+  },
+
+  {
+    label: "Quem somos",
+    href: ROUTES.quemSomos,
+  },
+];
 
 async function fetchCartCount() {
 
@@ -569,19 +681,144 @@ async function fetchCartCount() {
         </div>
 
         {/* Menu Desktop */}
-        <nav className={s.menu}>
-          {menu.map((item) => (
+       <nav className={s.menu}>
+
+  {/* CATEGORIAS DE PRODUTOS */}
+  {productMenus.map((item) => (
+    <div
+      key={item.label}
+      className={s.menuItem}
+    >
+      <Link
+        href={item.href}
+        className={`${s.menuLink} ${
+          isActive(item.href) ? s.active : ""
+        }`}
+      >
+        {item.label}
+      </Link>
+
+      <div className={s.megaMenu}>
+        <div className={s.megaContent}>
+
+          <div className={s.megaHeader}>
+            <span>{item.label}</span>
+
+            <Link href={item.href}>
+              Ver todos os produtos →
+            </Link>
+          </div>
+
+          <div className={s.megaGrid}>
+
+            {item.items.map((subItem) => (
+              <Link
+                key={subItem.label}
+                href={subItem.href}
+                className={s.megaLink}
+              >
+                {subItem.label}
+              </Link>
+            ))}
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  ))}
+
+
+  {/* DATA CENTER */}
+  <Link
+    href={ROUTES.categoria("data-center")}
+    className={`${s.menuLink} ${
+      isActive(ROUTES.categoria("data-center"))
+        ? s.active
+        : ""
+    }`}
+  >
+    Data Center
+  </Link>
+
+
+  {/* PROJETOS */}
+  <Link
+    href={ROUTES.projetos}
+    className={`${s.menuLink} ${
+      isActive(ROUTES.projetos)
+        ? s.active
+        : ""
+    }`}
+  >
+    Projetos
+  </Link>
+
+
+  {/* INSTALAÇÕES E SOLUÇÕES */}
+  <div className={s.menuItem}>
+
+    <button className={s.menuLink}>
+      Instalações e Soluções
+    </button>
+
+    <div className={s.megaMenu}>
+      <div className={s.megaContent}>
+
+        <div className={s.megaHeader}>
+          <span>Instalações e Soluções</span>
+        </div>
+
+        <div className={s.solutionGrid}>
+
+          {solutionsMenu.map((item) => (
             <Link
-              key={item.href}
+              key={item.label}
               href={item.href}
-              className={`${s.menuLink} ${
-                isActive(item.href) ? s.active : ""
-              }`}
+              className={s.solutionCard}
             >
-              {item.label}
+              <strong>{item.label}</strong>
+
+              <span>
+                Conheça nossas soluções →
+              </span>
             </Link>
           ))}
-        </nav>
+
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+
+  {/* FALE CONOSCO */}
+  <Link
+    href={ROUTES.faleConosco}
+    className={`${s.menuLink} ${
+      isActive(ROUTES.faleConosco)
+        ? s.active
+        : ""
+    }`}
+  >
+    Fale conosco
+  </Link>
+
+
+  {/* QUEM SOMOS */}
+  <Link
+    href={ROUTES.quemSomos}
+    className={`${s.menuLink} ${
+      isActive(ROUTES.quemSomos)
+        ? s.active
+        : ""
+    }`}
+  >
+    Quem somos
+  </Link>
+
+</nav>
 
         {openMobile && (
           <div className={s.mobileMenu}>
