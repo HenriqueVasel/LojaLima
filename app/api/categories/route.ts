@@ -59,13 +59,14 @@ export async function GET() {
 
     // Junta categorias + quantidade
     const categoriesWithCount = categories
-      .map((category) => ({
-        id: category.id,
-        name: category.name,
-        slug: category.slug,
-        productCount: countMap.get(category.id) || 0,
-      }))
-      .filter((category) => category.productCount > 0);
+  .map((category) => ({
+    id: category.id,
+    name: category.name,
+    slug: category.slug,
+    parentId: category.parentId,
+    productCount: countMap.get(category.id) || 0,
+  }))
+  .filter((category) => category.productCount > 0);
 
     return NextResponse.json(categoriesWithCount);
 
