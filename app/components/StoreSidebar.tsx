@@ -9,11 +9,12 @@ export default function StoreSidebar() {
   const params = useSearchParams();
 
   const [categories, setCategories] = useState<
-  {
-    id: number;
-    name: string;
-    slug: string;
-  }[]
+ {
+  id: number;
+  name: string;
+  slug: string;
+  productCount: number;
+}[]
 >([]);
 
 const [loadingCategories, setLoadingCategories] = useState(true);
@@ -185,10 +186,17 @@ const visibleCategories = showAllCategories
 
                 }}
               />
+<div className={styles.categoryLabel}>
 
-              <span>
-                {item.name}
-              </span>
+  <span className={styles.categoryName}>
+    {item.name}
+  </span>
+
+  <span className={styles.categoryCount}>
+    {item.productCount}
+  </span>
+
+</div>
 
             </label>
 

@@ -5,19 +5,89 @@ export async function GET() {
 
   try {
 
-    const categories = await prisma.category.findMany({
+   const categories = await prisma.category.findMany({
   where: {
     active: true,
   },
-      orderBy: {
-        sortOrder: "asc"
+
+  orderBy: {
+    sortOrder: "asc",
+  },
+
+  select: {
+    id: true,
+    name: true,
+    slug: true,
+
+    productcategory: {
+      where: {
+        product: {
+          active: true,
+
+          stock: {
+            quantity: {
+              gt: 0,
+            },
+          },
+
+          productimage: {
+            some: {
+              url: {
+                not: "",
+              },
+            },
+          },
+        },
       },
+
       select: {
-        id: true,
-        name: true,
-        slug: true
-      }
-    });
+        productId: true,
+      },
+    },
+  },
+});
+
+const categories = await prisma.category.findMany({
+  where: {
+    active: true,
+  },
+
+  orderBy: {
+    sortOrder: "asc",
+  },
+
+  select: {
+    id: true,
+    name: true,
+    slug: true,
+
+    productcategory: {
+      where: {
+        product: {
+          active: true,
+
+          stock: {
+            quantity: {
+              gt: 0,
+            },
+          },
+
+          productimage: {
+            some: {
+              url: {
+                not: "",
+              },
+            },
+          },
+        },
+      },
+
+      select: {
+        productId: true,
+      },
+    },
+  },
+});
 
     return NextResponse.json(categories);
 
