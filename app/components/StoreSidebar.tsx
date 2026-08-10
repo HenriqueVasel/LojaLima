@@ -17,6 +17,8 @@ export default function StoreSidebar() {
 >([]);
 
 const [loadingCategories, setLoadingCategories] = useState(true);
+const [categorySearch, setCategorySearch] = useState("");
+const [showAllCategories, setShowAllCategories] = useState(false);
 
 useEffect(() => {
   async function loadCategories() {
@@ -76,6 +78,16 @@ useEffect(() => {
     setMax(value);
   }
 
+  const filteredCategories = categories.filter((category) =>
+  category.name
+    .toLowerCase()
+    .includes(categorySearch.toLowerCase())
+);
+
+const visibleCategories = showAllCategories
+  ? filteredCategories
+  : filteredCategories.slice(0, 7);
+
   return (
     <aside className={styles.sidebar}>
 
@@ -94,63 +106,131 @@ useEffect(() => {
       </div>
 
 
-      {/* CATEGORIA */}
+     {/* CATEGORIA */}
 
-      <div className={styles.filterSection}>
+<div className={styles.filterSection}>
 
-        <button
-          type="button"
-          className={styles.filterTitle}
-        >
-          <span>Categoria</span>
-          <span>⌃</span>
-        </button>
+  <button
+    type="button"
+    className={styles.filterTitle}
+  >
+    <span>Categoria</span>
+    <span>⌃</span>
+  </button>
 
-       <div className={styles.filterContent}>
+  <div className={styles.filterContent}>
 
-  {loadingCategories ? (
-    <p className={styles.filterPlaceholder}>
-      Carregando categorias...
-    </p>
-  ) : (
-    <div className={styles.categoryList}>
+    {/* BUSCA */}
 
-      {categories.map((item) => {
-        const selected = params.get("category") === item.slug;
+    <div className={styles.filterSearch}>
 
-        return (
-          <label
-            key={item.id}
-            className={styles.checkboxItem}
-          >
-            <input
-              type="checkbox"
-              checked={selected}
-              onChange={() => {
-                const searchParams = new URLSearchParams(
-                  params.toString()
-                );
+      <span className={styles.searchIcon}>
+        ⌕
+      </span>
 
-                searchParams.set("category", item.slug);
-
-                router.push(
-                  `/loja?${searchParams.toString()}`
-                );
-              }}
-            />
-
-            <span>{item.name}</span>
-          </label>
-        );
-      })}
+      <input
+        type="text"
+        placeholder="Buscar categoria..."
+        value={categorySearch}
+        onChange={(e) =>
+          setCategorySearch(e.target.value)
+        }
+      />
 
     </div>
-  )}
 
-</div>
+
+    {/* CATEGORIAS */}
+
+    {loadingCategories ? (
+
+      <p className={styles.filterPlaceholder}>
+        Carregando categorias...
+      </p>
+
+    ) : (
+
+      <div className={styles.categoryList}>
+
+        {visibleCategories.map((item) => {
+
+          const selected =
+            params.get("category") === item.slug;
+
+          return (
+
+            <label
+              key={item.id}
+              className={styles.checkboxItem}
+            >
+
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={() => {
+
+                  const searchParams =
+                    new URLSearchParams(
+                      params.toString()
+                    );
+
+                  searchParams.set(
+                    "category",
+                    item.slug
+                  );
+
+                  router.push(
+                    `/loja?${searchParams.toString()}`
+                  );
+
+                }}
+              />
+
+              <span>
+                {item.name}
+              </span>
+
+            </label>
+
+          );
+
+        })}
 
       </div>
 
+    )}
+
+
+    {/* VER MAIS */}
+
+    {!categorySearch &&
+      filteredCategories.length > 7 && (
+
+      <button
+        type="button"
+        className={styles.showMoreButton}
+        onClick={() =>
+          setShowAllCategories(
+            !showAllCategories
+          )
+        }
+      >
+
+        {showAllCategories
+          ? "Ver menos"
+          : "Ver mais"}
+
+        <span>
+          {showAllCategories ? "⌃" : "⌄"}
+        </span>
+
+      </button>
+
+    )}
+
+  </div>
+
+</div>
 
       {/* MARCA */}
 
