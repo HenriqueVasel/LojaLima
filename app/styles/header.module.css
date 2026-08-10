@@ -321,19 +321,18 @@ color: #111827;
   position: absolute;
 
   top: -7px;
-  left: 50%;
+  left: 38px;
 
   width: 14px;
   height: 14px;
 
   background: #ffffff;
 
-  transform: translateX(-50%) rotate(45deg);
+  transform: rotate(45deg);
 
   border-left: 1px solid rgba(0, 0, 0, 0.08);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
-
 
 /* Conteúdo interno */
 .megaContent {
@@ -416,6 +415,60 @@ color: #111827;
   color: #15803d;
 
   transform: translateX(3px);
+}
+
+/* Mega menus dos itens mais à direita */
+.menuItem:nth-child(6) .megaMenu {
+  left: auto;
+  right: 0;
+}
+
+.menuItem:nth-child(7) .megaMenu {
+  left: auto;
+  right: 0;
+}
+
+.megaColumns {
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 28px;
+
+  padding-top: 4px;
+}
+
+.megaColumn {
+  min-width: 0;
+}
+
+.megaColumnTitle {
+  margin: 0 0 10px;
+
+  color: #111827;
+
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.megaColumnLinks {
+  display: flex;
+  flex-direction: column;
+
+  gap: 2px;
+}
+
+.megaColumn .megaLink {
+  min-height: auto;
+
+  padding: 7px 8px;
+
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.megaColumn .megaLink:hover {
+  transform: translateX(2px);
 }
 
 

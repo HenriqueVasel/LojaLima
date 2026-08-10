@@ -43,25 +43,51 @@ const productMenus = [
 
   href: productCategory("cftv"),
 
-  items: [
+  columns: [
     {
-      label: "Câmeras",
-      href: productCategory("cftv"),
+      title: "Câmeras",
+      items: [
+        {
+          label: "Câmeras",
+          href: productCategory("cftv"),
+        },
+        {
+          label: "Câmeras Wi-Fi",
+          href: productCategory("cameras-wifi"),
+        },
+        {
+          label: "Câmeras IP",
+          href: productCategory("cftv"),
+        },
+      ],
     },
 
     {
-      label: "Câmeras Wi-Fi",
-      href: productCategory("cameras-wifi"),
+      title: "Gravadores",
+      items: [
+        {
+          label: "DVR",
+          href: productCategory("cftv"),
+        },
+        {
+          label: "NVR",
+          href: productCategory("cftv"),
+        },
+      ],
     },
 
     {
-      label: "Gravadores",
-      href: productCategory("cftv"),
-    },
-
-    {
-      label: "Acessórios",
-      href: productCategory("cftv"),
+      title: "Acessórios",
+      items: [
+        {
+          label: "Acessórios CFTV",
+          href: productCategory("cftv"),
+        },
+        {
+          label: "Fontes",
+          href: productCategory("cftv"),
+        },
+      ],
     },
   ],
 },
@@ -804,19 +830,36 @@ async function fetchCartCount() {
             </Link>
           </div>
 
-          <div className={s.megaGrid}>
+        <div className={s.megaColumns}>
 
-            {item.items.map((subItem) => (
-              <Link
-                key={subItem.label}
-                href={subItem.href}
-                className={s.megaLink}
-              >
-                {subItem.label}
-              </Link>
-            ))}
+  {item.columns?.map((column) => (
+    <div
+      key={column.title}
+      className={s.megaColumn}
+    >
 
-          </div>
+      <h4 className={s.megaColumnTitle}>
+        {column.title}
+      </h4>
+
+      <div className={s.megaColumnLinks}>
+
+        {column.items.map((subItem) => (
+          <Link
+            key={subItem.label}
+            href={subItem.href}
+            className={s.megaLink}
+          >
+            {subItem.label}
+          </Link>
+        ))}
+
+      </div>
+
+    </div>
+  ))}
+
+</div>
 
         </div>
       </div>
