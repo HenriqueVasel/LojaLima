@@ -122,13 +122,68 @@ if (search) {
 /* categoria */
 
 if (category) {
-where.productcategory = {
-  some: {
-    category: {
+
+  // Busca a categoria selecionada
+  const selectedCategory = await prisma.category.findUnique({
+    where: {
       slug: category,
     },
-  },
-};
+    select: {
+      id: true,
+    },
+  });
+
+  if (selectedCategory) {
+
+    // Busca todas as categorias ativas
+    const allCategories = await prisma.category.findMany({
+      where: {
+        active: true,
+      },
+      select: {
+        id: true,
+        parentId: true,
+      },
+    });
+
+    // Começa pela categoria selecionada
+    const categoryIds = [selectedCategory.id];
+
+    // Encontra todas as categorias filhas,
+    // netas, bisnetas etc.
+    let changed = true;
+
+    while (changed) {
+
+      changed = false;
+
+      for (const cat of allCategories) {
+
+        if (
+          cat.parentId !== null &&
+          categoryIds.includes(cat.parentId) &&
+          !categoryIds.includes(cat.id)
+        ) {
+          categoryIds.push(cat.id);
+          changed = true;
+        }
+
+      }
+
+    }
+
+    // Busca produtos pertencentes à categoria
+    // ou a qualquer uma de suas subcategorias
+    where.productcategory = {
+      some: {
+        categoryId: {
+          in: categoryIds,
+        },
+      },
+    };
+
+  }
+
 }
 
 /* preço */
