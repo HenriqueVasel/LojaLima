@@ -11,11 +11,12 @@ export async function GET() {
       orderBy: {
         sortOrder: "asc",
       },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
+    select: {
+  id: true,
+  name: true,
+  slug: true,
+  parentId: true,
+},
     });
 
     // Busca quantos produtos válidos existem em cada categoria
