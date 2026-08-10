@@ -262,17 +262,16 @@ color: #111827;
 
 /* Menu que aparece ao passar o mouse */
 .megaMenu {
- position: absolute;
+  position: absolute;
 
   top: calc(100% + 10px);
-  left: 0;
+  left: 50%;
 
-  transform: translateY(8px);
-
-width: 640px;
-max-width: calc(100vw - 40px);
+  width: 640px;
+  max-width: calc(100vw - 40px);
 
   background: #ffffff;
+
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 16px;
 
@@ -286,6 +285,8 @@ max-width: calc(100vw - 40px);
   visibility: hidden;
   pointer-events: none;
 
+  transform: translateX(-50%) translateY(8px);
+
   transition:
     opacity 180ms ease,
     transform 180ms ease,
@@ -293,13 +294,23 @@ max-width: calc(100vw - 40px);
 
   z-index: 1000000;
 }
-
 /* Mantém o menu aberto enquanto o mouse estiver no item */
 .menuItem:hover .megaMenu {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 
+  transform: translateY(0);
+}
+
+.menuItem:last-child .megaMenu {
+  left: auto;
+  right: 0;
+
+  transform: translateY(8px);
+}
+
+.menuItem:last-child:hover .megaMenu {
   transform: translateY(0);
 }
 

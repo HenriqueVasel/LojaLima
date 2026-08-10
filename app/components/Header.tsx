@@ -39,7 +39,7 @@ export default function Header() {
 
 const productMenus = [
 {
-  label: "CFTV",
+  label: "Câmeras",
 
   href: productCategory("cftv"),
 
@@ -168,6 +168,30 @@ const productMenus = [
     {
       label: "Baterias",
       href: productCategory("energia"),
+    },
+  ],
+},
+
+
+{
+  label: "Fechaduras Digitais",
+
+  href: productCategory("fechaduras"),
+
+  items: [
+    {
+      label: "Fechaduras Digitais",
+      href: productCategory("fechaduras"),
+    },
+
+    {
+      label: "Fechaduras Inteligentes",
+      href: productCategory("fechaduras"),
+    },
+
+    {
+      label: "Acessórios",
+      href: productCategory("fechaduras"),
     },
   ],
 },
@@ -800,30 +824,7 @@ async function fetchCartCount() {
   ))}
 
 
-  {/* DATA CENTER */}
-  <Link
-    href={ROUTES.categoria("data-center")}
-    className={`${s.menuLink} ${
-      isActive(ROUTES.categoria("data-center"))
-        ? s.active
-        : ""
-    }`}
-  >
-    Data Center
-  </Link>
 
-
-  {/* PROJETOS */}
-  <Link
-    href={ROUTES.projetos}
-    className={`${s.menuLink} ${
-      isActive(ROUTES.projetos)
-        ? s.active
-        : ""
-    }`}
-  >
-    Projetos
-  </Link>
 
 
   {/* INSTALAÇÕES E SOLUÇÕES */}
