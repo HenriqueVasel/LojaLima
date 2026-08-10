@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import s from "@/app/styles/home.module.css";
-import CategoriesSection from "@/app/components/CategoriesSection";
+
 import HomeProducts from "@/app/components/HomeProducts";
 import HomeBannerCarousel from "@/app/components/HomeBannerCarousel";
 import { Suspense } from "react";
@@ -102,8 +102,7 @@ export default function HomePage() {
       <section className={`${s.productsSection} shopScope`}>
         <div className={s.productsWrapper}>
 
-          <CategoriesSection />
-
+          
         <TrustBar />
 
         <HomeSolutionSection />
