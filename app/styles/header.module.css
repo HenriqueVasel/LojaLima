@@ -366,6 +366,13 @@ color: #111827;
   z-index: 1;
 }
 
+.menuItem:nth-child(6) .megaMenu::before,
+.menuItem:nth-child(7) .megaMenu::before {
+  left: auto;
+  right: 55px;
+  transform: rotate(45deg);
+}
+
 /* Conteúdo interno */
 .megaContent {
   position: relative;
