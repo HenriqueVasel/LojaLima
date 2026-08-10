@@ -262,12 +262,15 @@ color: #111827;
 
 /* Menu que aparece ao passar o mouse */
 .megaMenu {
-  position: absolute;
-  top: calc(100% + 10px);
-  left: 50%;
-  transform: translateX(-50%) translateY(8px);
+ position: absolute;
 
-  width: 620px;
+  top: calc(100% + 10px);
+  left: 0;
+
+  transform: translateY(8px);
+
+width: 640px;
+max-width: calc(100vw - 40px);
 
   background: #ffffff;
   border: 1px solid rgba(0, 0, 0, 0.08);
@@ -297,9 +300,8 @@ color: #111827;
   visibility: visible;
   pointer-events: auto;
 
-  transform: translateX(-50%) translateY(0);
+  transform: translateY(0);
 }
-
 
 /* Pequena seta visual acima do menu */
 .megaMenu::before {
@@ -392,16 +394,8 @@ color: #111827;
   transition: 160ms ease;
 }
 
-
 .megaLink::before {
-  content: "›";
-
-  margin-right: 8px;
-
-  color: #16a34a;
-
-  font-size: 18px;
-  font-weight: 800;
+  content: none;
 }
 
 

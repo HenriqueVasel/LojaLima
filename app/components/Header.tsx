@@ -12,6 +12,9 @@ import { FiSearch } from "react-icons/fi";
 import s from "@/app/styles/header.module.css";
 import { ROUTES } from "@/routes/routes";
 
+const productCategory = (slug: string) =>
+  `/loja?category=${encodeURIComponent(slug)}`;
+
 
 export default function Header() {
   const [cartCount, setCartCount] = useState(0);
@@ -35,71 +38,139 @@ export default function Header() {
   const [loadingUser, setLoadingUser] = useState(true);
 
 const productMenus = [
+{
+  label: "CFTV",
+
+  href: productCategory("cftv"),
+
+  items: [
+    {
+      label: "Câmeras",
+      href: productCategory("cftv"),
+    },
+
+    {
+      label: "Câmeras Wi-Fi",
+      href: productCategory("cameras-wifi"),
+    },
+
+    {
+      label: "Gravadores",
+      href: productCategory("cftv"),
+    },
+
+    {
+      label: "Acessórios",
+      href: productCategory("cftv"),
+    },
+  ],
+},
+
+ {
+  label: "Alarmes",
+
+  href: productCategory("alarmes"),
+
+  items: [
+    {
+      label: "Centrais",
+      href: productCategory("alarmes"),
+    },
+
+    {
+      label: "Sensores",
+      href: productCategory("alarmes"),
+    },
+
+    {
+      label: "Sirenes",
+      href: productCategory("alarmes"),
+    },
+
+    {
+      label: "Acessórios",
+      href: productCategory("alarmes"),
+    },
+  ],
+},
   {
-    label: "CFTV",
-    href: ROUTES.categoria("cftv"),
-    items: [
-      { label: "Câmeras", href: ROUTES.categoria("cftv") },
-      { label: "Câmeras Wi-Fi", href: ROUTES.categoria("cameras-wifi") },
-      { label: "Gravadores", href: ROUTES.categoria("cftv") },
-      { label: "Acessórios", href: ROUTES.categoria("cftv") },
-    ],
-  },
+  label: "Controle de Acesso",
+
+  href: productCategory("controle-de-acesso"),
+
+  items: [
+    {
+      label: "Controladoras",
+      href: productCategory("controle-de-acesso"),
+    },
+
+    {
+      label: "Leitores",
+      href: productCategory("controle-de-acesso"),
+    },
+
+    {
+      label: "Biometria",
+      href: productCategory("controle-de-acesso"),
+    },
+
+    {
+      label: "Fechaduras",
+      href: productCategory("fechaduras"),
+    },
+  ],
+},
 
   {
-    label: "Alarmes",
-    href: ROUTES.categoria("alarmes"),
-    items: [
-      { label: "Centrais", href: ROUTES.categoria("alarmes") },
-      { label: "Sensores", href: ROUTES.categoria("alarmes") },
-      { label: "Sirenes", href: ROUTES.categoria("alarmes") },
-      { label: "Acessórios", href: ROUTES.categoria("alarmes") },
-    ],
-  },
+  label: "Redes",
 
-  {
-    label: "Controle de Acesso",
-    href: ROUTES.categoria("controle-de-acesso"),
-    items: [
-      {
-        label: "Controladoras",
-        href: ROUTES.categoria("controle-de-acesso"),
-      },
-      {
-        label: "Leitores",
-        href: ROUTES.categoria("controle-de-acesso"),
-      },
-      {
-        label: "Biometria",
-        href: ROUTES.categoria("controle-de-acesso"),
-      },
-      {
-        label: "Fechaduras",
-        href: ROUTES.categoria("fechaduras"),
-      },
-    ],
-  },
+  href: productCategory("redes"),
 
-  {
-    label: "Redes",
-    href: ROUTES.categoria("redes"),
-    items: [
-      { label: "Cabeamento", href: ROUTES.categoria("cabeamento") },
-      { label: "Switches", href: ROUTES.categoria("redes") },
-      { label: "Roteadores", href: ROUTES.categoria("redes") },
-      { label: "Access Points", href: ROUTES.categoria("redes") },
-    ],
-  },
+  items: [
+    {
+      label: "Cabeamento",
+      href: productCategory("cabeamento"),
+    },
 
-  {
-    label: "Energia",
-    href: ROUTES.categoria("energia"),
-    items: [
-      { label: "Fontes", href: ROUTES.categoria("energia") },
-      { label: "Nobreaks", href: ROUTES.categoria("energia") },
-      { label: "Baterias", href: ROUTES.categoria("energia") },
-    ],
-  },
+    {
+      label: "Switches",
+      href: productCategory("redes"),
+    },
+
+    {
+      label: "Roteadores",
+      href: productCategory("redes"),
+    },
+
+    {
+      label: "Access Points",
+      href: productCategory("redes"),
+    },
+  ],
+},
+
+ {
+  label: "Energia",
+
+  href: productCategory("energia"),
+
+  items: [
+    {
+      label: "Fontes",
+      href: productCategory("energia"),
+    },
+
+    {
+      label: "Nobreaks",
+      href: productCategory("energia"),
+    },
+
+    {
+      label: "Baterias",
+      href: productCategory("energia"),
+    },
+  ],
+},
 ];
 
 const solutionsMenu = [
