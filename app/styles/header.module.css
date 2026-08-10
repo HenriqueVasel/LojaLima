@@ -254,6 +254,25 @@ color: #111827;
   height: 100%;
 }
 
+/* Área invisível que mantém o hover ativo
+   enquanto o mouse desce até o mega menu */
+.menuItem::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  top: 100%;
+
+  height: 18px;
+
+  background: transparent;
+
+  z-index: 999999;
+}
+
 /* Área clicável do item */
 .menuItem > .menuLink {
   cursor: pointer;
@@ -264,7 +283,7 @@ color: #111827;
 .megaMenu {
   position: absolute;
 
-  top: calc(100% + 10px);
+ top: calc(100% + 8px);
   left: 50%;
 
   width: 640px;
@@ -300,7 +319,18 @@ color: #111827;
   visibility: visible;
   pointer-events: auto;
 
-  transform: translateY(0);
+ transform: translateX(-50%) translateY(0);
+}
+/* Fechaduras Digitais */
+.menuItem:nth-child(6) .megaMenu {
+  left: auto;
+  right: 0;
+}
+
+/* Instalações e Soluções */
+.menuItem:nth-child(7) .megaMenu {
+  left: auto;
+  right: 0;
 }
 
 .menuItem:last-child .megaMenu {
@@ -321,17 +351,19 @@ color: #111827;
   position: absolute;
 
   top: -7px;
-  left: 38px;
+  left: 50%;
 
   width: 14px;
   height: 14px;
 
   background: #ffffff;
 
-  transform: rotate(45deg);
+  transform: translateX(-50%) rotate(45deg);
 
   border-left: 1px solid rgba(0, 0, 0, 0.08);
   border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+  z-index: 1;
 }
 
 /* Conteúdo interno */
@@ -417,16 +449,7 @@ color: #111827;
   transform: translateX(3px);
 }
 
-/* Mega menus dos itens mais à direita */
-.menuItem:nth-child(6) .megaMenu {
-  left: auto;
-  right: 0;
-}
 
-.menuItem:nth-child(7) .megaMenu {
-  left: auto;
-  right: 0;
-}
 
 .megaColumns {
   display: grid;
