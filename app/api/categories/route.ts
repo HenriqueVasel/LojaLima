@@ -6,10 +6,9 @@ export async function GET() {
   try {
 
     const categories = await prisma.category.findMany({
-      where: {
-        active: true,
-        featured: true,
-      },
+  where: {
+    active: true,
+  },
       orderBy: {
         sortOrder: "asc"
       },

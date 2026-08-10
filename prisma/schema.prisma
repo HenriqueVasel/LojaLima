@@ -355,3 +355,47 @@ enum user_role {
   ADMIN
   CLIENT
 }
+
+model Navigation {
+
+  id          Int      @id @default(autoincrement())
+
+  title       String
+
+  slug        String   @unique
+
+  parentId    Int?
+
+  parent      Navigation? @relation("NavigationTree", fields: [parentId], references: [id])
+
+  children    Navigation[] @relation("NavigationTree")
+
+  level       Int      @default(1)
+
+  order       Int      @default(0)
+
+  visible     Boolean  @default(true)
+
+  featured    Boolean  @default(false)
+
+  icon        String?
+
+  banner      String?
+
+  image       String?
+
+  url         String?
+
+  description String?
+
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+
+  @@index([parentId])
+
+  @@index([visible])
+
+  @@index([order])
+
+}

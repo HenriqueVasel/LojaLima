@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import ProductGrid from "@/app/components/ProductGrid";
 import ProductsCarousel from "@/app/components/ProductsCarousel";
 import StoreToolbar from "@/app/components/StoreToolbar";
+import StoreSidebar from "@/app/components/StoreSidebar";
 import WhatsAppSection from "@/app/components/WhatsAppSection";
 import HomeKitBanner from "@/app/components/HomeKitSection";
 import HomeBreakSection from "@/app/components/HomeBreakSection";
@@ -22,23 +23,31 @@ export default function HomeProducts() {
     <>
       {/* RESULTADOS */}
       {isResults && (
-        <>
-          <StoreToolbar />
+  <div className="storeLayout">
 
-          <ProductGrid
-            title={
-              search
-                ? `Resultados para: ${search}`
-                : `Categoria: ${category}`
-            }
-            endpoint={`/api/products?${query}`}
-key={query}
-            itemsPerRow={4}
-            insertEvery={2}
-            insertComponent={<WhatsAppSection />}
-          />
-        </>
-      )}
+    <StoreSidebar />
+
+    <div className="storeContent">
+
+      <StoreToolbar />
+
+      <ProductGrid
+        title={
+          search
+            ? `Resultados para: ${search}`
+            : `Categoria: ${category}`
+        }
+        endpoint={`/api/products?${query}`}
+        key={query}
+        itemsPerRow={4}
+        insertEvery={2}
+        insertComponent={<WhatsAppSection />}
+      />
+
+    </div>
+
+  </div>
+)}
 
       {/* HOME */}
       {!isResults && (
