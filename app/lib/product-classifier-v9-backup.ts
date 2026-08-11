@@ -1,5 +1,5 @@
 // ============================================================
-// PRODUCT CLASSIFIER — V10 CALIBRADO
+// PRODUCT CLASSIFIER — V9 CORRIGIDO
 // ============================================================
 
 export type Classification = {
@@ -85,10 +85,6 @@ function categoryIs(categories: string, ...values: string[]) {
   return values.some((value) =>
     hasWord(categories, value)
   );
-}
-
-function categoryIsAny(categories: string, ...values: string[]) {
-  return values.some((value) => hasWord(categories, value));
 }
 
 // ============================================================
@@ -407,14 +403,6 @@ export function classifyProduct(
   // 6 — CÂMERAS
   // ==========================================================
 
-  const cameraModelSignal = has(
-    name,
-    "VIP",
-    "VIPW",
-    "VHD",
-    "VHDM"
-  );
-
   if (
     has(
       name,
@@ -423,8 +411,7 @@ export function classifyProduct(
       "CAMERA IP",
       "CAMERA WIFI",
       "CAMERA WI-FI"
-    ) ||
-    cameraModelSignal
+    )
   ) {
 
     let subtype = "Câmeras";
@@ -554,54 +541,6 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 9 — LEITORES DE CONTROLE DE ACESSO
-  // IMPORTANTE: antes de RFID/CREDENCIAIS para não confundir
-  // "LEITOR RFID" com cartão/tag/chaveiro.
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "LEITOR DE ACESSO",
-      "LEITOR RFID",
-      "LEITOR FACIAL",
-      "LEITOR BIOMETRICO",
-      "LEITOR BIOMETRIA",
-      "LEITOR DE PROXIMIDADE"
-    )
-    ||
-    (
-      categoryIsAny(categories, "CONTROLE DE ACESSO", "CONTROLE ACESSO") &&
-      has(name, "LEITOR")
-    )
-  ) {
-    let subtype = "Leitores";
-
-    if (has(name, "FACIAL")) {
-      subtype = "Leitores Faciais";
-    } else if (has(name, "BIOMETRIA", "BIOMETRICO")) {
-      subtype = "Leitores Biométricos";
-    } else if (has(name, "RFID", "PROXIMIDADE", "MIFARE")) {
-      subtype = "Leitores RFID";
-    }
-
-    return {
-      family: "controle-acesso",
-      type: "Leitores",
-      subtype,
-      line: null,
-      attributes: {
-        ...(has(name, "RFID", "MIFARE")
-          ? { rfid: true }
-          : {}),
-        ...(has(name, "POE")
-          ? { poe: true }
-          : {}),
-      },
-    };
-  }
-
-  // ==========================================================
   // 9 — RFID / CREDENCIAIS
   // ==========================================================
 
@@ -691,59 +630,19 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 11 — AUTOMAÇÃO / ILUMINAÇÃO: SENSORES
-  // Evita que sensores destinados à iluminação caiam em Alarmes.
+  // 11 — ALARMES: SENSORES
   // ==========================================================
 
   if (
     has(
       name,
-      "SENSOR DE PRESENCA PARA ILUMINACAO",
-      "SENSOR DE PRESENCA ILUMINACAO",
-      "SENSOR PARA ILUMINACAO",
-      "ESP180AE"
-    )
-    ||
-    (
-      has(name, "SENSOR", "PRESENCA") &&
-      categoryIsAny(categories, "ILUMINACAO", "AUTOMACAO")
-    )
-  ) {
-    return {
-      family: "automacao",
-      type: "Sensores",
-      subtype: "Sensores de Presença para Iluminação",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  // ==========================================================
-  // 11 — ALARMES: SENSORES
-  // ==========================================================
-
-  const alarmSensorSignal =
-    has(
-      name,
+      "SENSOR",
       "IVP",
       "IVA",
       "XAS",
-      "REED",
-      "SENSOR MAGNETICO",
-      "SENSOR MAGNÉTICO",
-      "SENSOR DE ALARME"
-    ) ||
-    (
-      has(name, "SENSOR") &&
-      categoryIsAny(
-        categories,
-        "ALARMES",
-        "SISTEMA DE SEGURANCA",
-        "SISTEMA DE SEGURANÇA"
-      )
-    );
-
-  if (alarmSensorSignal) {
+      "REED"
+    )
+  ) {
 
     let subtype = "Sensores";
 
@@ -975,29 +874,15 @@ export function classifyProduct(
   // IMPORTANTE: ANTES DE FONTE
   // ==========================================================
 
-  const accessPointModelSignal = has(
-    name,
-    "U7-PRO",
-    "U6-PRO",
-    "U6-LITE",
-    "U6+",
-    "UAP-AC",
-    "UAP-AC-PRO",
-    "UAP-AC-LITE",
-    "EAP225",
-    "EAP610",
-    "EAP650",
-    "EAP670"
-  );
-
-  const accessPointContextSignal =
-    has(name, "ACCESS POINT", "ACCESSPOINT", "AP WIFI", "AP WI-FI") ||
-    (
-      has(name, "UNIFI") &&
-      has(name, "AP")
-    );
-
-  if (accessPointContextSignal || accessPointModelSignal) {
+  if (
+    has(
+      name,
+      "ACCESS POINT",
+      "AP WIFI",
+      "AP WI-FI",
+      "ACCESSPOINT"
+    )
+  ) {
 
     return {
       family: "redes",
@@ -1509,19 +1394,6 @@ export function classifyProduct(
       "AUTOMATIZADOR",
       "MOTOR PARA PORTAO",
       "MOTOR PARA PORTÃO"
-    ) ||
-    (
-      categoryIsAny(categories, "AUTOMATIZADORES", "AUTOMATIZADOR") &&
-      has(
-        name,
-        "MOTOR",
-        "CENTRAL DE COMANDO",
-        "CENTRAL COMANDO",
-        "RECEPTOR",
-        "CONTROLE REMOTO",
-        "FOTOCELULA",
-        "FOTOCÉLULA"
-      )
     )
   ) {
 
@@ -1591,38 +1463,10 @@ export function classifyProduct(
     )
   ) {
 
-    let subtype = "Acessórios de Automatizadores";
-
-    if (has(name, "CREMALHEIRA")) {
-      subtype = "Cremalheiras";
-    } else if (has(name, "ENGRENAGEM")) {
-      subtype = "Engrenagens";
-    } else if (has(name, "COROA")) {
-      subtype = "Coroas";
-    } else if (has(name, "POLIA")) {
-      subtype = "Polias";
-    } else if (has(name, "MANCAL")) {
-      subtype = "Mancais";
-    } else if (has(name, "ROLAMENTO")) {
-      subtype = "Rolamentos";
-    } else if (has(name, "FUSO")) {
-      subtype = "Fusos";
-    } else if (has(name, "CONTROLE REMOTO")) {
-      subtype = "Controles Remotos";
-    } else if (has(name, "FOTOCELULA", "FOTOCÉLULA")) {
-      subtype = "Fotocélulas";
-    } else if (has(name, "CENTRAL DE COMANDO", "CENTRAL COMANDO")) {
-      subtype = "Centrais de Comando";
-    } else if (has(name, "RECEPTOR")) {
-      subtype = "Receptores";
-    } else if (has(name, "SUPORTE")) {
-      subtype = "Suportes";
-    }
-
     return {
       family: "automatizadores",
       type: "Acessórios de Automatizadores",
-      subtype,
+      subtype: null,
       line: null,
       attributes: {},
     };

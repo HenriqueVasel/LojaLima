@@ -1,165 +1,136 @@
 import { prisma } from "@/app/lib/prisma";
 import { NextResponse } from "next/server";
+
 import {
   classifyProduct,
+  calculateScore,
+  getStatus,
 } from "@/app/lib/product-classifier";
 
-export const dynamic =
-  "force-dynamic";
+export const dynamic = "force-dynamic";
 
-export async function GET(
-  req: Request
-) {
-
+export async function GET(req: Request) {
   try {
-
-    const { searchParams } =
-      new URL(req.url);
+    const { searchParams } = new URL(req.url);
 
     const page = Math.max(
-      Number(
-        searchParams.get("page") || "1"
-      ),
+      Number(searchParams.get("page") || "1"),
       1
     );
 
     const limit = Math.min(
       Math.max(
-        Number(
-          searchParams.get("limit") || "500"
-        ),
+        Number(searchParams.get("limit") || "500"),
         1
       ),
       500
     );
 
-    const skip =
-      (page - 1) * limit;
+    const skip = (page - 1) * limit;
 
-    const total =
-      await prisma.product.count({
-        where: {
-          active: true,
-        },
-      });
+    const total = await prisma.product.count({
+      where: {
+        active: true,
+      },
+    });
 
-    const products =
-      await prisma.product.findMany({
+    const products = await prisma.product.findMany({
+      where: {
+        active: true,
+      },
 
-        where: {
-          active: true,
-        },
+      select: {
+        id: true,
+        name: true,
+        sku: true,
+        description: true,
 
-        select: {
-
-          id: true,
-
-          name: true,
-
-          sku: true,
-
-          description: true,
-
-          productcategory: {
-
-            select: {
-
-              category: {
-
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
-
+        productcategory: {
+          select: {
+            category: {
+              select: {
+                id: true,
+                name: true,
+                slug: true,
               },
-
             },
-
           },
-
         },
+      },
 
-        orderBy: {
-          id: "asc",
-        },
+      orderBy: {
+        id: "asc",
+      },
 
-        skip,
+      skip,
+      take: limit,
+    });
 
-        take: limit,
+    const analisados = products.map((product) => {
+      const categories =
+        product.productcategory?.map(
+          (item) => item.category.name
+        ) || [];
+
+      const classification = classifyProduct({
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        description: product.description,
+        categories,
       });
 
-    const analisados =
-      products.map(
-        (product) => {
+      const score = calculateScore(classification);
 
-          const categories =
-            product.productcategory
-              ?.map(
-                (item) =>
-                  item.category.name
-              ) || [];
-
-          const classification =
-            classifyProduct({
-
-              name:
-                product.name,
-
-              sku:
-                product.sku,
-
-              description:
-                product.description,
-
-              categories,
-            });
-
-          return {
-
-            id:
-              product.id,
-
-            name:
-              product.name,
-
-            sku:
-              product.sku,
-
-            categories,
-
-            classification,
-          };
-        }
+      const status = getStatus(
+        classification,
+        score
       );
 
-    const aprovados =
-      analisados.filter(
-        (item) =>
-          item.classification
-            .status === "APROVADO"
-      ).length;
+      return {
+        id: product.id,
 
-    const revisar =
-      analisados.filter(
-        (item) =>
-          item.classification
-            .status === "REVISAR"
-      ).length;
+        name: product.name,
 
-    const corrigir =
-      analisados.filter(
-        (item) =>
-          item.classification
-            .status === "CORRIGIR"
-      ).length;
+        sku: product.sku,
+
+        categories,
+
+        classification,
+
+        score,
+
+        status,
+      };
+    });
+
+    const aprovados = analisados.filter(
+      (item) => item.status === "APROVADO"
+    ).length;
+
+    const revisar = analisados.filter(
+      (item) => item.status === "REVISAR"
+    ).length;
+
+    const corrigir = analisados.filter(
+      (item) => item.status === "CORRIGIR"
+    ).length;
+
+    const percentualAprovado =
+      analisados.length
+        ? Number(
+            (
+              (aprovados /
+                analisados.length) *
+              100
+            ).toFixed(1)
+          )
+        : 0;
 
     return NextResponse.json({
-
       sucesso: true,
 
-      modo:
-        "AUDITORIA_SEM_GRAVACAO",
+      modo: "AUDITORIA_SEM_GRAVACAO",
 
       pagina: page,
 
@@ -171,39 +142,24 @@ export async function GET(
         analisados.length,
 
       resumo: {
-
         aprovados,
 
         revisar,
 
         corrigir,
 
-        percentualAprovado:
-          analisados.length
-            ? Number(
-                (
-                  (aprovados /
-                    analisados.length) *
-                  100
-                ).toFixed(1)
-              )
-            : 0,
+        percentualAprovado,
       },
 
-      produtos:
-        analisados,
+      produtos: analisados,
 
       proximaPagina:
-        skip +
-          analisados.length <
-        total
+        skip + analisados.length < total
           ? page + 1
           : null,
-
     });
 
   } catch (error) {
-
     console.error(
       "Erro ao analisar produtos:",
       error
@@ -212,8 +168,11 @@ export async function GET(
     return NextResponse.json(
       {
         sucesso: false,
-        erro:
-          "Erro ao analisar produtos",
+        erro: "Erro ao analisar produtos",
+        detalhes:
+          error instanceof Error
+            ? error.message
+            : String(error),
       },
       {
         status: 500,
