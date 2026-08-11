@@ -5,20 +5,17 @@ export const dynamic = "force-dynamic";
 
 /*
 |--------------------------------------------------------------------------
-| V9 — MOTOR FINAL DE CLASSIFICAÇÃO
+| V10 — MOTOR FINAL DE CLASSIFICAÇÃO
 |--------------------------------------------------------------------------
 |
-| Esta rota NÃO grava nada no banco.
+| OBJETIVO:
+| - Classificar produtos sem gravar no banco
+| - Reduzir falsos positivos
+| - Priorizar regras específicas antes das genéricas
+| - Separar corretamente família / tipo / subtipo / linha
+| - Extrair atributos básicos
 |
-| Ela analisa os produtos e produz uma classificação FINAL:
-|
-| família
-| tipo
-| subtipo
-| linha
-| atributos
-|
-| Depois de validarmos o resultado, criaremos a rota de aplicação.
+| NÃO GRAVA NADA NO BANCO.
 |
 |--------------------------------------------------------------------------
 */
@@ -39,6 +36,12 @@ type ProductInput = {
   categories?: string[];
 };
 
+/*
+|--------------------------------------------------------------------------
+| NORMALIZAÇÃO
+|--------------------------------------------------------------------------
+*/
+
 function normalize(text: string = "") {
   return text
     .normalize("NFD")
@@ -51,6 +54,17 @@ function normalize(text: string = "") {
 
 function has(text: string, ...terms: string[]) {
   return terms.some((term) => text.includes(normalize(term)));
+}
+
+function hasWord(text: string, term: string) {
+  const normalizedTerm = normalize(term);
+
+  const escaped = normalizedTerm.replace(
+    /[.*+?^${}()|[\]\\]/g,
+    "\\$&"
+  );
+
+  return new RegExp(`(^|\\s)${escaped}(?=\\s|$)`).test(text);
 }
 
 function firstMatch(
@@ -68,19 +82,20 @@ function firstMatch(
 
 /*
 |--------------------------------------------------------------------------
-| Extração de canais
+| ATRIBUTOS
 |--------------------------------------------------------------------------
 */
 
 function extractChannels(text: string): number | null {
-
   const patterns = [
     /(?:^|\s)(4|8|16|32|64|128|256)\s*(?:CANAIS|CH|CHS)(?:\s|$)/,
-    /(?:DVR|NVR|MHDX|NVD|IMHDX|INVD)[^\d]{0,10}(4|8|16|32|64|128|256)/,
+
+    /(?:DVR|NVR|MHDX|NVD|IMHDX|INVD)[^\d]{0,12}(4|8|16|32|64|128|256)/,
+
+    /\b(4|8|16|32|64|128|256)CH\b/,
   ];
 
   for (const pattern of patterns) {
-
     const match = text.match(pattern);
 
     if (match?.[1]) {
@@ -91,14 +106,7 @@ function extractChannels(text: string): number | null {
   return null;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Extração de tensão
-|--------------------------------------------------------------------------
-*/
-
 function extractVoltage(text: string): string | null {
-
   const match = text.match(
     /\b(12V|24V|110V|120V|127V|220V|230V|240V)\b/
   );
@@ -106,35 +114,80 @@ function extractVoltage(text: string): string | null {
   return match?.[1] || null;
 }
 
+function extractTechnology(text: string): string | null {
+  if (has(text, "WI-FI", "WIFI")) {
+    return "Wi-Fi";
+  }
+
+  if (has(text, "POE", "802.3AF", "802.3AT")) {
+    return "PoE";
+  }
+
+  if (has(text, "RFID", "MIFARE")) {
+    return "RFID";
+  }
+
+  return null;
+}
+
+function extractResolution(text: string): string | null {
+  const match = text.match(
+    /\b(1MP|2MP|3MP|4MP|5MP|6MP|8MP|10MP|12MP)\b/
+  );
+
+  return match?.[1] || null;
+}
+
 /*
 |--------------------------------------------------------------------------
-| Classificação V9
+| CLASSIFICAÇÃO
 |--------------------------------------------------------------------------
 */
 
-function classifyProduct(product: ProductInput): Classification {
+function classifyProduct(
+  product: ProductInput
+): Classification {
 
   const name = normalize(product.name);
-  const description = normalize(product.description || "");
+
+  const description = normalize(
+    product.description || ""
+  );
+
   const categories = normalize(
     (product.categories || []).join(" ")
   );
-
-  /*
-  |--------------------------------------------------------------------------
-  | CONTEXTO
-  |--------------------------------------------------------------------------
-  */
 
   const text = `${name} ${description}`;
 
   /*
   |--------------------------------------------------------------------------
-  | REGRAS DE EXCLUSÃO
+  | CONTEXTO DE CATEGORIA
   |--------------------------------------------------------------------------
-  |
-  | Algumas palavras NÃO podem determinar a família.
-  |
+  */
+
+  const categoryIsCftv =
+    categories.includes("CFTV");
+
+  const categoryIsAlarm =
+    categories.includes("ALARME");
+
+  const categoryIsAccess =
+    categories.includes("CONTROLE DE ACESSO");
+
+  const categoryIsNetworks =
+    categories.includes("REDES");
+
+  const categoryIsCabos =
+    categories.includes("CABEAMENTO");
+
+  const categoryIsAutomation =
+    categories.includes("AUTOMATIZADORES");
+
+  /*
+  |--------------------------------------------------------------------------
+  | EXCLUSÕES
+  |--------------------------------------------------------------------------
   */
 
   const mentionsIncludedBattery =
@@ -157,11 +210,10 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | 1. CFTV
+  | 1. CFTV — GRAVADORES
   |--------------------------------------------------------------------------
   */
 
-  // DVR
   if (
     has(
       name,
@@ -174,8 +226,8 @@ function classifyProduct(product: ProductInput): Classification {
     const channels = extractChannels(text);
 
     const line = firstMatch(name, {
-      MHDX: "MHDX",
       IMHDX: "IMHDX",
+      MHDX: "MHDX",
     });
 
     return {
@@ -189,7 +241,12 @@ function classifyProduct(product: ProductInput): Classification {
     };
   }
 
-  // NVR
+  /*
+  |--------------------------------------------------------------------------
+  | 2. CFTV — NVR
+  |--------------------------------------------------------------------------
+  */
+
   if (
     has(
       name,
@@ -202,8 +259,8 @@ function classifyProduct(product: ProductInput): Classification {
     const channels = extractChannels(text);
 
     const line = firstMatch(name, {
-      NVD: "NVD",
       INVD: "INVD",
+      NVD: "NVD",
     });
 
     return {
@@ -219,7 +276,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | Câmeras
+  | 3. CFTV — CÂMERAS
   |--------------------------------------------------------------------------
   */
 
@@ -227,7 +284,6 @@ function classifyProduct(product: ProductInput): Classification {
     has(
       name,
       "CAMERA",
-      "CÂMERA",
       "CAM IP",
       "CAMERA IP",
       "CAMERA WI-FI",
@@ -251,8 +307,8 @@ function classifyProduct(product: ProductInput): Classification {
       has(
         name,
         "IP",
-        "VIPW",
-        "VIP"
+        "VIP",
+        "VIPW"
       )
     ) {
       subtype = "IP";
@@ -275,14 +331,24 @@ function classifyProduct(product: ProductInput): Classification {
       VHD: "VHD",
     });
 
+    const resolution =
+      extractResolution(text);
+
+    const technology =
+      extractTechnology(text);
+
     return {
       family: "cftv",
       type: "Câmeras",
       subtype,
       line,
       attributes: {
-        ...(has(name, "WI-FI", "WIFI")
-          ? { tecnologia: "Wi-Fi" }
+        ...(technology
+          ? { tecnologia: technology }
+          : {}),
+
+        ...(resolution
+          ? { resolucao: resolution }
           : {}),
       },
     };
@@ -290,11 +356,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | VÍDEO PORTEIRO
-  |--------------------------------------------------------------------------
-  |
-  | IMPORTANTE:
-  | Isso vem ANTES de IP.
+  | 4. VÍDEO PORTEIRO
   |--------------------------------------------------------------------------
   */
 
@@ -302,10 +364,9 @@ function classifyProduct(product: ProductInput): Classification {
     has(
       name,
       "VIDEO PORTEIRO",
-      "VÍDEO PORTEIRO",
-      "TVIP",
       "PORTEIRO VIDEO",
-      "PORTEIRO ELETRONICO"
+      "PORTEIRO ELETRONICO",
+      "TVIP"
     )
   ) {
 
@@ -322,89 +383,59 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | ALARMES
+  | 5. ALARMES — SENSORES
   |--------------------------------------------------------------------------
   */
 
   if (
     has(
       name,
-      "ALARME",
-      "CENTRAL DE ALARME",
-      "SIRENE",
-      "RECEPTOR XAR",
-      "TECLADO XAT"
+      "SENSOR",
+      "IVP",
+      "IVA",
+      "XAS",
+      "REED"
     )
   ) {
 
+    let subtype = "Sensores";
+
     if (
       has(
         name,
-        "SENSOR",
         "IVP",
-        "IVA",
-        "XAS",
-        "REED"
+        "PRESENCA",
+        "PRESENÇA"
       )
     ) {
-
-      let subtype = "Sensores";
-
-      if (has(name, "IVP")) {
-        subtype = "Sensores de Presença";
-      }
-
-      else if (
-        has(
-          name,
-          "REED",
-          "MAGNETICO",
-          "MAGNÉTICO"
-        )
-      ) {
-        subtype = "Sensores Magnéticos";
-      }
-
-      else if (
-        has(
-          name,
-          "IVA",
-          "BARREIRA"
-        )
-      ) {
-        subtype = "Sensores de Barreira";
-      }
-
-      return {
-        family: "sensores",
-        type: "Sensores",
-        subtype,
-        line: null,
-        attributes: {},
-      };
+      subtype = "Sensores de Presença";
     }
 
-    if (
+    else if (
       has(
         name,
-        "SIRENE",
-        "SIR "
+        "REED",
+        "MAGNETICO",
+        "MAGNÉTICO"
       )
     ) {
+      subtype = "Sensores Magnéticos";
+    }
 
-      return {
-        family: "alarmes",
-        type: "Alarmes",
-        subtype: "Sirenes",
-        line: null,
-        attributes: {},
-      };
+    else if (
+      has(
+        name,
+        "IVA",
+        "BARREIRA"
+      )
+    ) {
+      subtype = "Sensores de Barreira";
     }
 
     return {
       family: "alarmes",
-      type: "Alarmes",
-      subtype: null,
+      type: "Sensores",
+      subtype,
       line: null,
       attributes: {},
     };
@@ -412,7 +443,109 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | CONTROLE DE ACESSO
+  | 6. ALARMES — SIRENES
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    has(
+      name,
+      "SIRENE",
+      "SIRENA"
+    )
+  ) {
+
+    return {
+      family: "alarmes",
+      type: "Alarmes",
+      subtype: "Sirenes",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 7. ALARMES — CENTRAIS
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    has(
+      name,
+      "CENTRAL DE ALARME",
+      "CENTRAL ALARME",
+      "CENTRAL MONITORADA",
+      "CENTRAL DE SEGURANCA",
+      "CENTRAL DE SEGURANÇA",
+      "AMT",
+      "ANM"
+    )
+  ) {
+
+    return {
+      family: "alarmes",
+      type: "Centrais",
+      subtype: "Centrais de Alarme",
+      line: firstMatch(name, {
+        AMT: "AMT",
+        ANM: "ANM",
+      }),
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 8. ALARMES — RECEPTOR
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    has(
+      name,
+      "RECEPTOR XAR",
+      "XAR "
+    )
+  ) {
+
+    return {
+      family: "alarmes",
+      type: "Receptores",
+      subtype: "Receptores de Alarme",
+      line: firstMatch(name, {
+        XAR: "XAR",
+      }),
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 9. ALARMES — TECLADOS
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    has(
+      name,
+      "TECLADO XAT",
+      "XAT "
+    )
+  ) {
+
+    return {
+      family: "alarmes",
+      type: "Teclados",
+      subtype: "Teclados de Alarme",
+      line: "XAT",
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 10. CONTROLE DE ACESSO
   |--------------------------------------------------------------------------
   */
 
@@ -439,7 +572,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | RFID / CREDENCIAIS
+  | 11. RFID / CREDENCIAIS
   |--------------------------------------------------------------------------
   */
 
@@ -467,7 +600,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | FECHADURAS
+  | 12. FECHADURAS
   |--------------------------------------------------------------------------
   */
 
@@ -475,10 +608,10 @@ function classifyProduct(product: ProductInput): Classification {
     has(
       name,
       "FECHADURA",
-      "FECHADURA DIGITAL",
-      "FECHADURA ELETRICA",
-      "FECHADURA ELÉTRICA",
-      "SOLENOIDE"
+      "SOLENOIDE",
+      "ELETROIMA",
+      "ELETROIMÃ",
+      "ELETROIMAN"
     )
   ) {
 
@@ -506,6 +639,17 @@ function classifyProduct(product: ProductInput): Classification {
       subtype = "Fechaduras Elétricas";
     }
 
+    else if (
+      has(
+        name,
+        "ELETROIMA",
+        "ELETROIMÃ",
+        "ELETROIMAN"
+      )
+    ) {
+      subtype = "Eletroímãs";
+    }
+
     return {
       family: "controle-acesso",
       type: "Fechaduras",
@@ -517,13 +661,8 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | ENERGIA
+  | 13. ENERGIA — NOBREAK
   |--------------------------------------------------------------------------
-  */
-
-  /*
-  | IMPORTANTE:
-  | "ACOMPANHA BATERIA" não transforma nobreak em bateria.
   */
 
   if (
@@ -544,7 +683,9 @@ function classifyProduct(product: ProductInput): Classification {
       }),
       attributes: {
         ...(extractVoltage(text)
-          ? { tensao: extractVoltage(text) }
+          ? {
+              tensao: extractVoltage(text),
+            }
           : {}),
       },
     };
@@ -552,7 +693,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | BATERIAS
+  | 14. ENERGIA — BATERIAS
   |--------------------------------------------------------------------------
   */
 
@@ -579,7 +720,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | FONTES
+  | 15. ENERGIA — FONTES
   |--------------------------------------------------------------------------
   */
 
@@ -598,13 +739,19 @@ function classifyProduct(product: ProductInput): Classification {
       type: "Fontes",
       subtype: "Fontes de Alimentação",
       line: null,
-      attributes: {},
+      attributes: {
+        ...(extractVoltage(text)
+          ? {
+              tensao: extractVoltage(text),
+            }
+          : {}),
+      },
     };
   }
 
   /*
   |--------------------------------------------------------------------------
-  | REDES
+  | 16. REDES — SWITCH
   |--------------------------------------------------------------------------
   */
 
@@ -616,22 +763,42 @@ function classifyProduct(product: ProductInput): Classification {
     )
   ) {
 
-    return {
-      family: "redes",
-      type: "Switches",
-      subtype: has(
+    let subtype: string | null = null;
+
+    if (
+      has(
         name,
         "NAO GERENCIAVEL",
         "NÃO GERENCIÁVEL"
       )
-        ? "Switch Não Gerenciável"
-        : has(name, "GERENCIAVEL", "GERENCIÁVEL")
-          ? "Switch Gerenciável"
-          : null,
+    ) {
+      subtype = "Switch Não Gerenciável";
+    }
+
+    else if (
+      has(
+        name,
+        "GERENCIAVEL",
+        "GERENCIÁVEL"
+      )
+    ) {
+      subtype = "Switch Gerenciável";
+    }
+
+    return {
+      family: "redes",
+      type: "Switches",
+      subtype,
       line: null,
       attributes: {},
     };
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 17. REDES — ROTEADORES
+  |--------------------------------------------------------------------------
+  */
 
   if (
     has(
@@ -650,6 +817,12 @@ function classifyProduct(product: ProductInput): Classification {
     };
   }
 
+  /*
+  |--------------------------------------------------------------------------
+  | 18. REDES — ACCESS POINT
+  |--------------------------------------------------------------------------
+  */
+
   if (
     has(
       name,
@@ -665,55 +838,23 @@ function classifyProduct(product: ProductInput): Classification {
       type: "Access Points",
       subtype: null,
       line: null,
-      attributes: {},
+      attributes: {
+        ...(has(name, "WI-FI", "WIFI")
+          ? {
+              tecnologia: "Wi-Fi",
+            }
+          : {}),
+      },
     };
   }
 
   /*
   |--------------------------------------------------------------------------
-  | CABEAMENTO
+  | 19. CONECTORES
   |--------------------------------------------------------------------------
-  */
-
-  if (
-    has(
-      name,
-      "CAT5",
-      "CAT5E",
-      "CAT 5",
-      "CAT 5E"
-    )
-  ) {
-
-    return {
-      family: "cabeamento",
-      type: "Cabos",
-      subtype: "Cabos de Rede CAT5",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  if (
-    has(
-      name,
-      "CAT6",
-      "CAT 6"
-    )
-  ) {
-
-    return {
-      family: "cabeamento",
-      type: "Cabos",
-      subtype: "Cabos de Rede CAT6",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  /*
-  |--------------------------------------------------------------------------
-  | CONECTORES
+  |
+  | MUITO IMPORTANTE:
+  | CONECTOR deve ser avaliado ANTES de CAT5/CAT6.
   |--------------------------------------------------------------------------
   */
 
@@ -765,21 +906,78 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | TELEFONIA
+  | 20. CABEAMENTO — CAT6
   |--------------------------------------------------------------------------
   */
 
   if (
     has(
       name,
+      "CAT6",
+      "CAT 6"
+    )
+  ) {
+
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos de Rede CAT6",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 21. CABEAMENTO — CAT5
+  |--------------------------------------------------------------------------
+  */
+
+  if (
+    has(
+      name,
+      "CAT5",
+      "CAT5E",
+      "CAT 5",
+      "CAT 5E"
+    )
+  ) {
+
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos de Rede CAT5",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 22. TELEFONIA — CENTRAIS
+  |--------------------------------------------------------------------------
+  |
+  | NÃO usar CP4030 sozinho.
+  | Exigimos contexto de telefonia.
+  |--------------------------------------------------------------------------
+  */
+
+  const telephoneContext =
+    has(
+      name,
       "CENTRAL TELEFONICA",
       "CENTRAL TELEFÔNICA",
+      "CENTRAL PABX",
+      "PABX",
+      "RAMAL",
+      "TELEFONICA",
+      "TELEFÔNICA",
       "IMPACTA",
-      "COMUNIC 48",
-      "COMUNIC 80",
-      "CP112",
-      "CP4030"
-    )
+      "COMUNIC"
+    );
+
+  if (
+    telephoneContext
   ) {
 
     return {
@@ -790,10 +988,18 @@ function classifyProduct(product: ProductInput): Classification {
         IMPACTA: "IMPACTA",
         "COMUNIC 48": "COMUNIC",
         "COMUNIC 80": "COMUNIC",
+        CP112: "CP112",
+        CP4030: "CP4030",
       }),
       attributes: {},
     };
   }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 23. TELEFONIA — TELEFONES
+  |--------------------------------------------------------------------------
+  */
 
   if (
     has(
@@ -851,49 +1057,9 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | AUTOMATIZADORES
+  | 24. AUTOMATIZADORES — PRODUTO PRINCIPAL
   |--------------------------------------------------------------------------
   */
-
-  if (
-    has(
-      name,
-      "CREMALHEIRA",
-      "ENGRENAGEM",
-      "ENGRENAGEM CREM",
-      "POLIA",
-      "COROA",
-      "MANCAL",
-      "FUSO",
-      "MOTOR",
-      "REPOSICAO",
-      "REPOSIÇÃO",
-      "SUPORTE",
-      "ROLAMENTO"
-    ) &&
-    (
-      has(
-        name,
-        "DZ",
-        "GATTER",
-        "LIGHT",
-        "SUPER",
-        "DESLIZANTE",
-        "PIVOTANTE",
-        "AUTOMATIZADOR"
-      ) ||
-      categories.includes("AUTOMATIZADORES")
-    )
-  ) {
-
-    return {
-      family: "automatizadores",
-      type: "Acessórios de Automatizadores",
-      subtype: null,
-      line: null,
-      attributes: {},
-    };
-  }
 
   if (
     has(
@@ -907,6 +1073,66 @@ function classifyProduct(product: ProductInput): Classification {
     return {
       family: "automatizadores",
       type: "Automatizadores",
+      subtype: has(
+        name,
+        "DESLIZANTE"
+      )
+        ? "Deslizantes"
+        : has(
+            name,
+            "PIVOTANTE"
+          )
+          ? "Pivotantes"
+          : null,
+      line: firstMatch(name, {
+        DZ: "DZ",
+        GATTER: "GATTER",
+        LIGHT: "LIGHT",
+        SUPER: "SUPER",
+      }),
+      attributes: {},
+    };
+  }
+
+  /*
+  |--------------------------------------------------------------------------
+  | 25. AUTOMATIZADORES — ACESSÓRIOS
+  |--------------------------------------------------------------------------
+  */
+
+  const automationContext =
+    categoryIsAutomation ||
+    has(
+      name,
+      "AUTOMATIZADOR",
+      "PORTAO",
+      "PORTÃO",
+      "DZ",
+      "GATTER",
+      "LIGHT",
+      "SUPER"
+    );
+
+  if (
+    automationContext &&
+    has(
+      name,
+      "CREMALHEIRA",
+      "ENGRENAGEM",
+      "POLIA",
+      "COROA",
+      "MANCAL",
+      "FUSO",
+      "ROLAMENTO",
+      "REPOSICAO",
+      "REPOSIÇÃO",
+      "SUPORTE"
+    )
+  ) {
+
+    return {
+      family: "automatizadores",
+      type: "Acessórios de Automatizadores",
       subtype: null,
       line: null,
       attributes: {},
@@ -915,10 +1141,7 @@ function classifyProduct(product: ProductInput): Classification {
 
   /*
   |--------------------------------------------------------------------------
-  | FALLBACK CONTROLADO
-  |--------------------------------------------------------------------------
-  |
-  | Não vamos inventar classificação.
+  | 26. FALLBACK CONTROLADO
   |--------------------------------------------------------------------------
   */
 
@@ -937,20 +1160,32 @@ function classifyProduct(product: ProductInput): Classification {
 |--------------------------------------------------------------------------
 */
 
-function calculateScore(classification: Classification) {
+function calculateScore(
+  classification: Classification
+) {
 
   let score = 0;
 
-  if (classification.family) score += 40;
+  if (classification.family) {
+    score += 40;
+  }
 
-  if (classification.type) score += 25;
+  if (classification.type) {
+    score += 25;
+  }
 
-  if (classification.subtype) score += 20;
+  if (classification.subtype) {
+    score += 20;
+  }
 
-  if (classification.line) score += 10;
+  if (classification.line) {
+    score += 10;
+  }
 
   if (
-    Object.keys(classification.attributes).length > 0
+    Object.keys(
+      classification.attributes
+    ).length > 0
   ) {
     score += 5;
   }
@@ -994,22 +1229,28 @@ export async function GET(req: Request) {
 
   try {
 
-    const { searchParams } = new URL(req.url);
+    const { searchParams } =
+      new URL(req.url);
 
     const page = Math.max(
-      Number(searchParams.get("page") || "1"),
+      Number(
+        searchParams.get("page") || "1"
+      ),
       1
     );
 
     const limit = Math.min(
       Math.max(
-        Number(searchParams.get("limit") || "500"),
+        Number(
+          searchParams.get("limit") || "500"
+        ),
         1
       ),
       500
     );
 
-    const skip = (page - 1) * limit;
+    const skip =
+      (page - 1) * limit;
 
     const totalProdutos =
       await prisma.product.count({
@@ -1036,13 +1277,21 @@ export async function GET(req: Request) {
           description: true,
 
           productcategory: {
+
             select: {
+
               category: {
+
                 select: {
+
                   name: true,
+
                 },
+
               },
+
             },
+
           },
 
         },
@@ -1057,71 +1306,85 @@ export async function GET(req: Request) {
 
       });
 
-    const produtos = products.map((product) => {
+    const produtos =
+      products.map((product) => {
 
-      const categories =
-        product.productcategory?.map(
-          (item) => item.category.name
-        ) || [];
+        const categories =
+          product.productcategory?.map(
+            (item) =>
+              item.category.name
+          ) || [];
 
-      const classification =
-        classifyProduct({
+        const classification =
+          classifyProduct({
+
+            id: product.id,
+
+            name: product.name,
+
+            sku: product.sku,
+
+            description:
+              product.description,
+
+            categories,
+
+          });
+
+        const score =
+          calculateScore(
+            classification
+          );
+
+        const status =
+          getStatus(
+            classification,
+            score
+          );
+
+        return {
+
           id: product.id,
+
           name: product.name,
+
           sku: product.sku,
-          description: product.description,
+
           categories,
-        });
 
-      const score =
-        calculateScore(classification);
-
-      const status =
-        getStatus(
           classification,
-          score
-        );
 
-      return {
+          score,
 
-        id: product.id,
+          status,
 
-        name: product.name,
+        };
 
-        sku: product.sku,
-
-        categories,
-
-        classification,
-
-        score,
-
-        status,
-
-      };
-
-    });
+      });
 
     const aprovados =
       produtos.filter(
-        (p) => p.status === "APROVADO"
+        (p) =>
+          p.status === "APROVADO"
       ).length;
 
     const revisar =
       produtos.filter(
-        (p) => p.status === "REVISAR"
+        (p) =>
+          p.status === "REVISAR"
       ).length;
 
     const corrigir =
       produtos.filter(
-        (p) => p.status === "CORRIGIR"
+        (p) =>
+          p.status === "CORRIGIR"
       ).length;
 
     return NextResponse.json({
 
       sucesso: true,
 
-      versao: "9.0",
+      versao: "10.0",
 
       modo: "AUDITORIA_FINAL",
 
@@ -1164,27 +1427,26 @@ export async function GET(req: Request) {
           : null,
 
       observacao:
-        "V9 classifica os produtos sem gravar alterações no banco.",
+        "V10 classifica os produtos sem gravar alterações no banco.",
 
     });
 
   } catch (error) {
 
     console.error(
-      "Erro na análise V9:",
+      "Erro na análise V10:",
       error
     );
 
     return NextResponse.json(
       {
         sucesso: false,
-        erro: "Erro ao executar análise V9",
+        erro:
+          "Erro ao executar análise V10",
       },
       {
         status: 500,
       }
     );
-
   }
-
 }
