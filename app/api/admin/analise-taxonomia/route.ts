@@ -1,1208 +1,1261 @@
-import { NextResponse } from "next/server";
 import { prisma } from "@/app/lib/prisma";
+import { NextResponse } from "next/server";
 
+export const dynamic = "force-dynamic";
 
 // ============================================================
 // NORMALIZAÇÃO
 // ============================================================
 
-function normalize(text: string | null | undefined): string {
-  return (text || "")
+function normalize(value: unknown): string {
+  return String(value ?? "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toUpperCase()
+    .replace(/\s+/g, " ")
     .trim();
 }
 
+function has(text: string, values: string[]): boolean {
+  return values.some((value) => text.includes(normalize(value)));
+}
+
+function hasWord(text: string, value: string): boolean {
+  const normalized = normalize(value);
+
+  return new RegExp(
+    `(^|\\s|[-_/().])${normalized.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=\\s|[-_/().]|$)`
+  ).test(text);
+}
 
 // ============================================================
-// DETECTAR TIPO DO PRODUTO
-// ============================================================
-//
-// IMPORTANTE:
-// A ordem importa.
-//
-// Exemplo:
-// "NOBREAK ... ACOMPANHA BATERIA"
-// não pode virar BATERIA.
-//
-// "GRAVADOR MHDX"
-// não pode virar CAMERA.
-//
-
-const TYPE_RULES: Array<{
-  type: string;
-  keywords: string[];
-}> = [
-
-  // ==========================================================
-  // CFTV
-  // ==========================================================
-
-  {
-    type: "DVR",
-    keywords: [
-      "DVR",
-      "MHDX",
-      "HDCVI",
-      "GRAVADOR DIGITAL DE VIDEO",
-      "GRAVADOR DIGITAL",
-    ],
-  },
-
-  {
-    type: "NVR",
-    keywords: [
-      "NVR",
-      "NVD",
-      "GRAVADOR DE VIDEO DE REDE",
-      "GRAVADOR IP",
-    ],
-  },
-
-  {
-    type: "Câmeras Wi-Fi",
-    keywords: [
-      "CAMERA WI-FI",
-      "CAMERA WIFI",
-      "CAMERA DE VIDEO WI-FI",
-      "CAMERA VIDEO WI-FI",
-    ],
-  },
-
-  {
-    type: "Câmeras",
-    keywords: [
-      "CAMERA",
-      "CÂMERA",
-      "VHD",
-      "VIP",
-    ],
-  },
-
-  {
-    type: "HD",
-    keywords: [
-      "HD 1TB",
-      "HD 2TB",
-      "HD 4TB",
-      "HDD",
-      "DISCO RIGIDO",
-      "DISCO RÍGIDO",
-    ],
-  },
-
-  // ==========================================================
-  // ALARMES
-  // ==========================================================
-
-  {
-    type: "Sensores",
-    keywords: [
-      "SENSOR",
-      "IVP",
-      "IVA",
-      "MAGNETICO",
-      "MAGNÉTICO",
-      "REED",
-    ],
-  },
-
-  {
-    type: "Centrais de Alarme",
-    keywords: [
-      "CENTRAL DE ALARME",
-      "CENTRAL ALARME",
-      "AMT",
-      "ANM",
-    ],
-  },
-
-  {
-    type: "Sirenes",
-    keywords: [
-      "SIRENE",
-      "ACIONADOR MANUAL",
-    ],
-  },
-
-  {
-    type: "Cerca Elétrica",
-    keywords: [
-      "CERCA ELETRICA",
-      "CERCA ELÉTRICA",
-      "ELC",
-    ],
-  },
-
-  // ==========================================================
-  // CONTROLE DE ACESSO
-  // ==========================================================
-
-  {
-    type: "Controle de Acesso",
-    keywords: [
-      "CONTROLADOR DE ACESSO",
-      "CONTROLE DE ACESSO",
-    ],
-  },
-
-  {
-    type: "Leitores",
-    keywords: [
-      "LEITOR RFID",
-      "LEITOR BIOMETRICO",
-      "LEITOR BIOMÉTRICO",
-      "LEITOR DE CARTAO",
-      "LEITOR DE CARTÃO",
-      "LEITOR CADASTRADOR",
-      "DIGIPROX",
-    ],
-  },
-
-  {
-    type: "Biometria",
-    keywords: [
-      "BIOMETRICO",
-      "BIOMÉTRICO",
-      "BIOMETRIA",
-      "FACIAL",
-      "RECONHECIMENTO FACIAL",
-    ],
-  },
-
-  // ==========================================================
-  // PORTEIROS
-  // ==========================================================
-
-  {
-    type: "Vídeo Porteiro",
-    keywords: [
-      "VIDEO PORTEIRO",
-      "VIDEOPORTEIRO",
-      "VÍDEO PORTEIRO",
-      "TVIP",
-      "IVR",
-      "XPE",
-    ],
-  },
-
-  {
-    type: "Porteiros",
-    keywords: [
-      "PORTEIRO",
-      "EXTENSAO PORTEIRO",
-      "EXTENSÃO PORTEIRO",
-    ],
-  },
-
-  // ==========================================================
-  // FECHADURAS
-  // ==========================================================
-
-  {
-    type: "Fechaduras Digitais",
-    keywords: [
-      "FECHADURA DIGITAL",
-      "FECHADURA SMART",
-      "FECHADURA INTELIGENTE",
-      "MFD",
-      "MFR",
-      "FR200",
-      "FR210",
-      "FR331",
-    ],
-  },
-
-  {
-    type: "Fechaduras",
-    keywords: [
-      "FECHADURA",
-      "ELETROIMA",
-      "ELETROIMÃ",
-      "SOLENOIDE",
-    ],
-  },
-
-  // ==========================================================
-  // REDES
-  // ==========================================================
-
-  {
-    type: "Switches",
-    keywords: [
-      "SWITCH",
-      "S110",
-      "S111",
-      "S112",
-      "S211",
-      "S232",
-      "S302",
-      "S332",
-      "SF 800",
-    ],
-  },
-
-  {
-    type: "Access Points",
-    keywords: [
-      "ACCESS POINT",
-      "AP ",
-      "U6-",
-      "U7-",
-      "UAP-",
-      "UNIFI",
-    ],
-  },
-
-  {
-    type: "Roteadores",
-    keywords: [
-      "ROTEADOR",
-      "ROUTER",
-      "W4-",
-      "W5-",
-      "W6-",
-      "RW ",
-    ],
-  },
-
-  {
-    type: "Cabos de Rede",
-    keywords: [
-      "CABO LAN",
-      "CABO UTP",
-      "CABO CAT5",
-      "CABO CAT6",
-      "CAT5E",
-      "CAT6",
-      "PATCH CORD",
-    ],
-  },
-
-  {
-    type: "Fibra Óptica",
-    keywords: [
-      "FIBRA OPTICA",
-      "FIBRA ÓPTICA",
-      "FIBER",
-      "FTTH",
-      "OLT",
-      "ONU",
-      "ONT",
-    ],
-  },
-
-  {
-    type: "Racks",
-    keywords: [
-      "RACK",
-      "MINI RACK",
-      "RACK PAREDE",
-      "RACK DE PISO",
-    ],
-  },
-
-  // ==========================================================
-  // ENERGIA
-  // ==========================================================
-
-  {
-    type: "Nobreaks",
-    keywords: [
-      "NOBREAK",
-      "NO-BREAK",
-      "UPS",
-    ],
-  },
-
-  {
-    type: "Baterias",
-    keywords: [
-      "BATERIA",
-      "BATERIAS",
-      "VRLA",
-      "SELADA",
-    ],
-  },
-
-  {
-    type: "Fontes",
-    keywords: [
-      "FONTE",
-      "FONTE DE ALIMENTACAO",
-      "FONTE DE ALIMENTAÇÃO",
-      "AC/DC",
-      "DC/DC",
-    ],
-  },
-
-  {
-    type: "Estabilizadores",
-    keywords: [
-      "ESTABILIZADOR",
-    ],
-  },
-
-  // ==========================================================
-  // AUTOMATIZADORES
-  // ==========================================================
-
-  {
-    type: "Automatizadores",
-    keywords: [
-      "AUTOMATIZADOR",
-      "MOTOR DE PORTAO",
-      "MOTOR DE PORTÃO",
-      "MOTOR PORTAO",
-      "MOTOR PORTÃO",
-    ],
-  },
-
-  {
-    type: "Controles Remotos",
-    keywords: [
-      "CONTROLE REMOTO",
-      "TX ",
-      "RECEPTOR",
-    ],
-  },
-
-  {
-    type: "Cremalheiras",
-    keywords: [
-      "CREMALHEIRA",
-      "CREMALHEIRA DE ALUMINIO",
-      "CREMALHEIRA DE ALUMÍNIO",
-    ],
-  },
-
-  // ==========================================================
-  // TELEFONIA
-  // ==========================================================
-
-  {
-    type: "Telefones",
-    keywords: [
-      "TELEFONE",
-      "TELEFONE IP",
-      "TIP ",
-      "TS ",
-      "TC ",
-    ],
-  },
-
-  {
-    type: "PABX",
-    keywords: [
-      "PABX",
-      "IMPACTA",
-      "MODULARE",
-      "CONECTA",
-      "UNNITI",
-    ],
-  },
-
-  // ==========================================================
-  // CABEAMENTO
-  // ==========================================================
-
-  {
-    type: "Conectores",
-    keywords: [
-      "CONECTOR",
-      "RJ45",
-      "RJ11",
-      "EMENDA RJ",
-      "PLUG",
-    ],
-  },
-];
-
-
-// ============================================================
-// DETECTAR TIPO
+// EXTRAÇÃO DE ATRIBUTOS
 // ============================================================
 
-function detectType(
-  name: string,
-  description?: string | null
-): {
-  type: string | null;
-  matchedKeywords: string[];
-} {
+function extractChannels(text: string): number | null {
 
-  const text = normalize(
-    `${name} ${description || ""}`
+  // Exemplos:
+  // 4 canais
+  // 8 canais
+  // 16 canais
+  // 32CH
+  // 16CH
+  const explicit = text.match(
+    /\b(4|8|16|24|32|64)\s*(?:CANAIS?|CH)\b/i
   );
 
+  if (explicit) {
+    return Number(explicit[1]);
+  }
+
+  // MHDX 1304 -> 4 canais
+  // MHDX 1116 -> 16 canais
+  // NVD 1532 -> 32 canais
+  const model = text.match(
+    /\b(?:IM?HDX|MHDX|NVD|NVR|DVR)[\s-]*\d{2,4}[-A-Z]?\b/i
+  );
+
+  if (model) {
+
+    const digits = model[0].replace(/\D/g, "");
+
+    if (digits.length >= 4) {
+
+      const lastTwo = Number(
+        digits.slice(-2)
+      );
+
+      if ([4, 8, 16, 24, 32, 64].includes(lastTwo)) {
+        return lastTwo;
+      }
+
+    }
+  }
+
+  return null;
+}
+
+function extractVA(text: string): number | null {
+
+  const match = text.match(
+    /\b(\d{3,5})\s*(?:VA|KVA)\b/i
+  );
+
+  if (!match) return null;
+
+  const value = Number(match[1]);
+
+  if (text.includes("KVA")) {
+    return value * 1000;
+  }
+
+  return value;
+}
+
+function extractVoltage(text: string): string | null {
+
+  if (/\b220\s*V\b/i.test(text)) return "220V";
+
+  if (/\b127\s*V\b/i.test(text)) return "127V";
+
+  if (/\b120\s*V\b/i.test(text)) return "120V";
+
+  if (/\b110\s*V\b/i.test(text)) return "110V";
+
+  if (/\b12\s*V\b/i.test(text)) return "12V";
+
+  if (/\b24\s*V\b/i.test(text)) return "24V";
+
+  if (/\b5\s*V\b/i.test(text)) return "5V";
+
+  return null;
+}
+
+function extractPorts(text: string): number | null {
+
+  const match = text.match(
+    /\b(\d{1,3})\s*(?:PORTAS?|PORTS?)\b/i
+  );
+
+  if (!match) return null;
+
+  return Number(match[1]);
+}
+
+function extractResolution(text: string): string | null {
+
+  const match = text.match(
+    /\b(4K|8K|2K|1080P|720P|\d+(?:\.\d+)?MP)\b/i
+  );
+
+  return match ? match[1].toUpperCase() : null;
+}
+
+// ============================================================
+// RESULTADO
+// ============================================================
+
+type Classification = {
+  type: string | null;
+  subtype: string | null;
+  confidence: number;
+  reasons: string[];
+  attributes: Record<string, string | number | boolean>;
+};
+
+// ============================================================
+// CLASSIFICADOR
+// ============================================================
+
+function classifyProduct(product: any): Classification {
+
+  const name = normalize(product.name);
+  const brand = normalize(product.brand);
+  const line = normalize(product.line);
+  const description = normalize(product.description);
+
+  const text = `${name} ${brand} ${line} ${description}`;
+
+  const categories =
+    product.productcategory
+      ?.map((pc: any) =>
+        normalize(pc.category?.slug)
+      )
+      .filter(Boolean) ?? [];
+
+  const attributes: Record<
+    string,
+    string | number | boolean
+  > = {};
+
+  const reasons: string[] = [];
+
+  const channels = extractChannels(text);
+  const va = extractVA(text);
+  const voltage = extractVoltage(text);
+  const ports = extractPorts(text);
+  const resolution = extractResolution(text);
+
+  if (channels) {
+    attributes.canais = channels;
+  }
+
+  if (va) {
+    attributes.potenciaVA = va;
+  }
+
+  if (voltage) {
+    attributes.tensao = voltage;
+  }
+
+  if (ports) {
+    attributes.portas = ports;
+  }
+
+  if (resolution) {
+    attributes.resolucao = resolution;
+  }
+
+  if (has(text, ["POE", "POWER OVER ETHERNET"])) {
+    attributes.poe = true;
+  }
+
   // ==========================================================
-  // MATCH SEGURO
+  // 1. CFTV
   // ==========================================================
 
-  function matchesKeyword(keyword: string): boolean {
+  if (categories.includes("cftv")) {
 
-    const normalizedKeyword = normalize(keyword);
+    // --------------------------------------------------------
+    // MHDX
+    // --------------------------------------------------------
 
-    // Palavras muito curtas/códigos precisam ser tratados
-    // como tokens inteiros.
     if (
-      normalizedKeyword.length <= 4 ||
-      /^[A-Z0-9-]+$/.test(normalizedKeyword)
+      /\bI?MHDX\b/i.test(text) &&
+      (
+        has(text, [
+          "GRAVADOR",
+          "GRAVADOR DIGITAL",
+          "DVR",
+        ]) ||
+        /\bI?MHDX\s*\d+/i.test(name)
+      )
     ) {
-      const escaped = normalizedKeyword
-        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-        .replace(/\s+/g, "\\s+");
 
-      return new RegExp(
-        `(^|\\s|[-_/().])${escaped}(?=\\s|[-_/().]|$)`
-      ).test(text);
+      reasons.push("Modelo MHDX identificado");
+
+      return {
+        type: "MHDX",
+        subtype: channels
+          ? `${channels} canais`
+          : null,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
     }
 
-    // Expressões maiores podem usar busca normal.
-    return text.includes(normalizedKeyword);
-  }
-
-
-  // ==========================================================
-  // EXCEÇÕES
-  // ==========================================================
-
-  // Produto claramente relacionado a DVR/NVR.
-  // Evita que "CAMERA" apareça primeiro por causa da descrição.
-  const isRecorder =
-    matchesKeyword("DVR") ||
-    matchesKeyword("NVR") ||
-    matchesKeyword("MHDX") ||
-    matchesKeyword("NVD") ||
-    text.includes("GRAVADOR DIGITAL DE VIDEO") ||
-    text.includes("GRAVADOR DIGITAL") ||
-    text.includes("GRAVADOR DE VIDEO DE REDE") ||
-    text.includes("GRAVADOR IP");
-
-
-  // ==========================================================
-  // REGRAS DE ALTA PRIORIDADE
-  // ==========================================================
-
-  // ----------------------------------------------------------
-  // DVR
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("DVR") ||
-    matchesKeyword("MHDX") ||
-    text.includes("GRAVADOR DIGITAL DE VIDEO") ||
-    text.includes("GRAVADOR DIGITAL")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "DVR")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "DVR",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // NVR
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("NVR") ||
-    matchesKeyword("NVD") ||
-    text.includes("GRAVADOR DE VIDEO DE REDE") ||
-    text.includes("GRAVADOR IP")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "NVR")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "NVR",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CÂMERAS WI-FI
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CAMERA WI-FI") ||
-    text.includes("CAMERA WIFI") ||
-    text.includes("CAMERA DE VIDEO WI-FI") ||
-    text.includes("CAMERA VIDEO WI-FI")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Câmeras Wi-Fi")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Câmeras Wi-Fi",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // VÍDEO PORTEIRO
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("VIDEO PORTEIRO") ||
-    text.includes("VIDEOPORTEIRO") ||
-    matchesKeyword("TVIP") ||
-    matchesKeyword("IVR") ||
-    matchesKeyword("XPE")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Vídeo Porteiro")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Vídeo Porteiro",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // PORTEIRO
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("PORTEIRO") ||
-    text.includes("EXTENSAO PORTEIRO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Porteiros")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Porteiros",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // FECHADURA DIGITAL
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("FECHADURA DIGITAL") ||
-    text.includes("FECHADURA SMART") ||
-    text.includes("FECHADURA INTELIGENTE") ||
-    matchesKeyword("FR200") ||
-    matchesKeyword("FR210") ||
-    matchesKeyword("FR331")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Fechaduras Digitais")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Fechaduras Digitais",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // FECHADURAS
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("FECHADURA") ||
-    matchesKeyword("ELETROIMA") ||
-    matchesKeyword("SOLENOIDE")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Fechaduras")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Fechaduras",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // SENSORES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("SENSOR") ||
-    matchesKeyword("IVP") ||
-    matchesKeyword("IVA") ||
-    matchesKeyword("REED") ||
-    text.includes("SENSOR MAGNETICO") ||
-    text.includes("SENSOR MAGNETICO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Sensores")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Sensores",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CENTRAIS DE ALARME
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CENTRAL DE ALARME") ||
-    text.includes("CENTRAL ALARME") ||
-    matchesKeyword("AMT") ||
-    matchesKeyword("ANM")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Centrais de Alarme")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Centrais de Alarme",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // SIRENES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("SIRENE") ||
-    text.includes("ACIONADOR MANUAL")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Sirenes")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Sirenes",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CERCA ELÉTRICA
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CERCA ELETRICA") ||
-    matchesKeyword("ELC")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Cerca Elétrica")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Cerca Elétrica",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CONTROLE DE ACESSO
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CONTROLADOR DE ACESSO") ||
-    text.includes("CONTROLE DE ACESSO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Controle de Acesso")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Controle de Acesso",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // LEITORES
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("LEITOR RFID") ||
-    text.includes("LEITOR BIOMETRICO") ||
-    text.includes("LEITOR DE CARTAO") ||
-    text.includes("LEITOR CADASTRADOR") ||
-    matchesKeyword("DIGIPROX")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Leitores")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Leitores",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // BIOMETRIA
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("BIOMETRICO") ||
-    text.includes("BIOMETRIA") ||
-    text.includes("RECONHECIMENTO FACIAL") ||
-    matchesKeyword("FACIAL")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Biometria")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Biometria",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // SWITCH
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("SWITCH") ||
-    matchesKeyword("S110") ||
-    matchesKeyword("S111") ||
-    matchesKeyword("S112") ||
-    matchesKeyword("S211") ||
-    matchesKeyword("S232") ||
-    matchesKeyword("S302") ||
-    matchesKeyword("S332") ||
-    matchesKeyword("SF 800")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Switches")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Switches",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // ACCESS POINT
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("ACCESS POINT") ||
-    matchesKeyword("AP") ||
-    matchesKeyword("U6-") ||
-    matchesKeyword("U7-") ||
-    matchesKeyword("UAP-") ||
-    matchesKeyword("UNIFI")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Access Points")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Access Points",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // ROTEADORES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("ROTEADOR") ||
-    matchesKeyword("ROUTER") ||
-    matchesKeyword("W4-") ||
-    matchesKeyword("W5-") ||
-    matchesKeyword("W6-") ||
-    matchesKeyword("RW")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Roteadores")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Roteadores",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CABOS DE REDE
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CABO LAN") ||
-    text.includes("CABO UTP") ||
-    text.includes("CABO CAT5") ||
-    text.includes("CABO CAT6") ||
-    matchesKeyword("CAT5E") ||
-    matchesKeyword("CAT6") ||
-    text.includes("PATCH CORD")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Cabos de Rede")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Cabos de Rede",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // FIBRA ÓPTICA
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("FIBRA OPTICA") ||
-    matchesKeyword("FIBER") ||
-    matchesKeyword("FTTH") ||
-    matchesKeyword("OLT") ||
-    matchesKeyword("ONU") ||
-    matchesKeyword("ONT")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Fibra Óptica")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Fibra Óptica",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // RACKS
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("RACK") ||
-    text.includes("MINI RACK") ||
-    text.includes("RACK PAREDE") ||
-    text.includes("RACK DE PISO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Racks")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Racks",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // NOBREAK
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("NOBREAK") ||
-    matchesKeyword("NO-BREAK") ||
-    matchesKeyword("UPS")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Nobreaks")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Nobreaks",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // BATERIAS
-  // ----------------------------------------------------------
-
-  // IMPORTANTE:
-  // Não usar SELADA sozinha.
-  // "BATERIA SELADA" é bateria, mas "FONTE SELADA"
-  // não deve virar bateria.
-
-  if (
-    matchesKeyword("BATERIA") ||
-    matchesKeyword("BATERIAS") ||
-    matchesKeyword("VRLA") ||
-    text.includes("BATERIA SELADA")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Baterias")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Baterias",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // FONTES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("FONTE") ||
-    text.includes("FONTE DE ALIMENTACAO") ||
-    matchesKeyword("AC/DC") ||
-    matchesKeyword("DC/DC")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Fontes")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Fontes",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // ESTABILIZADORES
-  // ----------------------------------------------------------
-
-  if (matchesKeyword("ESTABILIZADOR")) {
-
-    return {
-      type: "Estabilizadores",
-      matchedKeywords: ["ESTABILIZADOR"],
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // AUTOMATIZADORES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("AUTOMATIZADOR") ||
-    text.includes("MOTOR DE PORTAO") ||
-    text.includes("MOTOR PORTAO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Automatizadores")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Automatizadores",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CREMALHEIRAS
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("CREMALHEIRA") ||
-    text.includes("CREMALHEIRA DE ALUMINIO")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Cremalheiras")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Cremalheiras",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CONTROLES REMOTOS
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("CONTROLE REMOTO") ||
-    matchesKeyword("TX")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Controles Remotos")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Controles Remotos",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // TELEFONES
-  // ----------------------------------------------------------
-
-  if (
-    text.includes("TELEFONE") ||
-    text.includes("TELEFONE IP")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Telefones")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Telefones",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // PABX
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("PABX") ||
-    matchesKeyword("IMPACTA") ||
-    matchesKeyword("MODULARE") ||
-    matchesKeyword("CONECTA") ||
-    matchesKeyword("UNNITI")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "PABX")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "PABX",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CONECTORES
-  // ----------------------------------------------------------
-
-  if (
-    matchesKeyword("CONECTOR") ||
-    matchesKeyword("RJ45") ||
-    matchesKeyword("RJ11") ||
-    text.includes("EMENDA RJ") ||
-    matchesKeyword("PLUG")
-  ) {
-
-    const matchedKeywords = TYPE_RULES
-      .find(rule => rule.type === "Conectores")!
-      .keywords
-      .filter(matchesKeyword);
-
-    return {
-      type: "Conectores",
-      matchedKeywords,
-    };
-  }
-
-
-  // ----------------------------------------------------------
-  // CÂMERAS
-  // ----------------------------------------------------------
-
-  // Câmera fica por último porque "CAMERA" é extremamente
-  // genérico e não pode ganhar de DVR/NVR/Wi-Fi etc.
-
-  if (
-    matchesKeyword("CAMERA") ||
-    matchesKeyword("VHD") ||
-    matchesKeyword("VIP")
-  ) {
-
-    // Se já sabemos que é gravador, nunca chamar de câmera.
-    if (!isRecorder) {
-
-      const matchedKeywords = TYPE_RULES
-        .find(rule => rule.type === "Câmeras")!
-        .keywords
-        .filter(matchesKeyword);
+    // --------------------------------------------------------
+    // NVD / NVR
+    // --------------------------------------------------------
+
+    if (
+      /\bNVD\s*\d+/i.test(text) ||
+      hasWord(text, "NVR") ||
+      has(text, [
+        "GRAVADOR DE VIDEO EM REDE",
+        "GRAVADOR DIGITAL DE VIDEO EM REDE",
+      ])
+    ) {
+
+      reasons.push("Gravador de vídeo em rede identificado");
+
+      return {
+        type: "NVR",
+        subtype: channels
+          ? `${channels} canais`
+          : null,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
+    }
+
+    // --------------------------------------------------------
+    // DVR
+    // --------------------------------------------------------
+
+    if (
+      hasWord(text, "DVR") ||
+      has(text, [
+        "GRAVADOR DIGITAL DE VIDEO",
+        "GRAVADOR DIGITAL",
+        "GRAVADOR MULTI HD",
+      ])
+    ) {
+
+      reasons.push("Gravador digital identificado");
+
+      return {
+        type: "DVR",
+        subtype: channels
+          ? `${channels} canais`
+          : null,
+        confidence: 0.98,
+        reasons,
+        attributes,
+      };
+    }
+
+    // --------------------------------------------------------
+    // CÂMERAS
+    // --------------------------------------------------------
+
+    const isCamera =
+      has(text, [
+        "CAMERA",
+        "CÂMERA",
+        "CAMERA IP",
+        "CAMERA WI-FI",
+        "CAMERA WIFI",
+        "BULLET",
+        "DOME",
+      ]) ||
+      /\bVIP\s*\d+/i.test(text) ||
+      /\bVHD\s*\d+/i.test(text) ||
+      /\bIM[BC]\s*\d+/i.test(text);
+
+    if (isCamera) {
+
+      if (
+        has(text, [
+          "WI-FI",
+          "WIFI",
+          "MIBO",
+          "IM4",
+          "IM5",
+          "IM3",
+        ])
+      ) {
+
+        reasons.push("Câmera Wi-Fi identificada");
+
+        return {
+          type: "Câmeras",
+          subtype: "Wi-Fi",
+          confidence: 0.98,
+          reasons,
+          attributes,
+        };
+      }
+
+      if (
+        has(text, [
+          "IP",
+          "VIP",
+          "ONVIF",
+        ])
+      ) {
+
+        reasons.push("Câmera IP identificada");
+
+        return {
+          type: "Câmeras",
+          subtype: "IP",
+          confidence: 0.96,
+          reasons,
+          attributes,
+        };
+      }
+
+      if (
+        has(text, [
+          "VHD",
+          "HDCVI",
+          "MULTI-HD",
+        ])
+      ) {
+
+        reasons.push("Câmera Multi-HD/HDCVI identificada");
+
+        return {
+          type: "Câmeras",
+          subtype: "Multi-HD",
+          confidence: 0.96,
+          reasons,
+          attributes,
+        };
+      }
+
+      reasons.push("Câmera identificada");
 
       return {
         type: "Câmeras",
-        matchedKeywords,
+        subtype: null,
+        confidence: 0.94,
+        reasons,
+        attributes,
+      };
+    }
+
+    // --------------------------------------------------------
+    // ACESSÓRIOS CFTV
+    // --------------------------------------------------------
+
+    if (
+      has(text, [
+        "CABO CFTV",
+        "BALUN",
+        "BNC",
+        "CONECTOR BNC",
+        "CAIXA DE PASSAGEM",
+        "VBOX",
+        "SUPORTE PARA CAMERA",
+        "SUPORTE DE CAMERA",
+      ])
+    ) {
+
+      reasons.push("Acessório de CFTV identificado");
+
+      return {
+        type: "Acessórios CFTV",
+        subtype: null,
+        confidence: 0.96,
+        reasons,
+        attributes,
       };
     }
   }
 
+  // ==========================================================
+  // 2. ALARMES
+  // ==========================================================
+
+  if (categories.includes("alarmes")) {
+
+    if (
+      has(text, [
+        "CERCA ELETRICA",
+        "CERCA ELÉTRICA",
+        "ELC ",
+      ])
+    ) {
+
+      reasons.push("Produto de cerca elétrica identificado");
+
+      return {
+        type: "Cerca elétrica",
+        subtype: null,
+        confidence: 0.97,
+        reasons,
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "DETECTOR DE FUMAÇA",
+        "DETECTOR DE TEMPERATURA",
+        "DETECTOR TERMICO",
+        "DETECTOR TÉRMICO",
+        "ACIONADOR MANUAL",
+        "CENTRAL DE INCENDIO",
+        "ALARME DE INCENDIO",
+      ])
+    ) {
+
+      reasons.push("Produto de alarme de incêndio identificado");
+
+      return {
+        type: "Alarmes de incêndio",
+        subtype: null,
+        confidence: 0.97,
+        reasons,
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "SENSOR DE PRESENCA",
+        "SENSOR DE PRESENÇA",
+        "SENSOR IVP",
+        "SENSOR IVA",
+        "SENSOR MAGNETICO",
+        "SENSOR MAGNÉTICO",
+        "SENSOR DE ABERTURA",
+        "SENSOR DE BARREIRA",
+      ])
+    ) {
+
+      reasons.push("Sensor de alarme identificado");
+
+      return {
+        type: "Sensores",
+        subtype: null,
+        confidence: 0.98,
+        reasons,
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CENTRAL DE ALARME",
+        "CENTRAL ALARME",
+        "CENTRAL DE ALARMES",
+      ])
+    ) {
+
+      reasons.push("Central de alarme identificada");
+
+      return {
+        type: "Centrais de alarme",
+        subtype: has(text, [
+          "MONITORADA",
+          "MONITORADO",
+        ])
+          ? "Monitoradas"
+          : has(text, [
+              "CONVENCIONAL",
+              "NÃO MONITORADA",
+              "NAO MONITORADA",
+            ])
+            ? "Não monitoradas"
+            : null,
+        confidence: 0.98,
+        reasons,
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "SIRENE",
+        "SIRENA",
+      ])
+    ) {
+
+      return {
+        type: "Acessórios",
+        subtype: "Sirenes",
+        confidence: 0.96,
+        reasons: ["Sirene identificada"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 3. REDES
+  // ==========================================================
+
+  if (categories.includes("redes")) {
+
+    // ACCESS POINT
+    if (
+      has(text, [
+        "ACCESS POINT",
+        "ACCESSPOINT",
+        "PONTO DE ACESSO",
+        "UNIFI",
+        "UNIFI ACCESS",
+      ])
+    ) {
+
+      reasons.push("Access Point identificado");
+
+      return {
+        type: "Access Points",
+        subtype: has(text, [
+          "WIFI 6",
+          "WI-FI 6",
+        ])
+          ? "Wi-Fi 6"
+          : has(text, [
+              "WIFI 7",
+              "WI-FI 7",
+            ])
+            ? "Wi-Fi 7"
+            : null,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
+    }
+
+    // ROTEADOR
+    if (
+      has(text, [
+        "ROTEADOR",
+        "ROUTER",
+      ])
+    ) {
+
+      reasons.push("Roteador identificado");
+
+      return {
+        type: "Roteadores",
+        subtype: null,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
+    }
+
+    // SWITCH
+    if (
+      hasWord(text, "SWITCH") ||
+      has(text, [
+        "SWITCH GIGABIT",
+        "SWITCH POE",
+        "SWITCH GERENCIAVEL",
+        "SWITCH GERENCIÁVEL",
+      ])
+    ) {
+
+      reasons.push("Switch identificado");
+
+      return {
+        type: "Switches",
+        subtype: attributes.poe === true
+          ? "PoE"
+          : null,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
+    }
+
+    // ONU / ONT
+    if (
+      has(text, [
+        "ONU",
+        "ONT",
+        "GPON",
+        "EPON",
+        "XPON",
+      ]) &&
+      has(text, [
+        "FIBRA",
+        "PON",
+        "GPON",
+        "EPON",
+        "XPON",
+        "OPTICO",
+        "ÓPTICO",
+      ])
+    ) {
+
+      reasons.push("Equipamento óptico/ONU identificado");
+
+      return {
+        type: "Fibra Óptica",
+        subtype: has(text, ["ONU"])
+          ? "ONU"
+          : "ONT",
+        confidence: 0.97,
+        reasons,
+        attributes,
+      };
+    }
+
+    // CABOS
+    if (
+      has(text, [
+        "PATCH CORD",
+        "CABO U/UTP",
+        "CABO UTP",
+        "CABO CAT5E",
+        "CABO CAT6",
+        "CABO CAT6A",
+        "CABO DE REDE",
+      ])
+    ) {
+
+      const categoria =
+        has(text, ["PATCH CORD"])
+          ? "Patch Cords"
+          : "Cabos de Rede";
+
+      reasons.push("Cabeamento de rede identificado");
+
+      return {
+        type: categoria,
+        subtype: has(text, ["CAT6A"])
+          ? "CAT6A"
+          : has(text, ["CAT6"])
+            ? "CAT6"
+            : has(text, ["CAT5E"])
+              ? "CAT5E"
+              : null,
+        confidence: 0.98,
+        reasons,
+        attributes,
+      };
+    }
+
+    // CONECTORES
+    if (
+      has(text, [
+        "CONECTOR RJ45",
+        "CONECTOR RJ11",
+        "KEYSTONE",
+        "CONECTOR DE REDE",
+      ])
+    ) {
+
+      return {
+        type: "Conectores",
+        subtype: null,
+        confidence: 0.98,
+        reasons: ["Conector de rede identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 4. ENERGIA
+  // ==========================================================
+
+  if (categories.includes("energia")) {
+
+    // NOBREAK
+    if (
+      has(text, [
+        "NOBREAK",
+        "NO-BREAK",
+        "UPS",
+      ])
+    ) {
+
+      reasons.push("Nobreak identificado");
+
+      let subtype: string | null = null;
+
+      if (has(text, ["SENOIDAL"])) {
+        subtype = "Senoidal";
+      } else if (has(text, ["ONLINE"])) {
+        subtype = "Online";
+      } else if (has(text, ["INTERATIVO"])) {
+        subtype = "Interativo";
+      } else if (has(text, ["PORTAO", "PORTÃO"])) {
+        subtype = "Portão";
+      }
+
+      return {
+        type: "Nobreaks",
+        subtype,
+        confidence: 0.99,
+        reasons,
+        attributes,
+      };
+    }
+
+    // FONTES
+    if (
+      has(text, [
+        "FONTE",
+        "FONTE DE ALIMENTACAO",
+        "FONTE DE ALIMENTAÇÃO",
+        "FONTE NOBREAK",
+      ]) &&
+      !has(text, [
+        "NOBREAK INTERATIVO",
+        "NOBREAK ONLINE",
+      ])
+    ) {
+
+      reasons.push("Fonte de alimentação identificada");
+
+      return {
+        type: "Fontes",
+        subtype: null,
+        confidence: 0.97,
+        reasons,
+        attributes,
+      };
+    }
+
+    // BATERIAS
+    if (
+      has(text, [
+        "BATERIA",
+        "BATERIAS",
+        "VRLA",
+        "SELADA",
+      ]) &&
+      !has(text, [
+        "FURADEIRA",
+        "PARAFUSADEIRA",
+        "MARTELETE",
+      ])
+    ) {
+
+      reasons.push("Bateria identificada");
+
+      return {
+        type: "Baterias",
+        subtype: null,
+        confidence: 0.97,
+        reasons,
+        attributes,
+      };
+    }
+
+    // ESTABILIZADORES
+    if (
+      has(text, [
+        "ESTABILIZADOR",
+        "ESTABILIZADORES",
+      ])
+    ) {
+
+      return {
+        type: "Estabilizadores",
+        subtype: null,
+        confidence: 0.98,
+        reasons: ["Estabilizador identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 5. CONTROLE DE ACESSO
+  // ==========================================================
+
+  if (categories.includes("controle-de-acesso")) {
+
+    if (
+      has(text, [
+        "CONTROLADOR DE ACESSO",
+        "CONTROLADORA DE ACESSO",
+      ])
+    ) {
+
+      return {
+        type: "Controladores",
+        subtype: null,
+        confidence: 0.99,
+        reasons: ["Controlador de acesso identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "LEITOR RFID",
+        "RFID",
+        "LEITOR BIOMETRICO",
+        "LEITOR BIOMÉTRICO",
+        "LEITOR FACIAL",
+      ])
+    ) {
+
+      return {
+        type: "Leitores",
+        subtype: has(text, [
+          "RFID",
+          "PROXIMIDADE",
+        ])
+          ? "RFID"
+          : has(text, [
+              "FACIAL",
+              "FACE",
+            ])
+            ? "Faciais"
+            : "Biométricos",
+        confidence: 0.98,
+        reasons: ["Leitor de acesso identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CONTROLADOR FACIAL",
+        "BIOMETRIA",
+        "BIOMÉTRICO",
+        "BIOMETRICO",
+      ])
+    ) {
+
+      return {
+        type: "Biometria",
+        subtype: null,
+        confidence: 0.98,
+        reasons: ["Biometria identificada"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CARTAO DE PROXIMIDADE",
+        "CARTÃO DE PROXIMIDADE",
+        "TAG RFID",
+        "TAG DE PROXIMIDADE",
+      ])
+    ) {
+
+      return {
+        type: "Acessórios",
+        subtype: "Tags e cartões",
+        confidence: 0.98,
+        reasons: ["Tag/cartão de acesso identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 6. FECHADURAS
+  // ==========================================================
+
+  if (categories.includes("fechaduras")) {
+
+    if (
+      has(text, [
+        "FECHADURA DIGITAL",
+        "FECHADURA ELETRONICA",
+        "FECHADURA ELETRÔNICA",
+        "FECHADURA INTELIGENTE",
+      ])
+    ) {
+
+      return {
+        type: "Fechaduras Digitais",
+        subtype: has(text, ["BIOMETRIA", "BIOMETRICA", "BIOMÉTRICA"])
+          ? "Biometria"
+          : has(text, ["RFID", "CARTAO", "CARTÃO"])
+            ? "Cartão"
+            : has(text, ["SENHA"])
+              ? "Senha"
+              : null,
+        confidence: 0.99,
+        reasons: ["Fechadura digital identificada"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "FECHADURA ELETROMAGNETICA",
+        "FECHADURA ELETROIM",
+        "FECHADURA ELETROÍM",
+        "FECHADURA ELETRICA",
+        "FECHADURA ELÉTRICA",
+      ])
+    ) {
+
+      return {
+        type: "Fechaduras",
+        subtype: "Elétricas",
+        confidence: 0.98,
+        reasons: ["Fechadura elétrica/eletromagnética identificada"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 7. PORTEIROS
+  // ==========================================================
+
+  if (categories.includes("porteiros")) {
+
+    if (
+      has(text, [
+        "VIDEOPORTEIRO",
+        "VIDEO PORTEIRO",
+        "VÍDEO PORTEIRO",
+      ])
+    ) {
+
+      return {
+        type: "Vídeo Porteiro",
+        subtype: has(text, [
+          "WI-FI",
+          "WIFI",
+          "IP",
+        ])
+          ? "IP / Wi-Fi"
+          : null,
+        confidence: 0.99,
+        reasons: ["Vídeo porteiro identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "PORTEIRO",
+        "INTERFONE",
+        "CENTRAL DE PORTARIA",
+        "PORTARIA",
+      ])
+    ) {
+
+      return {
+        type: "Porteiros",
+        subtype: has(text, [
+          "CENTRAL",
+        ])
+          ? "Centrais"
+          : null,
+        confidence: 0.97,
+        reasons: ["Produto de portaria identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 8. AUTOMATIZADORES
+  // ==========================================================
+
+  if (categories.includes("automatizadores")) {
+
+    if (
+      has(text, [
+        "CANCELA",
+        "CANCELAS",
+      ])
+    ) {
+
+      return {
+        type: "Cancelas",
+        subtype: null,
+        confidence: 0.99,
+        reasons: ["Cancela identificada"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "AUTOMATIZADOR",
+        "MOTOR DE PORTAO",
+        "MOTOR DE PORTÃO",
+        "MOTOR PORTAO",
+        "MOTOR PORTÃO",
+      ])
+    ) {
+
+      return {
+        type: "Automatizadores",
+        subtype: has(text, [
+          "BASCULANTE",
+        ])
+          ? "Basculante"
+          : has(text, [
+              "DESLIZANTE",
+            ])
+            ? "Deslizante"
+            : has(text, [
+                "PIVOTANTE",
+              ])
+              ? "Pivotante"
+              : null,
+        confidence: 0.99,
+        reasons: ["Automatizador identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CONTROLE REMOTO",
+        "TX ",
+        "TRANSMISSOR",
+      ])
+    ) {
+
+      return {
+        type: "Controles Remotos",
+        subtype: null,
+        confidence: 0.96,
+        reasons: ["Controle remoto identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 9. CABEAMENTO
+  // ==========================================================
+
+  if (categories.includes("cabeamento")) {
+
+    if (
+      has(text, [
+        "PATCH CORD",
+      ])
+    ) {
+
+      return {
+        type: "Cabos",
+        subtype: "Patch Cord",
+        confidence: 0.99,
+        reasons: ["Patch Cord identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CABO",
+        "CABLE",
+      ])
+    ) {
+
+      return {
+        type: "Cabos",
+        subtype: has(text, ["CAT6A"])
+          ? "CAT6A"
+          : has(text, ["CAT6"])
+            ? "CAT6"
+            : has(text, ["CAT5E"])
+              ? "CAT5E"
+              : null,
+        confidence: 0.94,
+        reasons: ["Cabo identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "CONECTOR",
+        "RJ45",
+        "RJ11",
+        "KEYSTONE",
+      ])
+    ) {
+
+      return {
+        type: "Conectores",
+        subtype: null,
+        confidence: 0.98,
+        reasons: ["Conector identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "PATCH PANEL",
+        "PATCH PANEL DESCARREGADO",
+      ])
+    ) {
+
+      return {
+        type: "Patch Panels",
+        subtype: ports
+          ? `${ports} portas`
+          : null,
+        confidence: 0.99,
+        reasons: ["Patch Panel identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "FIBRA OPTICA",
+        "FIBRA ÓPTICA",
+        "CABO OPTICO",
+        "CABO ÓPTICO",
+        "SC/APC",
+        "SC/UPC",
+      ])
+    ) {
+
+      return {
+        type: "Fibra Óptica",
+        subtype: null,
+        confidence: 0.97,
+        reasons: ["Fibra óptica identificada"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 10. TELEFONIA
+  // ==========================================================
+
+  if (categories.includes("telefonia")) {
+
+    if (
+      has(text, [
+        "TELEFONE SEM FIO",
+        "TELEFONE COM FIO",
+        "TELEFONE",
+      ])
+    ) {
+
+      return {
+        type: "Telefones",
+        subtype: has(text, [
+          "SEM FIO",
+        ])
+          ? "Sem fio"
+          : "Com fio",
+        confidence: 0.98,
+        reasons: ["Telefone identificado"],
+        attributes,
+      };
+    }
+
+    if (
+      has(text, [
+        "PABX",
+        "CENTRAL TELEFONICA",
+        "CENTRAL TELEFÔNICA",
+      ])
+    ) {
+
+      return {
+        type: "Centrais Telefônicas",
+        subtype: null,
+        confidence: 0.98,
+        reasons: ["Central telefônica identificada"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 11. MONITORES
+  // ==========================================================
+
+  if (categories.includes("monitores")) {
+
+    if (
+      has(text, [
+        "MONITOR",
+        "MONITOR LED",
+        "MONITOR LCD",
+      ])
+    ) {
+
+      return {
+        type: "Monitores",
+        subtype: resolution ?? null,
+        confidence: 0.98,
+        reasons: ["Monitor identificado"],
+        attributes,
+      };
+    }
+  }
+
+  // ==========================================================
+  // 12. DIVERSOS
+  // ==========================================================
+
+  // IMPORTANTE:
+  //
+  // Não vamos inventar classificação para DIVERSOS.
+  //
+  // A versão anterior estava fazendo exatamente isso
+  // e colocando produtos aleatórios em Access Points,
+  // Sensores, Câmeras etc.
+
+  if (categories.includes("diversos")) {
+
+    return {
+      type: null,
+      subtype: null,
+      confidence: 0,
+      reasons: [
+        "Produto pertence a DIVERSOS e não possui classificação segura",
+      ],
+      attributes,
+    };
+  }
 
   // ==========================================================
   // NÃO IDENTIFICADO
@@ -1210,119 +1263,14 @@ function detectType(
 
   return {
     type: null,
-    matchedKeywords: [],
+    subtype: null,
+    confidence: 0,
+    reasons: [
+      "Nenhuma regra segura encontrou uma classificação",
+    ],
+    attributes,
   };
 }
-
-
-// ============================================================
-// EXTRAIR CANAIS
-// ============================================================
-
-function extractChannels(
-  text: string
-): number[] {
-
-  const normalized = normalize(text);
-
-  const values = new Set<number>();
-
-  const patterns = [
-    /\b(4|8|16|32|64|128)\s*CAN(?:AIS)?\b/,
-    /\b(4|8|16|32|64|128)CH\b/,
-  ];
-
-  for (const pattern of patterns) {
-
-    const match = normalized.match(pattern);
-
-    if (match) {
-      values.add(Number(match[1]));
-    }
-  }
-
-  return Array.from(values);
-}
-
-
-// ============================================================
-// EXTRAIR RESOLUÇÃO
-// ============================================================
-
-function extractResolution(
-  text: string
-): string[] {
-
-  const normalized = normalize(text);
-
-  const values = new Set<string>();
-
-  const patterns = [
-    /\b(1MP|2MP|3MP|4MP|5MP|6MP|8MP|12MP)\b/g,
-    /\b(720P|1080P|2K|4K|8K)\b/g,
-  ];
-
-  for (const pattern of patterns) {
-
-    const matches =
-      normalized.matchAll(pattern);
-
-    for (const match of matches) {
-      values.add(match[1]);
-    }
-  }
-
-  return Array.from(values);
-}
-
-
-// ============================================================
-// EXTRAIR POE
-// ============================================================
-
-function extractPoE(
-  text: string
-): boolean {
-
-  const normalized = normalize(text);
-
-  return (
-    normalized.includes("POE") ||
-    normalized.includes("P.O.E")
-  );
-}
-
-
-// ============================================================
-// EXTRAIR PORTAS
-// ============================================================
-
-function extractPorts(
-  text: string
-): number[] {
-
-  const normalized = normalize(text);
-
-  const values = new Set<number>();
-
-  const patterns = [
-    /\b(4|5|8|10|16|24|26|28|48|52)\s*PORTAS?\b/g,
-    /\b(4|5|8|10|16|24|26|28|48|52)P\b/g,
-  ];
-
-  for (const pattern of patterns) {
-
-    const matches =
-      normalized.matchAll(pattern);
-
-    for (const match of matches) {
-      values.add(Number(match[1]));
-    }
-  }
-
-  return Array.from(values);
-}
-
 
 // ============================================================
 // GET
@@ -1332,53 +1280,28 @@ export async function GET() {
 
   try {
 
-    // ========================================================
-    // BUSCAR PRODUTOS
-    // ========================================================
+    const products = await prisma.product.findMany({
 
-    const products =
-      await prisma.product.findMany({
+      select: {
 
-        where: {
-          active: true,
-        },
+        id: true,
+        name: true,
+        sku: true,
+        brand: true,
+        line: true,
+        description: true,
 
-        select: {
+        productcategory: {
 
-          id: true,
+          select: {
 
-          name: true,
+            category: {
 
-          description: true,
-
-          shortDescription: true,
-
-          sku: true,
-
-          brand: true,
-
-          brandRef: {
-            select: {
-              name: true,
-            },
-          },
-
-          line: {
-            select: {
-              name: true,
-            },
-          },
-
-          productcategory: {
-
-            select: {
-
-              category: {
-                select: {
-                  id: true,
-                  name: true,
-                  slug: true,
-                },
+              select: {
+                id: true,
+                name: true,
+                slug: true,
+                parentId: true,
               },
 
             },
@@ -1387,278 +1310,122 @@ export async function GET() {
 
         },
 
-        orderBy: {
-          id: "asc",
-        },
+      },
 
-      });
+      orderBy: {
+        id: "asc",
+      },
 
+    });
 
     // ========================================================
-    // RESULTADO POR CATEGORIA
+    // CLASSIFICAÇÃO
     // ========================================================
 
-    const categories = new Map<
+    const classified = products.map((product) => {
+
+      const result = classifyProduct(product);
+
+      return {
+        id: product.id,
+        name: product.name,
+        sku: product.sku,
+        brand: product.brand,
+
+        categories:
+          product.productcategory?.map(
+            (pc: any) => pc.category
+          ) ?? [],
+
+        ...result,
+      };
+
+    });
+
+    // ========================================================
+    // AGRUPAMENTO POR CATEGORIA
+    // ========================================================
+
+    const categoryMap = new Map<
       string,
       {
         id: number;
         name: string;
         slug: string;
-
         totalProducts: number;
-
         types: Map<
           string,
           {
+            type: string;
             quantity: number;
-
-            examples: Array<{
-              id: number;
-              name: string;
-              sku: string | null;
-              brand: string | null;
-              line: string | null;
-
-              channels: number[];
-              resolutions: string[];
-              ports: number[];
-              poe: boolean;
-
-              matchedKeywords: string[];
-            }>;
+            examples: any[];
           }
         >;
       }
     >();
 
+    for (const product of classified) {
 
-    // ========================================================
-    // ANALISAR CADA PRODUTO
-    // ========================================================
+      for (const category of product.categories) {
 
-    for (const product of products) {
+        if (!categoryMap.has(category.slug)) {
 
-      const text = [
-        product.name,
-        product.description,
-        product.shortDescription,
-        product.brand,
-        product.brandRef?.name,
-        product.line?.name,
-      ]
-        .filter(Boolean)
-        .join(" ");
-
-
-    const detection =
-  detectType(
-    product.name,
-    [
-      product.description,
-      product.shortDescription,
-      product.brand,
-      product.brandRef?.name,
-      product.line?.name,
-    ]
-      .filter(Boolean)
-      .join(" ")
-  );
-
-
-      // ------------------------------------------------------
-      // ATRIBUTOS ENCONTRADOS
-      // ------------------------------------------------------
-
-      const channels =
-        extractChannels(text);
-
-      const resolutions =
-        extractResolution(text);
-
-      const ports =
-        extractPorts(text);
-
-      const poe =
-        extractPoE(text);
-
-
-      // ------------------------------------------------------
-      // CATEGORIAS DO PRODUTO
-      // ------------------------------------------------------
-
-      for (
-        const relation of product.productcategory
-      ) {
-
-        const category =
-          relation.category;
-
-        const key =
-          String(category.id);
-
-
-        if (!categories.has(key)) {
-
-          categories.set(key, {
+          categoryMap.set(category.slug, {
 
             id: category.id,
-
             name: category.name,
-
             slug: category.slug,
-
             totalProducts: 0,
-
             types: new Map(),
 
           });
 
         }
 
-
         const categoryData =
-          categories.get(key)!;
-
+          categoryMap.get(category.slug)!;
 
         categoryData.totalProducts++;
 
+        const typeName =
+          product.type ?? "Não identificado";
 
-        // ----------------------------------------------------
-        // SEM TIPO
-        // ----------------------------------------------------
+        if (!categoryData.types.has(typeName)) {
 
-        if (!detection.type) {
+          categoryData.types.set(typeName, {
 
-          if (
-            !categoryData.types.has(
-              "Não identificado"
-            )
-          ) {
+            type: typeName,
+            quantity: 0,
+            examples: [],
 
-            categoryData.types.set(
-              "Não identificado",
-              {
-                quantity: 0,
-                examples: [],
-              }
-            );
-
-          }
-
-
-          const unknown =
-            categoryData.types.get(
-              "Não identificado"
-            )!;
-
-
-          unknown.quantity++;
-
-
-          if (
-            unknown.examples.length < 20
-          ) {
-
-            unknown.examples.push({
-
-              id: product.id,
-
-              name: product.name,
-
-              sku: product.sku,
-
-              brand:
-                product.brand ||
-                product.brandRef?.name ||
-                null,
-
-              line:
-                product.line?.name ||
-                null,
-
-              channels,
-
-              resolutions,
-
-              ports,
-
-              poe,
-
-              matchedKeywords: [],
-
-            });
-
-          }
-
-          continue;
-        }
-
-
-        // ----------------------------------------------------
-        // TIPO IDENTIFICADO
-        // ----------------------------------------------------
-
-        if (
-          !categoryData.types.has(
-            detection.type
-          )
-        ) {
-
-          categoryData.types.set(
-            detection.type,
-            {
-              quantity: 0,
-              examples: [],
-            }
-          );
+          });
 
         }
-
 
         const typeData =
-          categoryData.types.get(
-            detection.type
-          )!;
-
+          categoryData.types.get(typeName)!;
 
         typeData.quantity++;
 
-
-        // ----------------------------------------------------
-        // EXEMPLOS
-        // ----------------------------------------------------
-
-        if (
-          typeData.examples.length < 20
-        ) {
+        if (typeData.examples.length < 20) {
 
           typeData.examples.push({
 
             id: product.id,
-
             name: product.name,
-
             sku: product.sku,
+            brand: product.brand,
 
-            brand:
-              product.brand ||
-              product.brandRef?.name ||
-              null,
+            subtype: product.subtype,
 
-            line:
-              product.line?.name ||
-              null,
+            confidence:
+              product.confidence,
 
-            channels,
+            attributes:
+              product.attributes,
 
-            resolutions,
-
-            ports,
-
-            poe,
-
-            matchedKeywords:
-              detection.matchedKeywords,
+            reasons:
+              product.reasons,
 
           });
 
@@ -1668,86 +1435,66 @@ export async function GET() {
 
     }
 
-
     // ========================================================
-    // CONVERTER MAP → JSON
+    // PRODUTOS PARA REVISÃO
     // ========================================================
 
-    const result =
-      Array.from(
-        categories.values()
+    const review = classified
+      .filter(
+        (product) =>
+          !product.type ||
+          product.confidence < 0.90
       )
-        .map(category => ({
-
-          id: category.id,
-
-          name: category.name,
-
-          slug: category.slug,
-
-          totalProducts:
-            category.totalProducts,
-
-          types:
-            Array.from(
-              category.types.entries()
-            )
-              .map(
-                ([type, data]) => ({
-
-                  type,
-
-                  quantity:
-                    data.quantity,
-
-                  examples:
-                    data.examples,
-
-                })
-              )
-              .sort(
-                (a, b) =>
-                  b.quantity -
-                  a.quantity
-              ),
-
-        }))
-        .sort(
-          (a, b) =>
-            b.totalProducts -
-            a.totalProducts
-        );
-
+      .slice(0, 500);
 
     // ========================================================
     // RESUMO
     // ========================================================
 
-    const totalProducts =
-      products.length;
+    const classifiedCount =
+      classified.filter(
+        (product) =>
+          product.type &&
+          product.confidence >= 0.90
+      ).length;
 
+    const unclassifiedCount =
+      classified.length -
+      classifiedCount;
 
-    const productsClassified =
-  products.filter(product =>
-    detectType(
-      product.name,
-      [
-        product.description,
-        product.shortDescription,
-        product.brand,
-        product.brandRef?.name,
-        product.line?.name,
-      ]
-        .filter(Boolean)
-        .join(" ")
-    ).type !== null
-  ).length;
+    const percentage =
+      classified.length > 0
+        ? Number(
+            (
+              (classifiedCount /
+                classified.length) *
+              100
+            ).toFixed(2)
+          )
+        : 0;
 
+    const categories = Array.from(
+      categoryMap.values()
+    ).map((category) => ({
 
-    const productsWithoutType =
-      totalProducts -
-      productsClassified;
+      id: category.id,
 
+      name: category.name,
+
+      slug: category.slug,
+
+      totalProducts:
+        category.totalProducts,
+
+      types:
+        Array.from(
+          category.types.values()
+        ).sort(
+          (a, b) =>
+            b.quantity - a.quantity
+        ),
+
+    }));
 
     // ========================================================
     // RESPOSTA
@@ -1757,41 +1504,40 @@ export async function GET() {
 
       sucesso: true,
 
+      versao: "2.0",
+
       resumo: {
 
         totalProdutos:
-          totalProducts,
+          products.length,
 
         produtosClassificados:
-          productsClassified,
+          classifiedCount,
 
-        produtosSemTipo:
-          productsWithoutType,
+        produtosParaRevisao:
+          unclassifiedCount,
 
         percentualClassificado:
-          totalProducts > 0
-            ? Number(
-                (
-                  productsClassified /
-                  totalProducts
-                * 100
-                ).toFixed(2)
-              )
-            : 0,
+          percentage,
 
         categoriasAnalisadas:
-          result.length,
+          categories.length,
 
       },
 
-      categorias: result,
+    categories,
+
+revisao: review,
+
+      observacao:
+        "Esta rota somente analisa os produtos. Nenhum dado é gravado no banco.",
 
     });
 
   } catch (error) {
 
     console.error(
-      "ERRO ANALISE TAXONOMIA:",
+      "Erro na análise de taxonomia:",
       error
     );
 
@@ -1799,15 +1545,8 @@ export async function GET() {
 
       {
         sucesso: false,
-
         erro:
           "Erro ao analisar taxonomia",
-
-        detalhe:
-          error instanceof Error
-            ? error.message
-            : String(error),
-
       },
 
       {
