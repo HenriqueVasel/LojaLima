@@ -62,33 +62,33 @@ const productMenus = [
       ],
     },
 
+   {
+  title: "Gravadores",
+  items: [
     {
-      title: "Gravadores",
-      items: [
-        {
-          label: "DVR",
-          href: productCategory("cftv"),
-        },
-        {
-          label: "NVR",
-          href: productCategory("cftv"),
-        },
-      ],
+      label: "DVR",
+      href: productCategory("cftv-dvr"),
     },
+    {
+      label: "NVR",
+      href: productCategory("cftv-dvr"),
+    },
+  ],
+},
 
+   {
+  title: "Acessórios",
+  items: [
     {
-      title: "Acessórios",
-      items: [
-        {
-          label: "Acessórios CFTV",
-          href: productCategory("cftv"),
-        },
-        {
-          label: "Fontes",
-          href: productCategory("cftv"),
-        },
-      ],
+      label: "Acessórios CFTV",
+      href: productCategory("cftv-acessorios"),
     },
+    {
+      label: "Fontes",
+      href: productCategory("fontes"),
+    },
+  ],
+},
   ],
 },
 
@@ -99,28 +99,26 @@ const productMenus = [
 
   columns: [
     {
-      title: "Alarmes de incêndio",
-
-      items: [
-        {
-          label: "Acessórios",
-          href: productCategory("alarmes"),
-        },
-        {
-          label: "Centrais",
-          href: productCategory("alarmes"),
-        },
-        {
-          label: "Detectores",
-          href: productCategory("alarmes"),
-        },
-        {
-          label: "Sensores",
-          href: productCategory("alarmes"),
-        },
-      ],
+  title: "Alarmes de incêndio",
+  items: [
+    {
+      label: "Acessórios",
+      href: productCategory("alarmes-acessorios"),
     },
-
+    {
+      label: "Centrais",
+      href: productCategory("alarmes-centrais-convencionais"),
+    },
+    {
+      label: "Detectores",
+      href: productCategory("alarmes-sensores"),
+    },
+    {
+      label: "Sensores",
+      href: productCategory("alarmes-sensores"),
+    },
+  ],
+},
     {
       title: "Cerca elétrica",
 
@@ -136,35 +134,33 @@ const productMenus = [
       ],
     },
 
+   {
+  title: "Sensores",
+  items: [
     {
-      title: "Sensores",
-
-      items: [
-        {
-          label: "Sensores",
-          href: productCategory("alarmes"),
-        },
-        {
-          label: "Acessórios",
-          href: productCategory("alarmes"),
-        },
-      ],
+      label: "Sensores",
+      href: productCategory("alarmes-sensores"),
     },
+    {
+      label: "Acessórios",
+      href: productCategory("alarmes-acessorios"),
+    },
+  ],
+},
 
     {
-      title: "Centrais de alarme",
-
-      items: [
-        {
-          label: "Monitoradas",
-          href: productCategory("alarmes"),
-        },
-        {
-          label: "Não monitoradas",
-          href: productCategory("alarmes"),
-        },
-      ],
+  title: "Centrais de alarme",
+  items: [
+    {
+      label: "Monitoradas",
+      href: productCategory("alarmes-centrais-monitoradas"),
     },
+    {
+      label: "Não monitoradas",
+      href: productCategory("alarmes-centrais-convencionais"),
+    },
+  ],
+},
   ],
 },
 
