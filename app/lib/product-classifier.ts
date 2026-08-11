@@ -366,6 +366,30 @@ export function classifyProduct(
   }
 
   // ==========================================================
+  // 5 — CÂMERAS MULTI-HD (VHD)
+  // IMPORTANTE: ANTES DE HD PARA CFTV.
+  // VHD é linha de câmera, não armazenamento.
+  // ==========================================================
+
+  if (
+    has(
+      name,
+      "VHD",
+      "VHDM",
+      "CAMERA VHD",
+      "CAMERA VHDM"
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "Multi-HD",
+      line: has(name, "VHDM") ? "VHDM" : "VHD",
+      attributes: {},
+    };
+  }
+
+  // ==========================================================
   // 5 — HD PARA CFTV
   // ==========================================================
 
@@ -412,7 +436,16 @@ export function classifyProduct(
     "VIP",
     "VIPW",
     "VHD",
-    "VHDM"
+    "VHDM",
+    "VHD 1",
+    "VHD 2",
+    "VHD 3",
+    "VHD 4",
+    "VHD 5",
+    "VHD 6",
+    "VHD 7",
+    "VHD 8",
+    "VHD 9"
   );
 
   if (
@@ -479,6 +512,30 @@ export function classifyProduct(
             }
           : {}),
       },
+    };
+  }
+
+  // ==========================================================
+  // 7 — PORTEIRO RESIDENCIAL
+  // IPR é linha de porteiro residencial Intelbras.
+  // ==========================================================
+
+  if (
+    has(
+      name,
+      "PORTEIRO RESIDENCIAL",
+      "PORTEIRO RESIDENCIAL IPR",
+      "IPR1010",
+      "IPR 1010",
+      "IPR"
+    )
+  ) {
+    return {
+      family: "porteiros",
+      type: "Porteiros",
+      subtype: "Porteiros Residenciais",
+      line: has(name, "IPR") ? "IPR" : null,
+      attributes: {},
     };
   }
 
@@ -719,6 +776,42 @@ export function classifyProduct(
   }
 
   // ==========================================================
+  // 11 — ALARMES DE INCÊNDIO: DETECTORES
+  // IMPORTANTE: antes de sensores genéricos.
+  // ==========================================================
+
+  if (
+    has(
+      name,
+      "DETECTOR DE FUMACA",
+      "DETECTOR DE FUMAÇA",
+      "DETECTOR DE FUMO",
+      "DETECTOR TERMICO",
+      "DETECTOR TÉRMICO",
+      "DETECTOR DE CALOR",
+      "DETECTOR DE INCENDIO",
+      "DETECTOR DE INCÊNDIO",
+      "DFC"
+    )
+  ) {
+    let subtype = "Detectores de Incêndio";
+
+    if (has(name, "FUMACA", "FUMAÇA", "FUMO")) {
+      subtype = "Detectores de Fumaça";
+    } else if (has(name, "TERMICO", "TÉRMICO", "CALOR")) {
+      subtype = "Detectores de Calor";
+    }
+
+    return {
+      family: "alarmes",
+      type: "Alarmes de Incêndio",
+      subtype,
+      line: has(name, "DFC") ? "DFC" : null,
+      attributes: {},
+    };
+  }
+
+  // ==========================================================
   // 11 — ALARMES: SENSORES
   // ==========================================================
 
@@ -784,6 +877,38 @@ export function classifyProduct(
       type: "Sensores",
       subtype,
       line: null,
+      attributes: {},
+    };
+  }
+
+  // ==========================================================
+  // 12 — ALARMES: TRANSMISSORES / CONTROLES
+  // ==========================================================
+
+  if (
+    has(
+      name,
+      "TRANSMISSOR",
+      "TRANSMISSOR XAC",
+      "TX 434",
+      "TX434",
+      "XAC2000",
+      "XAC4000",
+      "TX CAR",
+      "TX CAR EVO"
+    )
+  ) {
+    return {
+      family: "alarmes",
+      type: "Transmissores",
+      subtype: has(name, "XAC")
+        ? "Transmissores XAC"
+        : "Controles e Transmissores",
+      line: has(name, "XAC")
+        ? "XAC"
+        : has(name, "TX")
+          ? "TX"
+          : null,
       attributes: {},
     };
   }
@@ -978,9 +1103,15 @@ export function classifyProduct(
   const accessPointModelSignal = has(
     name,
     "U7-PRO",
+    "U7-LR",
+    "U7-LITE",
     "U6-PRO",
     "U6-LITE",
     "U6+",
+    "U6-LR",
+    "U6-LR+",
+    "U5",
+    "UAP",
     "UAP-AC",
     "UAP-AC-PRO",
     "UAP-AC-LITE",
@@ -1230,7 +1361,65 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 27 — FONTES
+  // 27 — ANTENAS / DISTRIBUIÇÃO DE RF E TV
+  // ==========================================================
+
+  if (
+    has(
+      name,
+      "ANTENA",
+      "ANTENA DIGITAL",
+      "ANTENA UHF",
+      "ANTENA VHF",
+      "ANTENA INTERNA",
+      "ANTENA EXTERNA",
+      "ANTENA PARABOLICA",
+      "ANTENA PARABÓLICA"
+    )
+  ) {
+    return {
+      family: "antenas",
+      type: "Antenas",
+      subtype: has(name, "UHF")
+        ? "Antenas UHF"
+        : has(name, "VHF")
+          ? "Antenas VHF"
+          : has(name, "PARABOLICA", "PARABÓLICA")
+            ? "Antenas Parabólicas"
+            : null,
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (
+    has(
+      name,
+      "DIVISOR",
+      "DIVISOR DE SINAL",
+      "SPLITTER",
+      "DERIVADOR",
+      "TAP",
+      "MODULADOR",
+      "MODULADOR DIGITAL",
+      "MIXER"
+    )
+  ) {
+    return {
+      family: "antenas",
+      type: "Distribuição de Sinal",
+      subtype: has(name, "MODULADOR")
+        ? "Moduladores"
+        : has(name, "SPLITTER", "DIVISOR")
+          ? "Divisores e Splitters"
+          : "Distribuição de Sinal",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ==========================================================
+  // 28 — FONTES
   // ==========================================================
 
   if (
@@ -1259,7 +1448,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 28 — CONECTORES
+  // 29 — CONECTORES
   // ==========================================================
 
   if (
@@ -1319,7 +1508,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 29 — CABOS CAT5
+  // 30 — CABOS CAT5
   // ==========================================================
 
   if (
@@ -1342,7 +1531,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 30 — CABOS CAT6
+  // 31 — CABOS CAT6
   // ==========================================================
 
   if (
@@ -1363,7 +1552,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 31 — CABOS GENÉRICOS
+  // 32 — CABOS GENÉRICOS
   // ==========================================================
 
   if (
@@ -1386,7 +1575,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 32 — TELEFONIA: CENTRAIS
+  // 33 — TELEFONIA: CENTRAIS
   // IMPORTANTE:
   // CP4030 só entra aqui quando houver contexto de telefonia.
   // ==========================================================
@@ -1437,7 +1626,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 33 — TELEFONES
+  // 34 — TELEFONES
   // ==========================================================
 
   if (
@@ -1500,7 +1689,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 34 — AUTOMATIZADORES
+  // 35 — AUTOMATIZADORES
   // ==========================================================
 
   if (
@@ -1508,27 +1697,73 @@ export function classifyProduct(
       name,
       "AUTOMATIZADOR",
       "MOTOR PARA PORTAO",
-      "MOTOR PARA PORTÃO"
+      "MOTOR PARA PORTÃO",
+      "MOTOR DESLIZANTE",
+      "MOTOR PIVOTANTE",
+      "CENTRAL DE COMANDO",
+      "CENTRAL COMANDO",
+      "CP4030",
+      "CP 4030",
+      "CONTROLE REMOTO",
+      "CONTROLE EP",
+      "EP 02",
+      "FOTOCELULA",
+      "FOTOCÉLULA",
+      "RECEPTOR DE PORTAO",
+      "RECEPTOR DE PORTÃO"
     ) ||
     (
       categoryIsAny(categories, "AUTOMATIZADORES", "AUTOMATIZADOR") &&
       has(
         name,
         "MOTOR",
-        "CENTRAL DE COMANDO",
-        "CENTRAL COMANDO",
+        "CENTRAL",
         "RECEPTOR",
-        "CONTROLE REMOTO",
+        "CONTROLE",
         "FOTOCELULA",
         "FOTOCÉLULA"
       )
     )
   ) {
+    let subtype = "Automatizadores";
+
+    if (
+      has(
+        name,
+        "CONTROLE REMOTO",
+        "CONTROLE EP",
+        "EP 02"
+      )
+    ) {
+      subtype = "Controles Remotos";
+    } else if (
+      has(
+        name,
+        "CENTRAL DE COMANDO",
+        "CENTRAL COMANDO",
+        "CP4030",
+        "CP 4030"
+      )
+    ) {
+      subtype = "Centrais de Comando";
+    } else if (has(name, "RECEPTOR")) {
+      subtype = "Receptores";
+    } else if (has(name, "FOTOCELULA", "FOTOCÉLULA")) {
+      subtype = "Fotocélulas";
+    } else if (
+      has(
+        name,
+        "MOTOR",
+        "AUTOMATIZADOR"
+      )
+    ) {
+      subtype = "Motores e Automatizadores";
+    }
 
     return {
       family: "automatizadores",
       type: "Automatizadores",
-      subtype: null,
+      subtype,
       line: null,
       attributes: {
         ...(extractVoltage(text)
@@ -1541,7 +1776,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 35 — PEÇAS DE AUTOMATIZADORES
+  // 36 — PEÇAS DE AUTOMATIZADORES
   // ==========================================================
 
   if (
@@ -1555,6 +1790,7 @@ export function classifyProduct(
         "MANCAL",
         "FUSO",
         "ROLAMENTO",
+        "FREIO",
         "REPOSICAO",
         "REPOSIÇÃO"
       )
@@ -1593,7 +1829,9 @@ export function classifyProduct(
 
     let subtype = "Acessórios de Automatizadores";
 
-    if (has(name, "CREMALHEIRA")) {
+    if (has(name, "FREIO")) {
+      subtype = "Freios";
+    } else if (has(name, "CREMALHEIRA")) {
       subtype = "Cremalheiras";
     } else if (has(name, "ENGRENAGEM")) {
       subtype = "Engrenagens";
@@ -1629,7 +1867,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // FALLBACK
+  // 37 — FALLBACK
   // ==========================================================
 
   return {
