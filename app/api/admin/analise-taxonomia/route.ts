@@ -3,9 +3,30 @@ import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-/* =========================================================
-   TIPOS
-========================================================= */
+/*
+=========================================================
+V7 — ANÁLISE INTELIGENTE DE TAXONOMIA
+
+OBJETIVO:
+
+Produto
+  ↓
+Família
+  ↓
+Tipo
+  ↓
+Subtipo
+  ↓
+Linha
+  ↓
+Atributos
+
+IMPORTANTE:
+- NÃO grava nada no banco
+- apenas analisa
+- utiliza nome + SKU + categoria atual
+=========================================================
+*/
 
 type Confidence = "alta" | "media" | "baixa";
 
@@ -19,12 +40,8 @@ type Classification = {
   reason: string;
 };
 
-/* =========================================================
-   HELPERS
-========================================================= */
-
-function normalize(text: string) {
-  return text
+function clean(value: string | null | undefined) {
+  return String(value || "")
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toUpperCase()
@@ -32,278 +49,194 @@ function normalize(text: string) {
 }
 
 function has(text: string, terms: string[]) {
-  return terms.some((term) => text.includes(term));
+  return terms.some((term) => text.includes(clean(term)));
 }
 
-function extractChannels(text: string): number | null {
-  const patterns = [
-    /(?:MHDX|IMHDX|NVD|INVD)[\s-]*(\d{3,4})/,
-    /(\d{1,3})\s*(?:CANAIS|CH|CANAIS)/,
-  ];
-
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
-
-    if (!match) continue;
-
-    const raw = match[1];
-
-    if (!raw) continue;
-
-    // MHDX 1304 -> 4
-    // MHDX 1116 -> 16
-    // NVD 1532 -> 32
-    const lastTwo = Number(raw.slice(-2));
-
-    if ([4, 8, 16, 32, 64, 128].includes(lastTwo)) {
-      return lastTwo;
-    }
-
-    const number = Number(raw);
-
-    if ([4, 8, 16, 32, 64, 128].includes(number)) {
-      return number;
-    }
-  }
-
-  return null;
-}
-
-function extractVoltage(text: string): string | null {
-  const match = text.match(
-    /\b(12V|24V|48V|127V|110V|120V|220V|230V|240V)\b/
-  );
-
-  return match?.[1] || null;
-}
-
-function extractVA(text: string): number | null {
-  const match = text.match(/(\d+(?:[.,]\d+)?)\s*VA\b/);
+function numberAfter(text: string, pattern: RegExp) {
+  const match = text.match(pattern);
 
   if (!match) return null;
 
-  return Number(match[1].replace(",", "."));
+  return Number(match[1]);
 }
 
-function extractPorts(text: string): number | null {
-  const patterns = [
-    /\b(\d+)\s*PORTAS?\b/,
-    /\b(\d+)\s*P\b/,
-    /\b(\d+)\s*P\+/,
-  ];
+function classifyProduct(product: any): Classification {
 
-  for (const pattern of patterns) {
-    const match = text.match(pattern);
+  const name = clean(product.name);
 
-    if (!match) continue;
+  const categories = (product.productcategory || [])
+    .map((pc: any) => clean(pc.category?.name))
+    .filter(Boolean);
 
-    const value = Number(match[1]);
+  const categoryText = categories.join(" ");
 
-    if (value > 0 && value <= 256) {
-      return value;
-    }
-  }
+  const text = `${name} ${categoryText}`;
 
-  return null;
-}
-
-/* =========================================================
-   CLASSIFICADOR V6
-========================================================= */
-
-function classifyProduct(
-  name: string,
-  categories: string[]
-): Classification {
-  const text = normalize(name);
-  const categoryText = normalize(categories.join(" "));
+  /*
+  ========================================================
+  ATRIBUTOS BASE
+  ========================================================
+  */
 
   const attributes: Record<string, any> = {};
 
-  const voltage = extractVoltage(text);
-
-  if (voltage) {
-    attributes.tensao = voltage;
-  }
-
-  /* =======================================================
-     1. CONTROLE REMOTO
-     
-     TEM QUE VIR ANTES DE AUTOMATIZADOR
-  ======================================================= */
+  /*
+  ========================================================
+  1. CFTV — GRAVADORES
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "CONTROLE REMOTO",
-      "CONTROLE RF",
-      "TX ",
-      "TX/",
-      "TRANSMISSOR",
-      "XAC",
-      "EP 02",
-      "EP 04",
-      "HOLING CODE",
-    ])
+    has(name, ["MHDX", "IMHDX", "MHDX"])
+    ||
+    /\bDVR\b/.test(name)
+    ||
+    has(name, ["GRAVADOR DIGITAL DE VIDEO"])
   ) {
-    return {
-      family: "controle-acesso",
-      type: "Controles Remotos",
-      subtype: text.includes("AUTOMATIZADOR")
-        ? "Controles para Automatizadores"
-        : "Controles Remotos",
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como controle ou transmissor remoto.",
-    };
-  }
 
-  /* =======================================================
-     2. CREDENCIAIS RFID
-     
-     NÃO SÃO LEITORES
-  ======================================================= */
+    const canais =
+      numberAfter(name, /\b(\d{1,3})\s*(?:CANAIS|CH)\b/) ||
+      numberAfter(name, /\bMHDX\s*(\d{2,4})\b/)?.toString().slice(-2);
 
-  if (
-    has(text, [
-      "CARTAO RFID",
-      "CARTÃO RFID",
-      "CARTAO DE PROXIMIDADE",
-      "CARTÃO DE PROXIMIDADE",
-      "CHAVEIRO RFID",
-      "PULSEIRA RFID",
-      "TAG RFID",
-      "TAG DE PROXIMIDADE",
-    ])
-  ) {
-    let subtype = "Credenciais RFID";
+    /*
+    Alguns modelos MHDX possuem o número de canais
+    diretamente no código do modelo.
+    */
 
-    if (text.includes("CARTAO") || text.includes("CARTÃO")) {
-      subtype = "Cartões RFID";
+    let channelCount: number | null = null;
+
+    if (/\bMHDX\s*1304\b/.test(name)) channelCount = 4;
+    if (/\bMHDX\s*1308\b/.test(name)) channelCount = 8;
+    if (/\bMHDX\s*1316\b/.test(name)) channelCount = 16;
+    if (/\bMHDX\s*1332\b/.test(name)) channelCount = 32;
+
+    if (/\bMHDX\s*3104\b/.test(name)) channelCount = 4;
+    if (/\bMHDX\s*3108\b/.test(name)) channelCount = 8;
+    if (/\bMHDX\s*3116\b/.test(name)) channelCount = 16;
+    if (/\bMHDX\s*3132\b/.test(name)) channelCount = 32;
+
+    if (/\bIMHDX\s*3104\b/.test(name)) channelCount = 4;
+    if (/\bIMHDX\s*3108\b/.test(name)) channelCount = 8;
+    if (/\bIMHDX\s*3116\b/.test(name)) channelCount = 16;
+    if (/\bIMHDX\s*3132\b/.test(name)) channelCount = 32;
+
+    if (canais && typeof canais === "number") {
+      channelCount = canais;
     }
 
-    if (text.includes("CHAVEIRO")) {
-      subtype = "Chaveiros RFID";
+    if (channelCount) {
+      attributes.canais = channelCount;
     }
-
-    if (text.includes("PULSEIRA")) {
-      subtype = "Pulseiras RFID";
-    }
-
-    if (text.includes("TAG")) {
-      subtype = "Tags RFID";
-    }
-
-    return {
-      family: "controle-acesso",
-      type: "Credenciais",
-      subtype,
-      line: null,
-      attributes: {
-        ...attributes,
-        tecnologia: "RFID",
-      },
-      confidence: "alta",
-      reason: "Produto identificado como credencial RFID.",
-    };
-  }
-
-  /* =======================================================
-     3. CFTV — DVR
-     
-     MHDX / IMHDX
-  ======================================================= */
-
-  if (
-    has(text, [
-      "MHDX",
-      "IMHDX",
-      "DVR",
-      "GRAVADOR MHDX",
-      "GRAVADOR IMHDX",
-    ])
-  ) {
-    const channels = extractChannels(text);
-
-    if (channels) {
-      attributes.canais = channels;
-    }
-
-    const line = text.includes("IMHDX")
-      ? "IMHDX"
-      : text.includes("MHDX")
-      ? "MHDX"
-      : null;
 
     return {
       family: "cftv",
       type: "DVR",
       subtype: "Gravadores DVR",
-      line,
+      line: has(name, ["IMHDX"])
+        ? "IMHDX"
+        : "MHDX",
       attributes,
-      confidence: "alta",
-      reason: "Produto identificado como DVR.",
+      confidence: channelCount ? "alta" : "media",
+      reason: "Produto identificado como gravador DVR."
     };
   }
 
-  /* =======================================================
-     4. CFTV — NVR
-     
-     NVD / INVD
-  ======================================================= */
+  /*
+  ========================================================
+  2. CFTV — NVR / NVD / INVD
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "NVD ",
-      "NVD-",
-      "NVD/",
-      "INVD",
-      "NVR",
-      "GRAVADOR NVD",
-      "GRAVADOR INVD",
-    ])
+    has(name, ["NVD", "INVD"])
+    ||
+    /\bNVR\b/.test(name)
   ) {
-    const channels = extractChannels(text);
 
-    if (channels) {
-      attributes.canais = channels;
+    let channelCount: number | null = null;
+
+    /*
+    Modelos conhecidos
+    */
+
+    if (/\bNVD\s*1516\b/.test(name)) channelCount = 16;
+    if (/\bNVD\s*1532\b/.test(name)) channelCount = 32;
+
+    if (/\bINVD\s*5232\b/.test(name)) channelCount = 32;
+
+    const explicitChannels =
+      numberAfter(name, /\b(\d{1,3})\s*(?:CANAIS|CH)\b/);
+
+    if (explicitChannels) {
+      channelCount = explicitChannels;
     }
 
-    let line: string | null = null;
-
-    if (text.includes("INVD")) {
-      line = "INVD";
-    } else if (text.includes("NVD")) {
-      line = "NVD";
+    if (channelCount) {
+      attributes.canais = channelCount;
     }
 
     return {
       family: "cftv",
       type: "NVR",
       subtype: "Gravadores NVR",
-      line,
+      line: has(name, ["INVD"])
+        ? "INVD"
+        : "NVD",
       attributes,
-      confidence: "alta",
-      reason: "Produto identificado como NVR.",
+      confidence: channelCount ? "alta" : "media",
+      reason: "Produto identificado como gravador NVR."
     };
   }
 
-  /* =======================================================
-     5. CFTV — CÂMERAS WI-FI
-  ======================================================= */
+  /*
+  ========================================================
+  3. CFTV — CÂMERAS IP
+  ========================================================
+  */
 
   if (
-    has(text, [
+    has(name, [
+      "CAMERA IP",
+      "CÂMERA IP",
+      "VIP ",
+      "VIPW",
+      "CAMERA VIP"
+    ])
+  ) {
+
+    let line: string | null = null;
+
+    if (/\bVIPW\b/.test(name)) line = "VIPW";
+    else if (/\bVIP\b/.test(name)) line = "VIP";
+
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "IP",
+      line,
+      attributes,
+      confidence: "alta",
+      reason: "Câmera identificada como IP."
+    };
+  }
+
+  /*
+  ========================================================
+  4. CFTV — CÂMERAS WI-FI
+  ========================================================
+  */
+
+  if (
+    has(name, [
       "CAMERA WI-FI",
       "CAMERA WIFI",
       "CÂMERA WI-FI",
-      "CÂMERA WIFI",
-      "IM ",
-      "IM4",
-      "IM5",
-    ]) &&
-    has(text, ["CAMERA", "CÂMERA"])
+      "CÂMERA WIFI"
+    ])
   ) {
+
+    attributes.tecnologia = "Wi-Fi";
+
     return {
       family: "cftv",
       type: "Câmeras",
@@ -311,159 +244,106 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Câmera identificada como modelo Wi-Fi.",
+      reason: "Câmera identificada como modelo Wi-Fi."
     };
   }
 
-  /* =======================================================
-     6. CFTV — CÂMERAS IP
-  ======================================================= */
+  /*
+  ========================================================
+  5. CFTV — MULTI-HD / VHD
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "CAMERA IP",
-      "CÂMERA IP",
-      "VIP ",
-      "VIPW",
-      "IP DE VIDEO",
-      "IP DE VÍDEO",
-    ])
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "IP",
-      line: text.includes("VIPW")
-        ? "VIPW"
-        : text.includes("VIP")
-        ? "VIP"
-        : null,
-      attributes,
-      confidence: "alta",
-      reason: "Câmera identificada como IP.",
-    };
-  }
-
-  /* =======================================================
-     7. CFTV — CÂMERAS MULTI-HD / VHD
-  ======================================================= */
-
-  if (
-    has(text, [
+    has(name, [
       "VHD ",
       "VHDM",
       "MULTI-HD",
-      "MULTI HD",
-    ]) &&
-    has(text, ["CAMERA", "CÂMERA", "VHD", "VHDM"])
+      "MULTI HD"
+    ])
+    &&
+    has(name, ["CAMERA", "CÂMERA"])
   ) {
+
+    let line: string | null = null;
+
+    if (/\bVHDM\b/.test(name)) line = "VHDM";
+    else if (/\bVHD\b/.test(name)) line = "VHD";
+
     return {
       family: "cftv",
       type: "Câmeras",
       subtype: "Multi-HD",
-      line: text.includes("VHDM")
-        ? "VHDM"
-        : text.includes("VHD")
-        ? "VHD"
-        : null,
+      line,
       attributes,
       confidence: "alta",
-      reason: "Câmera identificada como Multi-HD.",
+      reason: "Câmera identificada como Multi-HD."
     };
   }
 
-  /* =======================================================
-     8. CFTV — CÂMERA GENÉRICA
-  ======================================================= */
-
-  if (has(text, ["CAMERA", "CÂMERA"])) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "media",
-      reason: "Produto identificado como câmera, mas o subtipo precisa de validação.",
-    };
-  }
-
-  /* =======================================================
-     9. SWITCH
-     
-     NÃO GERENCIÁVEL TEM PRIORIDADE
-  ======================================================= */
-
-  if (text.includes("SWITCH")) {
-    const ports = extractPorts(text);
-
-    if (ports) {
-      attributes.portas = ports;
-    }
-
-    if (
-      has(text, [
-        "NAO GERENCIAVEL",
-        "NÃO GERENCIÁVEL",
-        "NÃO GERENCIAVEL",
-      ])
-    ) {
-      return {
-        family: "redes",
-        type: "Switches",
-        subtype: "Switch Não Gerenciável",
-        line: null,
-        attributes,
-        confidence: "alta",
-        reason: "Switch identificado explicitamente como não gerenciável.",
-      };
-    }
-
-    if (
-      has(text, [
-        "GERENCIAVEL",
-        "GERENCIÁVEL",
-      ])
-    ) {
-      return {
-        family: "redes",
-        type: "Switches",
-        subtype: "Switch Gerenciável",
-        line: null,
-        attributes,
-        confidence: "alta",
-        reason: "Switch identificado explicitamente como gerenciável.",
-      };
-    }
-
-    return {
-      family: "redes",
-      type: "Switches",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como switch.",
-    };
-  }
-
-  /* =======================================================
-     10. NOBREAK
-     
-     TEM PRIORIDADE SOBRE BATERIA
-  ======================================================= */
+  /*
+  ========================================================
+  6. CFTV — HDs
+  ========================================================
+  */
 
   if (
-    has(text, [
+    has(name, [
+      "HD 1TB",
+      "HD 2TB",
+      "HD 4TB",
+      "HD 6TB",
+      "WD PURPLE",
+      "WD PURPLE"
+    ])
+    &&
+    has(categoryText, ["CFTV"])
+  ) {
+
+    const tb =
+      numberAfter(name, /\bHD\s*(\d+)\s*TB\b/);
+
+    if (tb) {
+      attributes.capacidadeTB = tb;
+    }
+
+    return {
+      family: "cftv",
+      type: "Armazenamento",
+      subtype: "HDs para CFTV",
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "HD identificado como armazenamento para CFTV."
+    };
+  }
+
+  /*
+  ========================================================
+  7. ENERGIA — NOBREAKS
+  ========================================================
+  */
+
+  if (
+    has(name, [
       "NOBREAK",
       "NO-BREAK",
-      "UPS",
+      "UPS"
     ])
   ) {
-    const va = extractVA(text);
 
-    if (va) {
-      attributes.potenciaVA = va;
+    const potencia =
+      numberAfter(name, /(\d+)\s*VA\b/);
+
+    const tensao =
+      numberAfter(name, /(\d+)\s*V\b/);
+
+    if (potencia) {
+      attributes.potenciaVA = potencia;
+    }
+
+    if (tensao) {
+      attributes.tensao = `${tensao}V`;
     }
 
     return {
@@ -473,75 +353,24 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como nobreak.",
+      reason: "Produto identificado como nobreak."
     };
   }
 
-  /* =======================================================
-     11. BATERIAS
-     
-     SOMENTE SE O PRODUTO FOR A BATERIA
-  ======================================================= */
+  /*
+  ========================================================
+  8. ENERGIA — FONTES
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "BATERIA ",
-      "BATERIA DE ",
-      "BATERIA VRLA",
-      "BATERIA ESTACIONARIA",
-      "BATERIA ESTACIONÁRIA",
-      "MODULO DE BATERIAS",
-      "MÓDULO DE BATERIAS",
-      "PILHA ",
-      "PILHA MOEDA",
+    has(name, [
+      "FONTE",
+      "FONTE DE ALIMENTACAO",
+      "FONTE INTELBRAS"
     ])
   ) {
-    return {
-      family: "energia",
-      type: "Baterias",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como bateria.",
-    };
-  }
 
-  /* =======================================================
-     12. FONTES
-     
-     PLACA DE FONTE NÃO É FONTE COMUM
-  ======================================================= */
-
-  if (
-    has(text, [
-      "PLACA FONTE",
-      "PLACA DE FONTE",
-      "PLACA FONTE",
-    ])
-  ) {
-    return {
-      family: "energia",
-      type: "Acessórios de Energia",
-      subtype: "Placas de Fonte",
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como placa de fonte.",
-    };
-  }
-
-  if (
-    has(text, [
-      "FONTE ",
-      "FONTE DE",
-      "FONTE INTELBRAS",
-      "POWER SUPPLY",
-      "ADAPTADOR AC/DC",
-      "CONVERSOR AUTOMATICO AC/DC",
-      "CONVERSOR AUTOMÁTICO AC/DC",
-    ])
-  ) {
     return {
       family: "energia",
       type: "Fontes",
@@ -549,34 +378,301 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como fonte de alimentação.",
+      reason: "Produto identificado como fonte de alimentação."
     };
   }
 
-  /* =======================================================
-     13. FECHADURAS
-  ======================================================= */
+  /*
+  ========================================================
+  9. ENERGIA — BATERIAS / PILHAS
+  ========================================================
+  */
 
-  if (has(text, ["FECHADURA", "FECHADURA DIGITAL"])) {
+  if (
+    has(name, [
+      "BATERIA",
+      "PILHA",
+      "CR2016",
+      "CR2025",
+      "CR2032",
+      "CR123"
+    ])
+  ) {
+
+    const tensao =
+      numberAfter(name, /(\d+(?:[.,]\d+)?)\s*V\b/);
+
+    if (tensao) {
+      attributes.tensao = `${String(tensao).replace(",", ".")}V`;
+    }
+
+    return {
+      family: "energia",
+      type: "Baterias",
+      subtype: "Baterias e Pilhas",
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como bateria ou pilha."
+    };
+  }
+
+  /*
+  ========================================================
+  10. REDES — SWITCH
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "SWITCH",
+      "SWITCH GERENCIAVEL",
+      "SWITCH NAO GERENCIAVEL"
+    ])
+  ) {
+
+    const portas =
+      numberAfter(name, /\b(\d+)\s*P(?:ORTAS)?\b/);
+
+    if (portas) {
+      attributes.portas = portas;
+    }
+
+    let subtype: string | null = null;
+
+    if (has(name, ["NAO GERENCIAVEL"])) {
+      subtype = "Switch Não Gerenciável";
+    }
+
+    if (has(name, ["GERENCIAVEL"])) {
+      subtype = "Switch Gerenciável";
+    }
+
+    return {
+      family: "redes",
+      type: "Switches",
+      subtype,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como switch."
+    };
+  }
+
+  /*
+  ========================================================
+  11. REDES — ROTEADORES
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "ROTEADOR",
+      "ROUTER"
+    ])
+  ) {
+
+    return {
+      family: "redes",
+      type: "Roteadores",
+      subtype: null,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como roteador."
+    };
+  }
+
+  /*
+  ========================================================
+  12. REDES — ACCESS POINT
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "ACCESS POINT",
+      "AP ",
+      "UNIFI"
+    ])
+  ) {
+
+    return {
+      family: "redes",
+      type: "Access Points",
+      subtype: null,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como Access Point."
+    };
+  }
+
+  /*
+  ========================================================
+  13. REDES — RACK
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "RACK",
+      "BANDEJA",
+      "PATCH PANEL",
+      "FRENTE FALSA"
+    ])
+  ) {
+
+    return {
+      family: "redes",
+      type: "Racks e Acessórios",
+      subtype: null,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como equipamento ou acessório de rack."
+    };
+  }
+
+  /*
+  ========================================================
+  14. CABEAMENTO — CAT5
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "CAT5",
+      "CAT5E"
+    ])
+    &&
+    has(name, ["CABO", "PATCH CORD"])
+  ) {
+
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos de Rede CAT5",
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Cabo identificado como CAT5/CAT5E."
+    };
+  }
+
+  /*
+  ========================================================
+  15. CABEAMENTO — CAT6
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "CAT6",
+      "CAT6A"
+    ])
+    &&
+    has(name, ["CABO", "PATCH CORD"])
+  ) {
+
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos de Rede CAT6",
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Cabo identificado como CAT6."
+    };
+  }
+
+  /*
+  ========================================================
+  16. CABEAMENTO — HDMI
+  ========================================================
+  */
+
+  if (
+    has(name, ["HDMI"])
+    &&
+    has(name, ["CABO"])
+  ) {
+
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos HDMI",
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Cabo HDMI identificado."
+    };
+  }
+
+  /*
+  ========================================================
+  17. CONECTORES
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "CONECTOR",
+      "RJ45",
+      "RJ11",
+      "BNC",
+      "MC4",
+      "SC/UPC",
+      "SC/APC"
+    ])
+  ) {
+
+    let subtype: string | null = null;
+
+    if (has(name, ["RJ45"])) subtype = "RJ45";
+    else if (has(name, ["RJ11"])) subtype = "RJ11";
+    else if (has(name, ["BNC"])) subtype = "BNC";
+    else if (has(name, ["MC4"])) subtype = "MC4";
+    else if (has(name, ["SC/UPC", "SC/APC"])) subtype = "Fibra Óptica";
+
+    return {
+      family: "conectividade",
+      type: "Conectores",
+      subtype,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como conector."
+    };
+  }
+
+  /*
+  ========================================================
+  18. CONTROLE DE ACESSO — FECHADURAS
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "FECHADURA DIGITAL",
+      "FECHADURA SMART",
+      "FECHADURA ELETRICA",
+      "FECHADURA ELÉTRICA",
+      "FECHADURA SOLENOIDE"
+    ])
+  ) {
+
     let subtype = "Fechaduras";
 
-    if (
-      has(text, [
-        "DIGITAL",
-        "SMART",
-        "BIOMETRIA",
-        "BIOMETRICA",
-        "BIOMÉTRICA",
-      ])
-    ) {
+    if (has(name, ["DIGITAL", "SMART"])) {
       subtype = "Fechaduras Digitais";
-    } else if (
-      has(text, [
-        "SOLENOIDE",
-        "ELETROIMA",
-        "ELETROÍMA",
-        "ELÉTRICA",
+    }
+
+    if (
+      has(name, [
         "ELETRICA",
+        "ELÉTRICA",
+        "SOLENOIDE"
       ])
     ) {
       subtype = "Fechaduras Elétricas";
@@ -589,29 +685,30 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como fechadura.",
+      reason: "Produto identificado como fechadura."
     };
   }
 
-  /* =======================================================
-     14. CONTROLE DE ACESSO
-  ======================================================= */
+  /*
+  ========================================================
+  19. CONTROLE DE ACESSO — CONTROLADORES
+  ========================================================
+  */
 
   if (
-    has(text, [
+    has(name, [
       "CONTROLADOR DE ACESSO",
-      "CONTROLE DE ACESSO",
-      "CONTROLADOR ACESSO",
+      "CONTROLE DE ACESSO"
     ])
   ) {
+
     let subtype: string | null = null;
 
     if (
-      has(text, [
+      has(name, [
         "FACIAL",
-        "BIOMETRIA",
         "BIOMETRICO",
-        "BIOMÉTRICO",
+        "BIOMÉTRICO"
       ])
     ) {
       subtype = "Controladores Biométricos";
@@ -624,56 +721,67 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como controlador de acesso.",
+      reason: "Produto identificado como controlador de acesso."
     };
   }
 
-  /* =======================================================
-     15. LEITORES
-  ======================================================= */
+  /*
+  ========================================================
+  20. RFID
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "LEITOR RFID",
-      "LEITOR DE PROXIMIDADE",
-      "LEITOR BIOMETRICO",
-      "LEITOR BIOMÉTRICO",
-      "LEITOR",
+    has(name, [
+      "RFID",
+      "MIFARE",
+      "CARTAO DE PROXIMIDADE",
+      "CHAVEIRO RFID",
+      "PULSEIRA RFID"
     ])
   ) {
-    let subtype = "Leitores";
 
-    if (has(text, ["RFID", "PROXIMIDADE"])) {
-      subtype = "RFID";
+    let subtype = "Credenciais RFID";
+
+    if (has(name, ["CARTAO"])) {
+      subtype = "Cartões RFID";
     }
 
-    if (has(text, ["BIOMETR"])) {
-      subtype = "Leitores Biométricos";
+    if (has(name, ["CHAVEIRO"])) {
+      subtype = "Chaveiros RFID";
     }
+
+    if (has(name, ["PULSEIRA"])) {
+      subtype = "Pulseiras RFID";
+    }
+
+    attributes.tecnologia = "RFID";
 
     return {
       family: "controle-acesso",
-      type: "Leitores",
+      type: "Credenciais",
       subtype,
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como leitor.",
+      reason: "Produto identificado como credencial RFID."
     };
   }
 
-  /* =======================================================
-     16. BOTOEIRAS
-  ======================================================= */
+  /*
+  ========================================================
+  21. CONTROLE DE ACESSO — BOTOEIRAS
+  ========================================================
+  */
 
   if (
-    has(text, [
+    has(name, [
       "BOTOEIRA",
       "BOTAO DE SAIDA",
-      "BOTÃO DE SAÍDA",
-      "BOTAO SAIDA",
+      "BOTÃO DE SAÍDA"
     ])
   ) {
+
     return {
       family: "controle-acesso",
       type: "Acessórios de Controle de Acesso",
@@ -681,138 +789,31 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como botoeira.",
+      reason: "Produto identificado como botoeira."
     };
   }
 
-  /* =======================================================
-     17. SENSORES
-  ======================================================= */
+  /*
+  ========================================================
+  22. ALARMES — CENTRAL
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "SENSOR",
-      "SENSORES",
-    ])
-  ) {
-    let subtype: string | null = null;
-
-    if (
-      has(text, [
-        "IVP",
-        "PRESENCA",
-        "PRESENÇA",
-        "INFRAVERMELHO PASSIVO",
-      ])
-    ) {
-      subtype = "Sensores de Presença";
-    }
-
-    if (
-      has(text, [
-        "MAG",
-        "MAGNETICO",
-        "MAGNÉTICO",
-        "REED",
-      ])
-    ) {
-      subtype = "Sensores Magnéticos";
-    }
-
-    if (
-      has(text, [
-        "IVA",
-        "BARREIRA",
-      ])
-    ) {
-      subtype = "Sensores de Barreira";
-    }
-
-    return {
-      family: "sensores",
-      type: "Sensores",
-      subtype,
-      line: null,
-      attributes,
-      confidence: subtype ? "alta" : "media",
-      reason: "Produto identificado como sensor.",
-    };
-  }
-
-  /* =======================================================
-     18. DETECTORES
-  ======================================================= */
-
-  if (
-    has(text, [
-      "DETECTOR",
-      "DETECTOR DE FUMACA",
-      "DETECTOR DE FUMAÇA",
-    ])
-  ) {
-    let subtype: string | null = null;
-
-    if (
-      has(text, [
-        "FUMACA",
-        "FUMAÇA",
-      ])
-    ) {
-      subtype = "Detectores de Fumaça";
-    }
-
-    return {
-      family: "alarmes",
-      type: "Detectores",
-      subtype,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como detector.",
-    };
-  }
-
-  /* =======================================================
-     19. SIRENES
-  ======================================================= */
-
-  if (
-    has(text, [
-      "SIRENE",
-      "SIRENA",
-      "SIRENE CORNETA",
-    ])
-  ) {
-    return {
-      family: "alarmes",
-      type: "Sirenes",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como sirene.",
-    };
-  }
-
-  /* =======================================================
-     20. CENTRAL DE ALARME
-  ======================================================= */
-
-  if (
-    has(text, [
+    has(name, [
       "CENTRAL DE ALARME",
       "CENTRAL ALARME",
-      "AMT ",
-      "CIE ",
+      "AMT "
     ])
   ) {
+
     let subtype = "Centrais de Alarme";
 
     if (
-      has(text, [
+      has(name, [
         "INCENDIO",
         "INCÊNDIO",
-        "CIE ",
+        "CIE "
       ])
     ) {
       subtype = "Centrais de Incêndio";
@@ -825,45 +826,160 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como central de alarme.",
+      reason: "Produto identificado como central de alarme."
     };
   }
 
-  /* =======================================================
-     21. PORTEIROS / VÍDEO PORTEIROS
-  ======================================================= */
+  /*
+  ========================================================
+  23. ALARMES — SIRENES
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "VIDEO PORTEIRO",
-      "VÍDEO PORTEIRO",
-      "VIDEO PORTEIRO",
-      "IV 7000",
-      "TVIP",
+    has(name, [
+      "SIRENE",
+      "SIR 2000"
     ])
   ) {
-    let subtype = "Vídeo Porteiros";
+
+    return {
+      family: "alarmes",
+      type: "Sirenes",
+      subtype: null,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como sirene."
+    };
+  }
+
+  /*
+  ========================================================
+  24. ALARMES — DETECTORES
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "DETECTOR DE FUMACA",
+      "DETECTOR DE FUMAÇA",
+      "DETECTOR"
+    ])
+  ) {
+
+    let subtype: string | null = null;
 
     if (
-      has(text, [
-        "MODULO INTERNO",
-        "MÓDULO INTERNO",
-        "TERMINAL INTERNO",
+      has(name, [
+        "FUMACA",
+        "FUMAÇA"
       ])
     ) {
-      subtype = "Módulo Interno";
+      subtype = "Detectores de Fumaça";
+    }
+
+    return {
+      family: "alarmes",
+      type: "Detectores",
+      subtype,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como detector."
+    };
+  }
+
+  /*
+  ========================================================
+  25. SENSORES
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "SENSOR",
+      "IVP",
+      "IVA",
+      "REED"
+    ])
+  ) {
+
+    let subtype = "Sensores";
+
+    if (
+      has(name, [
+        "IVP",
+        "INFRAVERMELHO",
+        "PRESENCA",
+        "PRESENÇA"
+      ])
+    ) {
+      subtype = "Sensores de Presença";
     }
 
     if (
-      has(text, [
+      has(name, [
+        "REED",
+        "MAGNETICO",
+        "MAGNÉTICO"
+      ])
+    ) {
+      subtype = "Sensores Magnéticos";
+    }
+
+    if (
+      has(name, [
+        "IVA",
+        "BARREIRA"
+      ])
+    ) {
+      subtype = "Sensores de Barreira";
+    }
+
+    return {
+      family: "sensores",
+      type: "Sensores",
+      subtype,
+      line: null,
+      attributes,
+      confidence: "alta",
+      reason: "Produto identificado como sensor."
+    };
+  }
+
+  /*
+  ========================================================
+  26. PORTEIROS
+  ========================================================
+  */
+
+  if (
+    has(name, [
+      "VIDEO PORTEIRO",
+      "VÍDEO PORTEIRO",
+      "PORTEIRO ELETRONICO",
+      "PORTEIRO ELETRÔNICO"
+    ])
+  ) {
+
+    let subtype = "Vídeo Porteiros";
+
+    if (
+      has(name, [
         "MODULO EXTERNO",
-        "MÓDULO EXTERNO",
+        "MÓDULO EXTERNO"
       ])
     ) {
       subtype = "Módulo Externo";
     }
 
-    if (text.includes("KIT")) {
+    if (
+      has(name, [
+        "KIT VIDEO PORTEIRO",
+        "KIT VÍDEO PORTEIRO"
+      ])
+    ) {
       subtype = "Kit Vídeo Porteiro";
     }
 
@@ -874,16 +990,24 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como vídeo porteiro.",
+      reason: "Produto identificado como vídeo porteiro."
     };
   }
 
+  /*
+  ========================================================
+  27. PORTEIRO
+  ========================================================
+  */
+
   if (
-    has(text, [
-      "PORTEIRO",
+    has(name, [
       "PORTEIRO RESIDENCIAL",
+      "PORTEIRO ELETRONICO",
+      "PORTEIRO ELETRÔNICO"
     ])
   ) {
+
     return {
       family: "porteiros",
       type: "Porteiros",
@@ -891,47 +1015,36 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como porteiro eletrônico.",
+      reason: "Produto identificado como porteiro eletrônico."
     };
   }
 
-  /* =======================================================
-     22. TELEFONES
-  ======================================================= */
+  /*
+  ========================================================
+  28. TELEFONIA — TELEFONES
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "TELEFONE",
+    has(name, [
+      "TELEFONE COM FIO",
+      "TELEFONE SEM FIO",
       "TELEFONE IP",
-      "TIP ",
-      "TDMI",
-      "TS ",
-      "TC ",
+      "TELEFONE"
     ])
   ) {
+
     let subtype: string | null = null;
 
-    if (
-      has(text, [
-        "SEM FIO",
-        "SEM-FIO",
-      ])
-    ) {
+    if (has(name, ["SEM FIO"])) {
       subtype = "Telefones Sem Fio";
-    } else if (
-      has(text, [
-        "COM FIO",
-        "COM-FIO",
-      ])
-    ) {
+    }
+
+    else if (has(name, ["COM FIO"])) {
       subtype = "Telefones Com Fio";
-    } else if (
-      has(text, [
-        "TELEFONE IP",
-        "TIP ",
-        "TDMI",
-      ])
-    ) {
+    }
+
+    else if (has(name, ["TELEFONE IP", "TIP ", "TDMI"])) {
       subtype = "Telefones IP";
     }
 
@@ -942,25 +1055,26 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: subtype ? "alta" : "media",
-      reason: "Produto identificado como telefone.",
+      reason: "Produto identificado como telefone."
     };
   }
 
-  /* =======================================================
-     23. CENTRAIS TELEFÔNICAS
-  ======================================================= */
+  /*
+  ========================================================
+  29. TELEFONIA — CENTRAIS
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "CENTRAL DIGITAL",
+    has(name, [
       "CENTRAL TELEFONICA",
       "CENTRAL TELEFÔNICA",
       "IMPACTA",
-      "COMUNIC",
-      "CP112",
-      "CP4030",
+      "COMUNIC 48",
+      "COMUNIC 80"
     ])
   ) {
+
     return {
       family: "telefonia",
       type: "Centrais Telefônicas",
@@ -968,206 +1082,66 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como central ou infraestrutura telefônica.",
+      reason: "Produto identificado como central telefônica."
     };
   }
 
-  /* =======================================================
-     24. ROTEADORES
-  ======================================================= */
+  /*
+  ========================================================
+  30. AUTOMATIZADORES
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "ROTEADOR",
-      "ROTEADOR WI-FI",
-      "ROTEADOR WIFI",
+    has(name, [
+      "AUTOMATIZADOR",
+      "CREMALHEIRA",
+      "CREM ",
+      "ENGRENAGEM",
+      "COROA",
+      "FUSO",
+      "MOTOR",
+      "POLIA"
     ])
+    &&
+    (
+      has(categoryText, ["AUTOMATIZADORES", "CONTROLE DE ACESSO"])
+      ||
+      has(name, [
+        "GATTER",
+        "NICE",
+        "DESL",
+        "DZ ",
+        "PIVOT"
+      ])
+    )
   ) {
-    return {
-      family: "redes",
-      type: "Roteadores",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como roteador.",
-    };
-  }
-
-  /* =======================================================
-     25. ACCESS POINT
-  ======================================================= */
-
-  if (
-    has(text, [
-      "ACCESS POINT",
-      "ACCESSPOINT",
-      "AP ",
-      "UNIFI ACCESS POINT",
-    ])
-  ) {
-    return {
-      family: "redes",
-      type: "Access Points",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como Access Point.",
-    };
-  }
-
-  /* =======================================================
-     26. RACKS
-  ======================================================= */
-
-  if (
-    has(text, [
-      "RACK",
-      "BANDEJA",
-      "PATCH PANEL",
-      "PATCH-PANEL",
-      "GUIA DE CABOS",
-    ])
-  ) {
-    return {
-      family: "redes",
-      type: "Racks e Acessórios",
-      subtype: null,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como rack ou acessório de rack.",
-    };
-  }
-
-  /* =======================================================
-     27. CONECTORES
-  ======================================================= */
-
-  if (
-    has(text, [
-      "CONECTOR",
-      "CONECTORES",
-      "RJ45",
-      "RJ11",
-      "BNC",
-      "SC/UPC",
-      "SC/APC",
-      "MC4",
-    ])
-  ) {
-    let subtype: string | null = null;
-
-    if (text.includes("RJ45")) {
-      subtype = "RJ45";
-    } else if (text.includes("RJ11")) {
-      subtype = "RJ11";
-    } else if (text.includes("BNC")) {
-      subtype = "BNC";
-    } else if (
-      text.includes("SC/UPC") ||
-      text.includes("SC/APC")
-    ) {
-      subtype = "Fibra Óptica";
-    }
 
     return {
-      family: "conectividade",
-      type: "Conectores",
-      subtype,
+      family: "automatizadores",
+      type: "Automatizadores",
+      subtype: "Automatizadores de Portão",
       line: null,
       attributes,
-      confidence: "alta",
-      reason: "Produto identificado como conector.",
+      confidence: "media",
+      reason: "Produto identificado como automatizador ou componente de automatizador."
     };
   }
 
-  /* =======================================================
-     28. CABOS
-  ======================================================= */
+  /*
+  ========================================================
+  31. CERCA ELÉTRICA
+  ========================================================
+  */
 
   if (
-    has(text, [
-      "CABO ",
-      "CABO/",
-      "CABO-",
-      "CABOS ",
-      "PATCH CORD",
-      "PATCHCORD",
-    ])
-  ) {
-    let subtype: string | null = null;
-
-    if (
-      has(text, [
-        "CAT5",
-        "CAT 5",
-      ])
-    ) {
-      subtype = "Cabos de Rede CAT5";
-    } else if (
-      has(text, [
-        "CAT6",
-        "CAT 6",
-      ])
-    ) {
-      subtype = "Cabos de Rede CAT6";
-    } else if (
-      has(text, [
-        "FIBRA OPTICA",
-        "FIBRA ÓPTICA",
-        "CABO OPTICO",
-        "CABO ÓPTICO",
-      ])
-    ) {
-      subtype = "Cabos de Fibra Óptica";
-    } else if (
-      has(text, [
-        "COAXIAL",
-        "RG59",
-        "RG06",
-        "RG-06",
-      ])
-    ) {
-      subtype = "Cabos Coaxiais";
-    } else if (
-      has(text, [
-        "HDMI",
-      ])
-    ) {
-      subtype = "Cabos HDMI";
-    } else if (
-      has(text, [
-        "RCA",
-      ])
-    ) {
-      subtype = "Cabos RCA";
-    }
-
-    return {
-      family: "cabeamento",
-      type: "Cabos",
-      subtype,
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como cabo.",
-    };
-  }
-
-  /* =======================================================
-     29. CERCA ELÉTRICA
-  ======================================================= */
-
-  if (
-    has(text, [
+    has(name, [
       "CERCA ELETRICA",
       "CERCA ELÉTRICA",
-      "CERCA ELETRICA",
-      "ELETRIFICADOR",
+      "CERCA ELETRICA"
     ])
   ) {
+
     return {
       family: "cerca-eletrica",
       type: "Cerca Elétrica",
@@ -1175,45 +1149,18 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "alta",
-      reason: "Produto identificado como equipamento de cerca elétrica.",
+      reason: "Produto identificado como equipamento de cerca elétrica."
     };
   }
 
-  /* =======================================================
-     30. AUTOMATIZADORES
-     
-     SÓ CHEGA AQUI DEPOIS DOS CONTROLES REMOTOS
-  ======================================================= */
+  /*
+  ========================================================
+  32. FALLBACK POR CATEGORIA
+  ========================================================
+  */
 
-  if (
-    has(text, [
-      "AUTOMATIZADOR",
-      "MOTOR PARA PORTAO",
-      "MOTOR PARA PORTÃO",
-      "MOTOR DESLIZANTE",
-      "MOTOR BASCULANTE",
-      "CREMALHEIRA",
-      "ENGRENAGEM",
-      "COROA",
-      "POLIA",
-    ])
-  ) {
-    return {
-      family: "automatizadores",
-      type: "Automatizadores",
-      subtype: "Automatizadores de Portão",
-      line: null,
-      attributes,
-      confidence: "alta",
-      reason: "Produto identificado como automatizador ou componente de automatizador.",
-    };
-  }
+  if (has(categoryText, ["CFTV"])) {
 
-  /* =======================================================
-     31. FALLBACK BASEADO NA CATEGORIA ATUAL
-  ======================================================= */
-
-  if (categoryText.includes("CFTV")) {
     return {
       family: "cftv",
       type: "CFTV",
@@ -1221,11 +1168,12 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "baixa",
-      reason: "Categoria atual indica CFTV, mas o nome não permitiu classificação específica.",
+      reason: "Categoria atual indica CFTV, mas o nome não permitiu classificação específica."
     };
   }
 
-  if (categoryText.includes("ALARM")) {
+  if (has(categoryText, ["ALARMES"])) {
+
     return {
       family: "alarmes",
       type: "Alarmes",
@@ -1233,11 +1181,12 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "baixa",
-      reason: "Categoria atual indica alarmes, mas o nome não permitiu classificação específica.",
+      reason: "Categoria atual indica alarmes, mas o nome não permitiu classificação específica."
     };
   }
 
-  if (categoryText.includes("REDES")) {
+  if (has(categoryText, ["REDES"])) {
+
     return {
       family: "redes",
       type: "Redes",
@@ -1245,11 +1194,12 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "baixa",
-      reason: "Categoria atual indica redes, mas o nome não permitiu classificação específica.",
+      reason: "Categoria atual indica redes, mas o nome não permitiu classificação específica."
     };
   }
 
-  if (categoryText.includes("ENERGIA")) {
+  if (has(categoryText, ["ENERGIA"])) {
+
     return {
       family: "energia",
       type: "Energia",
@@ -1257,11 +1207,12 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "baixa",
-      reason: "Categoria atual indica energia, mas o nome não permitiu classificação específica.",
+      reason: "Categoria atual indica energia, mas o nome não permitiu classificação específica."
     };
   }
 
-  if (categoryText.includes("TELEFONIA")) {
+  if (has(categoryText, ["TELEFONIA"])) {
+
     return {
       family: "telefonia",
       type: "Telefonia",
@@ -1269,9 +1220,15 @@ function classifyProduct(
       line: null,
       attributes,
       confidence: "baixa",
-      reason: "Categoria atual indica telefonia, mas o nome não permitiu classificação específica.",
+      reason: "Categoria atual indica telefonia, mas o nome não permitiu classificação específica."
     };
   }
+
+  /*
+  ========================================================
+  33. NÃO CLASSIFICADO
+  ========================================================
+  */
 
   return {
     family: null,
@@ -1280,16 +1237,21 @@ function classifyProduct(
     line: null,
     attributes: {},
     confidence: "baixa",
-    reason: "Produto precisa de revisão manual.",
+    reason: "Produto precisa de revisão manual."
   };
 }
 
-/* =========================================================
-   GET
-========================================================= */
+
+/*
+=========================================================
+GET
+=========================================================
+*/
 
 export async function GET(req: Request) {
+
   try {
+
     const { searchParams } = new URL(req.url);
 
     const limit = Math.min(
@@ -1297,26 +1259,21 @@ export async function GET(req: Request) {
       1000
     );
 
-    const category = searchParams.get("category");
+    const page = Math.max(
+      Number(searchParams.get("page") || 1),
+      1
+    );
+
+    const skip = (page - 1) * limit;
 
     const products = await prisma.product.findMany({
+
       where: {
         active: true,
-
-        ...(category
-          ? {
-              productcategory: {
-                some: {
-                  category: {
-                    slug: category,
-                  },
-                },
-              },
-            }
-          : {}),
       },
 
       select: {
+
         id: true,
         name: true,
         sku: true,
@@ -1325,77 +1282,131 @@ export async function GET(req: Request) {
           select: {
             category: {
               select: {
+                id: true,
                 name: true,
                 slug: true,
               },
             },
           },
         },
+
       },
 
       orderBy: {
         id: "asc",
       },
 
+      skip,
       take: limit,
+
     });
 
     const result = products.map((product) => {
-      const categories = product.productcategory.map(
-        (item) => item.category.name
-      );
 
-      const classification = classifyProduct(
-        product.name,
-        categories
-      );
+      const classification =
+        classifyProduct(product);
 
       return {
+
         id: product.id,
+
         name: product.name,
+
         sku: product.sku,
-        categories,
+
+        categories:
+          product.productcategory.map(
+            (pc: any) => pc.category.name
+          ),
+
         classification,
+
       };
+
     });
 
-    /* =====================================================
-       ESTATÍSTICAS
-    ===================================================== */
+    /*
+    ======================================================
+    ESTATÍSTICAS
+    ======================================================
+    */
 
     const classificados = result.filter(
-      (item) =>
-        item.classification.confidence === "alta" ||
-        item.classification.confidence === "media"
+      (p) =>
+        p.classification.family &&
+        p.classification.confidence !== "baixa"
+    );
+
+    const revisao = result.filter(
+      (p) =>
+        p.classification.confidence === "baixa"
     );
 
     const alta = result.filter(
-      (item) =>
-        item.classification.confidence === "alta"
+      (p) =>
+        p.classification.confidence === "alta"
     );
 
     const media = result.filter(
-      (item) =>
-        item.classification.confidence === "media"
+      (p) =>
+        p.classification.confidence === "media"
     );
 
-    const baixa = result.filter(
-      (item) =>
-        item.classification.confidence === "baixa"
-    );
+    /*
+    ======================================================
+    FAMÍLIAS
+    ======================================================
+    */
+
+    const familyMap: Record<string, number> = {};
+
+    for (const product of result) {
+
+      const family =
+        product.classification.family;
+
+      if (!family) continue;
+
+      familyMap[family] =
+        (familyMap[family] || 0) + 1;
+    }
+
+    /*
+    ======================================================
+    TIPOS
+    ======================================================
+    */
+
+    const typeMap: Record<string, number> = {};
+
+    for (const product of result) {
+
+      const type =
+        product.classification.type;
+
+      if (!type) continue;
+
+      typeMap[type] =
+        (typeMap[type] || 0) + 1;
+    }
 
     return NextResponse.json({
+
       sucesso: true,
 
-      versao: "6.0",
+      versao: "7.0",
 
       modo: "SIMULACAO",
+
+      pagina: page,
+
+      limite: limit,
 
       totalProdutos: result.length,
 
       classificados: classificados.length,
 
-      revisao: baixa.length,
+      revisao: revisao.length,
 
       percentualClassificado:
         result.length > 0
@@ -1411,21 +1422,28 @@ export async function GET(req: Request) {
       confianca: {
         alta: alta.length,
         media: media.length,
-        baixa: baixa.length,
+        baixa: revisao.length,
       },
 
+      familias: familyMap,
+
+      tipos: typeMap,
+
       produtos: result,
+
     });
+
   } catch (error) {
+
     console.error(
-      "Erro na análise de taxonomia V6:",
+      "Erro na análise de taxonomia V7:",
       error
     );
 
     return NextResponse.json(
       {
         sucesso: false,
-        erro: "Erro ao analisar produtos",
+        erro: "Erro ao analisar taxonomia",
       },
       {
         status: 500,
