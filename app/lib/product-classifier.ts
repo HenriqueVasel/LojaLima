@@ -55,6 +55,31 @@ export function classifyProduct(input: ProductInput): Classification {
   const text = `${name} ${description}`;
 
   // ============================================================
+// ACESSÓRIOS DE CÂMERAS NÃO SÃO CÂMERAS
+// ============================================================
+
+if (
+  has(
+    name,
+    "CAPA P/ CAMERA",
+    "CAPA PARA CAMERA",
+    "CAPA P/ CÂMERA",
+    "CAPA PARA CÂMERA",
+    "SUPORTE P/ CAMERA",
+    "SUPORTE PARA CAMERA",
+    "SUPORTE P/ CÂMERA",
+    "SUPORTE PARA CÂMERA"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Acessórios de Câmeras",
+    line: null,
+  });
+}
+
+  // ============================================================
   // 1. CFTV: "HD" de FULL HD / MULTI-HD não pode virar HD storage
   // ============================================================
  // ==========================================================
@@ -92,7 +117,7 @@ if (
     return {
       family: "cftv",
       type: "Câmeras",
-      subtype: "Veiculares",
+      subtype: "Câmeras Veiculares",
       line: null,
       attributes: {},
     };
@@ -139,7 +164,7 @@ if (
     return {
       family: "cftv",
       type: "Câmeras",
-      subtype: "Wi-Fi",
+      subtype: "Câmeras Wi-Fi",
       line: null,
       attributes: {
         wifi: true,
@@ -179,49 +204,45 @@ if (
     };
   }
 
-  // --------------------------------------------------------
-  // CÂMERAS IP
-  // --------------------------------------------------------
-  //
-  // IMPORTANTE:
-  // NÃO usamos apenas "IP" no texto inteiro.
-  // Só classificamos como IP quando houver sinais fortes
-  // de que o produto é uma câmera IP.
-  // --------------------------------------------------------
+// --------------------------------------------------------
+// CÂMERAS IP
+// --------------------------------------------------------
+//
+// Se o produto é uma câmera e possui sinais fortes de IP,
+// classificamos como IP.
+//
+// VIP / VIPW são linhas de câmeras IP da Intelbras.
+// --------------------------------------------------------
 
-  if (
-    has(
-      name,
-      "CAMERA IP",
-      "CÂMERA IP",
-      "CAMERA IP FULL HD",
-      "CÂMERA IP FULL HD",
-      "CAMERA IP POE",
-      "CÂMERA IP POE",
-      "CAMERA POE",
-      "CÂMERA POE",
-      "CAMERA NETWORK",
-      "CÂMERA NETWORK"
-    ) ||
-    (
-      has(name, "CAMERA", "CÂMERA") &&
-      has(name, "POE")
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "IP",
-      line: has(name, "VIPW")
-        ? "VIPW"
-        : has(name, "VIP")
-          ? "VIP"
-          : null,
-      attributes: {
-        ...(has(name, "POE") ? { poe: true } : {}),
-      },
-    };
-  }
+if (
+  has(
+    name,
+    "CAMERA IP",
+    "CÂMERA IP",
+    "CAMERA POE",
+    "CÂMERA POE",
+    "CAMERA NETWORK",
+    "CÂMERA NETWORK",
+    "CAMERA ONVIF",
+    "CÂMERA ONVIF",
+    "VIP",
+    "VIPW"
+  )
+) {
+  return {
+    family: "cftv",
+    type: "Câmeras",
+    subtype: "IP",
+    line: has(name, "VIPW")
+      ? "VIPW"
+      : has(name, "VIP")
+        ? "VIP"
+        : null,
+    attributes: {
+      ...(has(name, "POE") ? { poe: true } : {}),
+    },
+  };
+}
 
   // --------------------------------------------------------
   // CÂMERAS COM LINHAS VIP / VIPW
