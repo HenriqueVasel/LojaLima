@@ -38,323 +38,461 @@ export default function Header() {
   const [loadingUser, setLoadingUser] = useState(true);
 
 const productMenus = [
-{
-  label: "Câmeras",
-
-  href: productCategory("cftv"),
-
-columns: [
+  // ==========================================================
+  // CÂMERAS
+  // ==========================================================
   {
-    title: "Câmeras",
-    items: [
+    label: "Câmeras",
+    href: productCategory("cftv"),
+
+    columns: [
       {
-        label: "Câmeras",
-        href: productCategory("cftv-cameras"),
+        title: "Câmeras",
+        items: [
+          {
+            label: "Câmeras",
+            href: productCategory("cameras"),
+          },
+          {
+            label: "Câmeras Wi-Fi",
+            href: productCategory("cameras-wi-fi"),
+          },
+          {
+            label: "Câmeras IP",
+            href: productCategory("ip"),
+          },
+          {
+            label: "Câmeras Veiculares",
+            href: productCategory("cameras-veiculares"),
+          },
+          {
+            label: "Multi-HD",
+            href: productCategory("multi-hd"),
+          },
+        ],
       },
+
       {
-        label: "Câmeras Wi-Fi",
-        href: productCategory("cameras-wifi"),
+        title: "Gravadores",
+        items: [
+          {
+            label: "DVR",
+            href: productCategory("dvr"),
+          },
+          {
+            label: "NVR",
+            href: productCategory("nvr"),
+          },
+          {
+            label: "Armazenamento",
+            href: productCategory("armazenamento"),
+          },
+        ],
+      },
+
+      {
+        title: "Acessórios",
+        items: [
+          {
+            label: "Acessórios de CFTV",
+            href: productCategory("acessorios-de-cftv"),
+          },
+          {
+            label: "HD para CFTV",
+            href: productCategory("hd-para-cftv"),
+          },
+          {
+            label: "Cartões Micro SD",
+            href: productCategory("cartoes-micro-sd"),
+          },
+        ],
       },
     ],
   },
 
+  // ==========================================================
+  // ALARMES
+  // ==========================================================
   {
-    title: "Gravadores",
-    items: [
+    label: "Alarmes",
+    href: productCategory("alarmes"),
+
+    columns: [
       {
-        label: "DVR",
-        href: productCategory("cftv-dvr"),
+        title: "Centrais",
+        items: [
+          {
+            label: "Centrais de alarme",
+            href: productCategory("centrais-de-alarme"),
+          },
+          {
+            label: "Centrais de cerca elétrica",
+            href: productCategory("centrais-de-cerca-eletrica"),
+          },
+          {
+            label: "Expansores",
+            href: productCategory("expansores"),
+          },
+          {
+            label: "Módulos de comunicação",
+            href: productCategory("modulos-de-comunicacao"),
+          },
+        ],
       },
+
       {
-        label: "NVR",
-        href: productCategory("cftv-dvr"),
+        title: "Sensores e detecção",
+        items: [
+          {
+            label: "Detectores",
+            href: productCategory("detectores"),
+          },
+          {
+            label: "Acessórios de sensores",
+            href: productCategory("acessorios-de-sensores"),
+          },
+          {
+            label: "Teclados",
+            href: productCategory("teclados"),
+          },
+          {
+            label: "Transmissores",
+            href: productCategory("transmissores"),
+          },
+        ],
+      },
+
+      {
+        title: "Sirenes e cerca elétrica",
+        items: [
+          {
+            label: "Sirenes",
+            href: productCategory("sirenes"),
+          },
+          {
+            label: "Acessórios de cerca elétrica",
+            href: productCategory("acessorios-de-cerca-eletrica"),
+          },
+          {
+            label: "Fios e arames",
+            href: productCategory("fios-e-arames"),
+          },
+        ],
       },
     ],
   },
 
+  // ==========================================================
+  // CONTROLE DE ACESSO
+  // ==========================================================
   {
-    title: "Acessórios",
-    items: [
+    label: "Controle de Acesso",
+    href: productCategory("controle-de-acesso"),
+
+    columns: [
       {
-        label: "Acessórios CFTV",
-        href: productCategory("cftv-acessorios"),
+        title: "Controle de acesso",
+        items: [
+          {
+            label: "Controladores de acesso",
+            href: productCategory("controladores-de-acesso"),
+          },
+          {
+            label: "Controladores biométricos",
+            href: productCategory("controladores-biometricos"),
+          },
+          {
+            label: "Controladores faciais",
+            href: productCategory("controladores-faciais"),
+          },
+          {
+            label: "Leitores",
+            href: productCategory("leitores"),
+          },
+          {
+            label: "Credenciais",
+            href: productCategory("credenciais"),
+          },
+        ],
       },
+
       {
-        label: "Fontes",
-        href: productCategory("fontes"),
+        title: "Portaria",
+        items: [
+          {
+            label: "Porteiros eletrônicos",
+            href: productCategory("porteiros-eletronicos"),
+          },
+          {
+            label: "Porteiros residenciais",
+            href: productCategory("porteiros-residenciais"),
+          },
+          {
+            label: "Vídeo porteiros",
+            href: productCategory("video-porteiros"),
+          },
+          {
+            label: "Acessórios de porteiros",
+            href: productCategory("acessorios-de-porteiros"),
+          },
+          {
+            label: "Módulos de portaria",
+            href: productCategory("modulos-de-portaria"),
+          },
+        ],
+      },
+
+      {
+        title: "Controles e credenciais",
+        items: [
+          {
+            label: "Controles e transmissores",
+            href: productCategory("controles-e-transmissores"),
+          },
+          {
+            label: "Controles remotos",
+            href: productCategory("controles-remotos"),
+          },
+          {
+            label: "Cartões RFID",
+            href: productCategory("cartoes-rfid"),
+          },
+          {
+            label: "Chaveiros RFID",
+            href: productCategory("chaveiros-rfid"),
+          },
+        ],
       },
     ],
   },
-],
-},
 
-{
-  label: "Alarmes",
+  // ==========================================================
+  // REDES
+  // ==========================================================
+  {
+    label: "Redes",
+    href: productCategory("redes"),
 
-  href: productCategory("alarmes"),
+    columns: [
+      {
+        title: "Cabeamento",
+        items: [
+          {
+            label: "Cabeamento",
+            href: productCategory("cabeamento"),
+          },
+          {
+            label: "CAT5",
+            href: productCategory("cat5"),
+          },
+          {
+            label: "CAT6",
+            href: productCategory("cat6"),
+          },
+          {
+            label: "Patch Cords",
+            href: productCategory("patch-cords"),
+          },
+          {
+            label: "Cabos para CFTV",
+            href: productCategory("cabos-para-cftv"),
+          },
+        ],
+      },
 
-  columns: [
-    {
-      title: "Alarmes de incêndio",
-      items: [
-        {
-          label: "Acessórios",
-          href: productCategory("alarmes-acessorios"),
-        },
-        {
-          label: "Centrais",
-          href: productCategory("alarmes-centrais-convencionais"),
-        },
-        {
-          label: "Detectores",
-          href: productCategory("alarmes-sensores"),
-        },
-        {
-          label: "Sensores",
-          href: productCategory("alarmes-sensores"),
-        },
-        {
-          label: "Sirenes",
-          href: productCategory("alarmes-sirenes"),
-        },
-      ],
-    },
+      {
+        title: "Conectividade",
+        items: [
+          {
+            label: "Roteadores",
+            href: productCategory("roteadores"),
+          },
+          {
+            label: "Switches",
+            href: productCategory("switches"),
+          },
+          {
+            label: "Access Points",
+            href: productCategory("access-points"),
+          },
+          {
+            label: "Adaptadores de rede",
+            href: productCategory("adaptadores-de-rede"),
+          },
+          {
+            label: "Conversores de mídia",
+            href: productCategory("conversores-de-midia"),
+          },
+        ],
+      },
 
-    {
-      title: "Cerca elétrica",
-      items: [
-        {
-          label: "Cerca elétrica",
-          href: productCategory("cerca-eletrica"),
-        },
-      ],
-    },
+      {
+        title: "Infraestrutura",
+        items: [
+          {
+            label: "Racks",
+            href: productCategory("racks"),
+          },
+          {
+            label: "Acessórios de rack",
+            href: productCategory("acessorios-de-rack"),
+          },
+          {
+            label: "Patch Panels",
+            href: productCategory("patch-panels"),
+          },
+          {
+            label: "Fibra óptica",
+            href: productCategory("fibra-optica"),
+          },
+          {
+            label: "Conectores",
+            href: productCategory("conectores"),
+          },
+        ],
+      },
+    ],
+  },
 
-    {
-      title: "Sensores",
-      items: [
-        {
-          label: "Sensores",
-          href: productCategory("alarmes-sensores"),
-        },
-        {
-          label: "Acessórios",
-          href: productCategory("alarmes-acessorios"),
-        },
-      ],
-    },
+  // ==========================================================
+  // ENERGIA
+  // ==========================================================
+  {
+    label: "Energia",
+    href: productCategory("energia"),
 
-    {
-      title: "Centrais de alarme",
-      items: [
-        {
-          label: "Monitoradas",
-          href: productCategory("alarmes-centrais-monitoradas"),
-        },
-        {
-          label: "Convencionais",
-          href: productCategory("alarmes-centrais-convencionais"),
-        },
-      ],
-    },
-  ],
-},
+    columns: [
+      {
+        title: "Energia",
+        items: [
+          {
+            label: "Fontes de alimentação",
+            href: productCategory("fontes-de-alimentacao"),
+          },
+          {
+            label: "Nobreaks",
+            href: productCategory("nobreaks"),
+          },
+          {
+            label: "Baterias e pilhas",
+            href: productCategory("baterias-e-pilhas"),
+          },
+          {
+            label: "Conversores",
+            href: productCategory("conversores"),
+          },
+        ],
+      },
 
-{
-  label: "Controle de Acesso",
+      {
+        title: "Proteção elétrica",
+        items: [
+          {
+            label: "Proteção e distribuição",
+            href: productCategory("protecao-e-distribuicao"),
+          },
+          {
+            label: "Tomadas",
+            href: productCategory("tomadas"),
+          },
+          {
+            label: "Fusíveis",
+            href: productCategory("fusiveis"),
+          },
+          {
+            label: "Fitas isolantes",
+            href: productCategory("fitas-isolantes"),
+          },
+        ],
+      },
 
-  href: productCategory("controle-de-acesso"),
+      {
+        title: "Energia solar",
+        items: [
+          {
+            label: "Energia solar",
+            href: productCategory("energia-solar"),
+          },
+          {
+            label: "Conectores MC4",
+            href: productCategory("mc4"),
+          },
+        ],
+      },
+    ],
+  },
 
-  columns: [
-    {
-      title: "Controle de acesso",
-      items: [
-        {
-          label: "Controle de acesso",
-          href: productCategory("controle-de-acesso"),
-        },
-        {
-          label: "Controles de portões",
-          href: productCategory("controles-portoes"),
-        },
-      ],
-    },
+  // ==========================================================
+  // FECHADURAS DIGITAIS
+  // ==========================================================
+  {
+    label: "Fechaduras Digitais",
+    href: productCategory("fechaduras"),
 
-    {
-      title: "Portaria",
-      items: [
-        {
-          label: "Porteiro eletrônico",
-          href: productCategory("porteiro-eletronico"),
-        },
-        {
-          label: "Porteiros e acessórios",
-          href: productCategory("porteiro-acessorios"),
-        },
-        {
-          label: "Central de portaria digital",
-          href: productCategory("central-de-portaria-digital"),
-        },
-      ],
-    },
+    columns: [
+      {
+        title: "Fechaduras",
+        items: [
+          {
+            label: "Fechaduras",
+            href: productCategory("fechaduras"),
+          },
+          {
+            label: "Fechaduras elétricas",
+            href: productCategory("fechaduras-eletricas"),
+          },
+          {
+            label: "Fechaduras eletroímãs",
+            href: productCategory("fechaduras-eletroimas"),
+          },
+          {
+            label: "Solenoides",
+            href: productCategory("solenoides"),
+          },
+        ],
+      },
 
-    {
-      title: "Fechaduras",
-      items: [
-        {
-          label: "Fechaduras eletrônicas",
-          href: productCategory("fechaduras-eletronicas"),
-        },
-      ],
-    },
-  ],
-},
+      {
+        title: "Acesso",
+        items: [
+          {
+            label: "Biometria",
+            href: productCategory("controladores-biometricos"),
+          },
+          {
+            label: "Controle facial",
+            href: productCategory("controladores-faciais"),
+          },
+          {
+            label: "Leitores",
+            href: productCategory("leitores"),
+          },
+          {
+            label: "Credenciais RFID",
+            href: productCategory("credenciais-rfid"),
+          },
+        ],
+      },
 
-{
-  label: "Redes",
-
-  href: productCategory("redes"),
-
-  columns: [
-    {
-      title: "Cabeamento",
-      items: [
-        {
-          label: "Cabeamento",
-          href: productCategory("cabeamento"),
-        },
-        {
-          label: "Conectores",
-          href: productCategory("conectores"),
-        },
-      ],
-    },
-
-    {
-      title: "Redes",
-      items: [
-        {
-          label: "Redes com fio",
-          href: productCategory("redes-com-fio"),
-        },
-        {
-          label: "Redes sem fio profissionais",
-          href: productCategory("redes-sem-fio-profissionais"),
-        },
-      ],
-    },
-
-    {
-      title: "Infraestrutura",
-      items: [
-        {
-          label: "Racks e acessórios",
-          href: productCategory("redes-racks-e-acessorios"),
-        },
-        {
-          label: "Fibra óptica",
-          href: productCategory("redes-fibra-optica"),
-        },
-      ],
-    },
-  ],
-},
-
-{
-  label: "Energia",
-
-  href: productCategory("energia"),
-
-  columns: [
-    {
-      title: "Energia",
-      items: [
-        {
-          label: "Energia",
-          href: productCategory("energia"),
-        },
-        {
-          label: "Nobreaks",
-          href: productCategory("nobreak"),
-        },
-        {
-          label: "Baterias",
-          href: productCategory("baterias"),
-        },
-      ],
-    },
-
-    {
-      title: "Energia solar",
-      items: [
-        {
-          label: "Energia solar",
-          href: productCategory("energia-solar"),
-        },
-      ],
-    },
-
-    {
-      title: "Acessórios",
-      items: [
-        {
-          label: "Fontes",
-          href: productCategory("fontes"),
-        },
-      ],
-    },
-  ],
-},
-
-{
-  label: "Fechaduras Digitais",
-
-  href: productCategory("fechaduras"),
-
-  columns: [
-    {
-      title: "Fechaduras",
-      items: [
-        {
-          label: "Fechaduras digitais",
-          href: productCategory("fechaduras"),
-        },
-        {
-          label: "Fechaduras eletrônicas",
-          href: productCategory("fechaduras-eletronicas"),
-        },
-      ],
-    },
-
-    {
-      title: "Tipos de acesso",
-      items: [
-        {
-          label: "Biometria",
-          href: productCategory("fechaduras"),
-        },
-        {
-          label: "Senha",
-          href: productCategory("fechaduras"),
-        },
-        {
-          label: "Cartão",
-          href: productCategory("fechaduras"),
-        },
-      ],
-    },
-
-    {
-      title: "Aplicações",
-      items: [
-        {
-          label: "Porta de vidro",
-          href: productCategory("fechadura-porta-de-vidro"),
-        },
-      ],
-    },
-  ],
-},
+      {
+        title: "Aplicações",
+        items: [
+          {
+            label: "Portas e fechaduras",
+            href: productCategory("fechaduras"),
+          },
+          {
+            label: "Fechaduras elétricas",
+            href: productCategory("fechaduras-eletricas"),
+          },
+          {
+            label: "Fechaduras eletroímãs",
+            href: productCategory("fechaduras-eletroimas"),
+          },
+        ],
+      },
+    ],
+  },
 ];
 
 const solutionsMenu = [
