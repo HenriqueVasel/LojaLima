@@ -1,5 +1,5 @@
 // ============================================================
-// PRODUCT CLASSIFIER — V10 CALIBRADO
+// PRODUCT CLASSIFIER — V12 CALIBRADO
 // ============================================================
 
 export type Classification = {
@@ -163,6 +163,993 @@ export function classifyProduct(
   );
 
   const text = `${name} ${description}`;
+
+  // ==========================================================
+  // V12 — OVERRIDES CALIBRADOS PELA AUDITORIA DOS 500 PRODUTOS
+  // ==========================================================
+  // Regras de alta confiança vêm ANTES das regras genéricas.
+  // O objetivo é corrigir os casos observados na auditoria V11
+  // sem alterar as regras que já estavam funcionando.
+
+  // ----------------------------------------------------------
+  // ALARMES — CONTROLES / TRANSMISSORES
+  // ----------------------------------------------------------
+  if (
+    has(
+      name,
+      "TX 434",
+      "TX INTELBRAS",
+      "TX CAR EVO",
+      "XAC2000",
+      "XAC 2000",
+      "XAC4000",
+      "XAC 4000",
+      "XAC 8000",
+      "XAC 4003",
+      "XTR 1000"
+    )
+  ) {
+    return {
+      family: "alarmes",
+      type: "Transmissores",
+      subtype: "Controles e Transmissores",
+      line: has(name, "XAC8000", "XAC 8000") ? "XAC 8000"
+        : has(name, "XAC4003", "XAC 4003") ? "XAC 4003"
+        : has(name, "XAC4000", "XAC 4000") ? "XAC 4000"
+        : has(name, "XAC2000", "XAC 2000") ? "XAC 2000"
+        : has(name, "XTR 1000") ? "XTR"
+        : "TX",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ALARMES — DETECTORES DE FUMAÇA
+  // ----------------------------------------------------------
+  if (has(name, "DFC 421", "DFE 521", "DETECTOR DE FUMACA", "DETECTOR DE FUMAÇA")) {
+    return {
+      family: "alarmes",
+      type: "Alarmes de Incêndio",
+      subtype: "Detectores de Fumaça",
+      line: firstMatch(name, { "DFC 421": "DFC", "DFE 521": "DFE" }),
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // TELEFONIA — CENTRAIS CP / COMUNIC / IMPACTA
+  // ----------------------------------------------------------
+  if (
+    has(
+      name,
+      "CP 112 CENTRAL",
+      "CP 112",
+      "CP 192 CENTRAL",
+      "CP 192",
+      "CP 352 CENTRAL",
+      "CP352 CENTRAL",
+      "CP 4000 SMD",
+      "CENTRAL CP 4000",
+      "CP 4030",
+      "COMUNIC 48 CENTRAL",
+      "COMUNIC 80",
+      "CENTRAL COLETIVA",
+      "COLLECTIVE 20"
+    )
+  ) {
+    return {
+      family: "telefonia",
+      type: "Centrais Telefônicas",
+      subtype: "Centrais de Comunicação Condominial",
+      line: has(name, "CP 112") ? "CP112"
+        : has(name, "CP 192") ? "CP192"
+        : has(name, "CP 352", "CP352") ? "CP352"
+        : has(name, "CP 4030", "CP4030") ? "CP4030"
+        : has(name, "IMPACTA") ? "IMPACTA"
+        : has(name, "COMUNIC") ? "COMUNIC"
+        : "COLLECTIVE",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // AUTOMATIZADORES — SENSOR DE PORTA RP 100
+  // ----------------------------------------------------------
+  if (has(name, "RP 100")) {
+    return {
+      family: "automatizadores",
+      type: "Sensores para Automatizadores",
+      subtype: "Sensores de Presença",
+      line: "RP",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // AUTOMAÇÃO SMART
+  // ----------------------------------------------------------
+  if (has(name, "ECW 1001", "EWS 211", "CONTROLADOR DE CARGAS WI-FI", "CONTROLADOR DE CARGAS WIFI")) {
+    return {
+      family: "automacao",
+      type: "Casa Inteligente",
+      subtype: "Controladores Wi-Fi",
+      line: has(name, "ECW 1001") ? "ECW" : "EWS",
+      attributes: { wifi: true },
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ANTENAS / RECEPÇÃO DE TV
+  // ----------------------------------------------------------
+  if (has(name, "ANTENA INTERNA DE TV", "ANTENA DE TV INTERNA", "AI 3101", "AI 1015", "ANTENA SETORIAL", "UACC-UK-ULTRA-PANEL-ANTENNA")) {
+    return {
+      family: "antenas",
+      type: "Antenas",
+      subtype: has(name, "ANTENA SETORIAL", "UACC-UK-ULTRA-PANEL") ? "Antenas Setoriais" : "Antenas de TV",
+      line: firstMatch(name, { "AI 3101": "AI", "AI 1015": "AI", "UACC-UK-ULTRA-PANEL-ANTENNA": "UACC" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "RECEPTOR DIGITAL TV VIA SATELITE", "RECEPTOR DIGITAL TV VIA SATÉLITE", "RDS 830")) {
+    return {
+      family: "antenas",
+      type: "Receptores de TV",
+      subtype: "Receptores via Satélite",
+      line: "RDS",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // CONTROLE DE ACESSO — CAMPAINHAS / MÓDULOS
+  // ----------------------------------------------------------
+  if (has(name, "CIB 101S", "CIB 100 ME", "MODULO EXTERNO CAMPAINHA", "MÓDULO EXTERNO CAMPAINHA")) {
+    return {
+      family: "controle-acesso",
+      type: "Campainhas",
+      subtype: "Campainhas Sem Fio",
+      line: "CIB",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "PROTETOR DRYPLUG", "IDEAL PARA CONTROLES DE ACESSO")) {
+    return {
+      family: "controle-acesso",
+      type: "Acessórios de Controle de Acesso",
+      subtype: "Protetores",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // V12 — COMPLEMENTOS DE ALTO VALOR DA AUDITORIA
+  // ----------------------------------------------------------
+  if (has(name, "MODULADOR AGIL", "MODULADOR ÁGIL")) {
+    return {
+      family: "antenas",
+      type: "Distribuição de Sinal",
+      subtype: "Moduladores",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "PROTETOR DE LINHA TELEFONICA", "PROTETOR DE LINHA TELEFÔNICA")) {
+    return {
+      family: "telefonia",
+      type: "Acessórios de Telefonia",
+      subtype: "Protetores de Linha",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "PERFIL P/CERCA", "PERFIL P/ CERCA", "PERFIL ESTRELA", "PERFIL CANTONEIRA", "ISOLADORES") && categoryIsAny(categories, "DIVERSOS", "ALARMES")) {
+    return {
+      family: "alarmes",
+      type: "Cerca Elétrica",
+      subtype: "Acessórios de Cerca Elétrica",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "MIP 1000 IP", "MODULO INTELIGENTE DE PORTARIA", "MÓDULO INTELIGENTE DE PORTARIA")) {
+    return {
+      family: "controle-acesso",
+      type: "Controladores",
+      subtype: "Módulos de Portaria",
+      line: "MIP",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "XPE 1001 ID", "XPE 1001", "PORTEIRO COM LEITOR")) {
+    return {
+      family: "porteiros",
+      type: "Porteiros",
+      subtype: "Porteiros Eletrônicos",
+      line: "XPE",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "MODULO GPRS UNIVERSAL", "MÓDULO GPRS UNIVERSAL", "GPRS 1000 UNIVERSAL")) {
+    return {
+      family: "alarmes",
+      type: "Módulos de Comunicação",
+      subtype: "Módulos GPRS",
+      line: "GPRS",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "GR2 MIXX G6", "GR2-MIXX G6", "CENTRAL GATTER ELETR S-BOARD", "S-BOARD 1000", "AUT PIVO GAT", "AUT PIVÔ GAT")) {
+    return {
+      family: "automatizadores",
+      type: has(name, "CENTRAL") ? "Centrais de Comando" : "Automatizadores",
+      subtype: has(name, "CENTRAL") ? "Centrais de Comando" : "Automatizadores de Portão",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "VBOX 3000 B", "CAIXA METALICA VBOX", "CAIXA METÁLICA VBOX")) {
+    return {
+      family: "cftv",
+      type: "Acessórios de CFTV",
+      subtype: "Caixas de Passagem",
+      line: "VBOX",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "STANDARD 600 X 600 X 250")) {
+    return {
+      family: "energia",
+      type: "Quadros e Caixas Elétricas",
+      subtype: "Quadros de Distribuição",
+      line: "STANDARD",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "ABRACADEIRA NYLON", "ABRAÇADEIRA NYLON", "ROLO DE VELCRO", "VELCRO")) {
+    return {
+      family: "cabeamento",
+      type: "Acessórios de Cabeamento",
+      subtype: "Abraçadeiras e Velcros",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CANALETA", "DERIVAÇÃO EM", "DERIVACAO EM", "COTOVELO EXTERNO", "COTOVELO 90 GRAUS", "TAMPA EXTREMIDADE", "PASSA FIO HELICOIDAL")) {
+    return {
+      family: "cabeamento",
+      type: "Canaletas e Acessórios",
+      subtype: has(name, "CANALETA") ? "Canaletas" : has(name, "TAMPA") ? "Tampas" : has(name, "COTOVELO") ? "Cotovelo" : has(name, "DERIVAÇÃO", "DERIVACAO") ? "Derivações" : "Passa Fios",
+      line: "SISTEMA X",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "FITA ISOLANTE", "KIT FUSIVEL", "KIT FUSÍVEL", "TOMADA BLINDADA")) {
+    return {
+      family: "energia",
+      type: "Proteção e Distribuição",
+      subtype: has(name, "FITA ISOLANTE") ? "Fitas Isolantes" : has(name, "FUSIVEL", "FUSÍVEL") ? "Fusíveis" : "Tomadas",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CAIXA PLASTICA CENTRAL", "CAIXA PLÁSTICA CENTRAL", "CAIXA PLASTICA CENTRAL DE COMAN", "CAIXA METALICA BRANCA DIGITAL SAT", "CAIXA METÁLICA BRANCA DIGITAL SAT")) {
+    return {
+      family: "controle-acesso",
+      type: "Caixas e Gabinetes",
+      subtype: "Caixas para Equipamentos",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // V12 — SUBTIPOS PARA ELEVAR PRECISÃO DOS CASOS REVISAR
+  // ----------------------------------------------------------
+  if (has(name, "XSA 1000", "SUPORTE ARTICULADO XSA 1000")) {
+    return {
+      family: "alarmes",
+      type: "Acessórios de Sensores",
+      subtype: "Suportes para Sensores",
+      line: "XSA",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "EP 02", "EP 04") && has(name, "CONTROLE REMOTO")) {
+    return {
+      family: "automatizadores",
+      type: "Acessórios de Automatizadores",
+      subtype: "Controles Remotos",
+      line: "EP",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "LIMA P/ENXADA", "LIMA PARA ENXADA")) {
+    return {
+      family: "ferramentas",
+      type: "Ferramentas e Acessórios",
+      subtype: "Limas",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "MOTOR 2000/AR", "MOTOR PARA PORTAO", "MOTOR PARA PORTÃO", "AUTOMATIZADOR DE PORTAO", "AUTOMATIZADOR DE PORTÃO", "AUTOMATIZADOR DE PORTA")) {
+    return {
+      family: "automatizadores",
+      type: "Automatizadores",
+      subtype: "Automatizadores de Portão",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "CENTRAL AUTOMATIZADOR", "CENTRAL DE COMANDO", "CENTRAL COMANDO", "CENTRAL GATTER")) {
+    return {
+      family: "automatizadores",
+      type: "Centrais de Comando",
+      subtype: "Centrais de Comando",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "CERCA ELETRICA", "CERCA ELÉTRICA", "ELC 5001", "ELC 5002", "ELC 3012")) {
+    return {
+      family: "alarmes",
+      type: "Cerca Elétrica",
+      subtype: "Centrais de Cerca Elétrica",
+      line: firstMatch(name, { "ELC 5001": "ELC", "ELC 5002": "ELC", "ELC 3012": "ELC" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "SIRENE", "SIR 2000")) {
+    return {
+      family: "alarmes",
+      type: "Sirenes",
+      subtype: "Sirenes",
+      line: has(name, "SIR 2000") ? "SIR" : null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "SWITCH") && has(name, "POE", "HI-POE")) {
+    return {
+      family: "redes",
+      type: "Switches",
+      subtype: "PoE",
+      line: null,
+      attributes: {
+        poe: true,
+        ...(extractPorts(name) ? { portas: extractPorts(name) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "ROTEADOR", "ROUTER", "ROTEADOR WIRELESS", "W4-300F", "W6-1500", "R3005G")) {
+    return {
+      family: "redes",
+      type: "Roteadores",
+      subtype: has(name, "WIRELESS", "WIFI", "WI-FI") ? "Wi-Fi" : "Roteadores",
+      line: null,
+      attributes: {
+        ...(has(name, "WIRELESS", "WIFI", "WI-FI") ? { wifi: true } : {}),
+        ...(extractPorts(name) ? { portas: extractPorts(name) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "ROTEADOR/ACCESS POINT", "ROTEADOR ACCESS POINT", "AP 1250", "AP360", "AP310")) {
+    return {
+      family: "redes",
+      type: "Access Points",
+      subtype: "Wi-Fi",
+      line: null,
+      attributes: { wifi: true },
+    };
+  }
+
+  if (has(name, "CONVERSORES DE MIDIA", "CONVERSOR DE MIDIA", "KFM 112", "KGM 1105")) {
+    return {
+      family: "redes",
+      type: "Conversores de Mídia",
+      subtype: "Conversores de Mídia",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "PRENSA CABO", "PRENSA-CABO")) {
+    return {
+      family: "cabeamento",
+      type: "Acessórios de Cabeamento",
+      subtype: "Prensa-cabos",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CABO HDMI")) {
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos HDMI",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CABO USB", "USB-C", "USB - USB-C")) {
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: "Cabos USB",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CABO COAXIAL", "CABO CFTV", "CABO PARALELO", "CABO PP", "CABO BICOLOR", "CABO 4MM+2X26")) {
+    return {
+      family: "cabeamento",
+      type: "Cabos",
+      subtype: has(name, "COAXIAL") ? "Cabos Coaxiais" : has(name, "CFTV") ? "Cabos para CFTV" : "Cabos Elétricos",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "TELEFONE PLENO", "TELEFONE COM FIO")) {
+    return {
+      family: "telefonia",
+      type: "Telefones",
+      subtype: "Telefones Com Fio",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ALARMES — EXPANSORES DE ZONA
+  // ----------------------------------------------------------
+  if (
+    has(name, "EXPANSOR DE ZONAS", "EXPANSOR DE ZONA", "XEZ 4108", "XEZ4108")
+  ) {
+    return {
+      family: "alarmes",
+      type: "Expansores",
+      subtype: "Expansores de Zonas",
+      line: "XEZ",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ALARMES — ACIONADORES / DETECTORES / ILUMINAÇÃO DE EMERGÊNCIA
+  // ----------------------------------------------------------
+  if (has(name, "ACIONADOR MANUAL ENDERECAVEL", "ACIONADOR MANUAL ENDERECÁVEL", "AME521")) {
+    return {
+      family: "alarmes",
+      type: "Acionadores",
+      subtype: "Acionadores Manuais",
+      line: "AME",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "DETECTOR DE GAS", "DETECTOR DE GÁS", "GLP COM RELE", "GLP COM RELÉ")) {
+    return {
+      family: "alarmes",
+      type: "Detectores",
+      subtype: "Detectores de Gás",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (
+    has(
+      name,
+      "BLOCO DE ILUMINACAO AUTONOMO",
+      "BLOCO DE ILUMINAÇÃO AUTÔNOMO",
+      "SINALIZADOR AUDIO VISUAL ENDERECAVEL",
+      "SINALIZADOR AUDIO VISUAL ENDEREÇÁVEL"
+    )
+  ) {
+    return {
+      family: "alarmes",
+      type: "Alarmes de Incêndio",
+      subtype: has(name, "BLOCO DE ILUMINACAO", "BLOCO DE ILUMINAÇÃO")
+        ? "Iluminação de Emergência"
+        : "Sinalizadores",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // REDES — ACCESS POINTS UBIQUITI / UNIFI
+  // ----------------------------------------------------------
+  if (
+    has(name, "U7-LR", "U7-LITE", "U7-PRO", "U6-PRO", "U6-LITE", "U6+", "UAP-AC") ||
+    (has(name, "UNIFI") && has(name, "ACCESS POINT", "AP"))
+  ) {
+    const line = has(name, "U7-LR", "U7-LITE", "U7-PRO")
+      ? "U7"
+      : has(name, "U6-PRO", "U6-LITE", "U6+")
+        ? "U6"
+        : has(name, "UAP-AC")
+          ? "UAP-AC"
+          : "UNIFI";
+
+    return {
+      family: "redes",
+      type: "Access Points",
+      subtype: "Wi-Fi",
+      line,
+      attributes: {
+        wifi: true,
+        ...(has(name, "POE", "SEM FONTE") ? { poe: true } : {}),
+      },
+    };
+  }
+
+  // ----------------------------------------------------------
+  // REDES — SWITCH UBIQUITI
+  // ----------------------------------------------------------
+  if (has(name, "USW-48", "UNIFI SWITCH")) {
+    return {
+      family: "redes",
+      type: "Switches",
+      subtype: "Gerenciáveis",
+      line: "UNIFI",
+      attributes: {
+        gerenciavel: true,
+        ...(extractPorts(name) ? { portas: extractPorts(name) } : {}),
+      },
+    };
+  }
+
+  // ----------------------------------------------------------
+  // REDES — MODEMS / ONT / MESH / ADAPTADORES WI-FI
+  // ----------------------------------------------------------
+  if (has(name, "MODEM OPTICO", "MODEM ÓPTICO", "ONT", "WIFIBER", "WIFI6", "WI-FI 6")) {
+    return {
+      family: "redes",
+      type: "Modems e ONTs",
+      subtype: has(name, "PON", "ONT") ? "ONTs" : "Modems Ópticos",
+      line: null,
+      attributes: {
+        ...(has(name, "WIFI", "WI-FI") ? { wifi: true } : {}),
+        ...(extractPorts(name) ? { portas: extractPorts(name) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "EXTENSOR WIFI", "EXTENSOR WI-FI", "MESH")) {
+    return {
+      family: "redes",
+      type: "Access Points",
+      subtype: "Extensores Wi-Fi",
+      line: null,
+      attributes: { wifi: true },
+    };
+  }
+
+  if (has(name, "ADAPTADOR USB WI-FI", "ADAPTADOR USB WIFI")) {
+    return {
+      family: "redes",
+      type: "Adaptadores de Rede",
+      subtype: "Adaptadores Wi-Fi",
+      line: null,
+      attributes: { wifi: true },
+    };
+  }
+
+  // ----------------------------------------------------------
+  // REDES — RACKS E ACESSÓRIOS DE RACK
+  // ----------------------------------------------------------
+  if (has(name, "BANDEJA FIXA", "BANDEJA PARA RACK")) {
+    return {
+      family: "redes",
+      type: "Acessórios de Rack",
+      subtype: "Bandejas",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "KIT VENTILACAO", "KIT VENTILAÇÃO", "COOLERS", "REGUA COM", "RÉGUA COM", "GUIA DE CABOS P/ RACK", "GUIA DE CABOS PARA RACK", "CONJUNTO TRILHO RACK", "FRENTE FALSA P/RACK", "FRENTE FALSA PARA RACK", "KIT PORCA GAIOLA")) {
+    return {
+      family: "redes",
+      type: "Acessórios de Rack",
+      subtype: has(name, "KIT VENTILACAO", "KIT VENTILAÇÃO")
+        ? "Ventilação"
+        : has(name, "REGUA COM", "RÉGUA COM")
+          ? "Régua de Tomadas"
+          : has(name, "GUIA DE CABOS")
+            ? "Guias de Cabos"
+            : has(name, "TRILHO")
+              ? "Trilhos"
+              : has(name, "FRENTE FALSA")
+                ? "Frentes Falsas"
+                : "Fixação",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "MINI RACK")) {
+    return {
+      family: "redes",
+      type: "Racks",
+      subtype: "Mini Racks",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "RACK DE PISO", "RACK PISO")) {
+    return {
+      family: "redes",
+      type: "Racks",
+      subtype: "Racks de Piso",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // REDES — PATCH PANELS / FIBRA / SUPORTE ONU
+  // ----------------------------------------------------------
+  if (has(name, "PATCH PANEL", "PATCH CORD") && !has(name, "CAT5", "CAT6")) {
+    return {
+      family: "redes",
+      type: "Patch Panels",
+      subtype: "Patch Panels",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "SUPORTE DE ONU", "SUPORTE ONU")) {
+    return {
+      family: "redes",
+      type: "Acessórios de Rede",
+      subtype: "Suportes de ONU",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // TELEFONIA — GATEWAYS / RÁDIOS / ACESSÓRIOS
+  // ----------------------------------------------------------
+  if (has(name, "GW 308 S", "GW 316 S", "GW 332 S", "GATEWAY DE VOZ", "GATEWAY GW")) {
+    return {
+      family: "telefonia",
+      type: "Gateways",
+      subtype: "Gateways de Voz",
+      line: firstMatch(name, { "GW 308 S": "GW", "GW 316 S": "GW", "GW 332 S": "GW" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "RADIO COMUNICADOR", "RÁDIO COMUNICADOR", "RADIO COMUNIC", "RÁDIO COMUNIC")) {
+    return {
+      family: "telefonia",
+      type: "Rádios Comunicadores",
+      subtype: "Rádios Comunicadores",
+      line: firstMatch(name, { "RC 4002": "RC", "RC 4102": "RC", "RPD8": "RPD" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "FONE DE OUVIDO P/RADIO", "FONE DE OUVIDO PARA RADIO", "HEADSET")) {
+    return {
+      family: "telefonia",
+      type: "Acessórios de Telefonia",
+      subtype: "Headsets e Fones",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "PLACA RAMAL", "PLACA TRONCO", "PLACA DISA", "PLACA DE EXPANSAO GATEWAY", "PLACA DE EXPANSÃO GATEWAY", "PLACA 2 TRONCOS")) {
+    return {
+      family: "telefonia",
+      type: "Acessórios de Centrais",
+      subtype: has(name, "RAMAL") ? "Placas de Ramal" : has(name, "TRONCO") ? "Placas de Tronco" : "Placas de Centrais",
+      line: has(name, "IMPACTA") ? "IMPACTA" : has(name, "MODULARE") ? "MODULARE" : null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "TUBO DE VOZ", "ADAPTADOR DE PINAGEM", "TERMINAL INTELIGENTE", "TERMINAL DE VOZ")) {
+    return {
+      family: "telefonia",
+      type: "Acessórios de Telefonia",
+      subtype: "Terminais e Acessórios",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // PORTEIROS / CONTROLE DE ACESSO
+  // ----------------------------------------------------------
+  if (has(name, "IPR1010", "IPR8010", "IVR 7", "VIDEOPORTEIRO RESIDENCIAL", "PORTEIRO RESIDENCIAL")) {
+    return {
+      family: "porteiros",
+      type: "Porteiros Residenciais",
+      subtype: "Porteiros Residenciais",
+      line: firstMatch(name, { IPR1010: "IPR", IPR8010: "IPR", "IVR 7": "IVR" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "VIDEOPORTEIRO SMART", "VIDEOPORTEIRO RESIDENCIAL", "VIDEO PORTEIRO SMART", "IVW 3000")) {
+    return {
+      family: "porteiros",
+      type: "Vídeo Porteiros",
+      subtype: "Vídeo Porteiros",
+      line: firstMatch(name, { "IVW 3000": "IVW" }),
+      attributes: {},
+    };
+  }
+
+  if (has(name, "EXTENSAO PORTEIRO", "EXTENSÃO PORTEIRO", "EXTENSAO DE AUDIO", "EXTENSÃO DE ÁUDIO", "PROTETOR TOTEM")) {
+    return {
+      family: "porteiros",
+      type: "Acessórios de Porteiros",
+      subtype: has(name, "EXTENSAO", "EXTENSÃO") ? "Extensões" : "Suportes e Proteções",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "XFE 1000", "MODULO ACIONAMENTO EXTERNO", "MÓDULO DE ACIONAMENTO EXTERNO")) {
+    return {
+      family: "controle-acesso",
+      type: "Acessórios de Controle de Acesso",
+      subtype: "Módulos de Acionamento",
+      line: "XFE",
+      attributes: {},
+    };
+  }
+
+  if (has(name, "DIGIPROX", "SA203", "LEITOR DE PROXIMIDADE")) {
+    return {
+      family: "controle-acesso",
+      type: "Leitores",
+      subtype: "Leitores RFID",
+      line: null,
+      attributes: { rfid: true },
+    };
+  }
+
+  if (has(name, "ACIONADOR DE EMERGENCIA", "ACIONADOR DE CORTINAS", "ACIONADOR DE PORTAO", "ACIONADOR DE PORTÃO")) {
+    return {
+      family: has(name, "CORTINAS") ? "automacao" : "controle-acesso",
+      type: "Acionadores",
+      subtype: has(name, "EMERGENCIA") ? "Acionadores de Emergência" : "Acionadores",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // AUTOMATIZADORES — RECEPTORES / PEÇAS / MOTORES
+  // ----------------------------------------------------------
+  if (has(name, "RECEPTOR MD T01", "MD T01")) {
+    return {
+      family: "automatizadores",
+      type: "Acessórios de Automatizadores",
+      subtype: "Receptores",
+      line: "MD",
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "REPOS CJ ENGR CREM", "REPOS PORCA DE BRONZE", "CONJUNTO FRICCAO", "CONJUNTO FRICÇÃO", "CHAVE MANUAL DZ", "TAMPA FRONTAL DESLI", "GABINETE AUT.", "GABINETE AUT", "CREMALHEIRA INDUSTRIAL", "CREMALHEIRA 1.5M", "SENSOR DESLIZANTE SOCIAL")) {
+    return {
+      family: "automatizadores",
+      type: "Acessórios de Automatizadores",
+      subtype: has(name, "CREMALHEIRA") ? "Cremalheiras"
+        : has(name, "FRICCAO", "FRICÇÃO") ? "Conjuntos de Fricção"
+        : has(name, "PORCA") ? "Porcas e Fusos"
+        : has(name, "GABINETE") ? "Gabinetes"
+        : has(name, "CHAVE MANUAL") ? "Chaves Manuais"
+        : has(name, "TAMPA") ? "Tampas"
+        : "Acessórios de Automatizadores",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // CFTV — EXTENSORES HDMI / BALUNS / CAIXAS / MICRO SD
+  // ----------------------------------------------------------
+  if (has(name, "EXTENSOR HDMI", "EXTENSOR HDMI 4K", "EXTENSOR HDMI TX E RX")) {
+    return {
+      family: "cftv",
+      type: "Acessórios de CFTV",
+      subtype: "Extensores HDMI",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "BALUN PASSIVO DE VIDEO", "BALUN PASSIVO DE VÍDEO", "POWER CONV. EST. VIDEO BALUN", "POWER CONV EST VIDEO BALUN")) {
+    return {
+      family: "cftv",
+      type: "Acessórios de CFTV",
+      subtype: "Baluns de Vídeo",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CARTAO MICRO SD", "CARTÃO MICRO SD")) {
+    return {
+      family: "cftv",
+      type: "Armazenamento",
+      subtype: "Cartões Micro SD",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "MESA DE CONTROLE IP", "MESA DE CONTROLE IP/ANALOGICA", "MESA DE CONTROLE IP/ANALÓGICA")) {
+    return {
+      family: "cftv",
+      type: "Mesas de Controle",
+      subtype: "Mesas de Controle IP",
+      line: "VTN",
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ANTENAS / DISTRIBUIÇÃO DE SINAL
+  // ----------------------------------------------------------
+  if (has(name, "DIPLEXER", "DIVISOR", "AMPLIFICADOR LINHA", "AMPLIFICADOR DE LINHA", "MINI BOOSTER", "AMPLIFICADOR LINHA SATELITE", "AMPLIFICADOR LINHA SATÉLITE")) {
+    return {
+      family: "antenas",
+      type: "Distribuição de Sinal",
+      subtype: has(name, "DIPLEXER") ? "Diplexers"
+        : has(name, "DIVISOR") ? "Divisores e Splitters"
+        : "Amplificadores e Boosters",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // CABEAMENTO — CABOS / FIBRA / CONECTORES
+  // ----------------------------------------------------------
+  if (has(name, "CABO OPTICO", "CABO ÓPTICO", "CABO DE FIBRA", "FIBRA OPTICA", "FIBRA ÓPTICA", "CTO NAP", "CAIXA DIO", "DIO-DISTRIBUIDOR", "CORDAO OPTICO", "CORDÃO ÓPTICO", "SUPORTE METALICO AEREO PARA CONJUNTO DE EMENDA OPTICA")) {
+    return {
+      family: "cabeamento",
+      type: "Fibra Óptica",
+      subtype: has(name, "CTO NAP") ? "CTO"
+        : has(name, "CAIXA DIO", "DIO-DISTRIBUIDOR") ? "DIO"
+        : has(name, "CORDAO OPTICO", "CORDÃO ÓPTICO") ? "Cordões Ópticos"
+        : "Cabos de Fibra Óptica",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CONECTOR MACHO", "CONECTOR DE COMPRESSAO", "CONECTOR DE COMPRESSÃO", "MC4Y", "KIT 50 CONECTORES", "CONJUNTO 9 CONECTORES", "BASTIDOR P/ 1 BLOCO ENGATE")) {
+    return {
+      family: "cabeamento",
+      type: "Conectores",
+      subtype: has(name, "MC4Y") ? "MC4" : has(name, "COMPRESSAO", "COMPRESSÃO") ? "Conectores de Compressão" : "Conectores Diversos",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // ENERGIA / ELÉTRICA
+  // ----------------------------------------------------------
+  if (has(name, "MODULO DE BATERIAS", "MÓDULO DE BATERIAS", "GAL 12V-20", "GBA 12V 2AH")) {
+    return {
+      family: "energia",
+      type: "Acessórios de Energia",
+      subtype: "Módulos e Baterias",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "CONVERSOR AUTOMATICO AC/DC", "CONVERSOR AUTOMÁTICO AC/DC", "CONVERSOR AUT 12V", "CONVERSOR AUT 12V", "CONVERSOR AUT 24V", "CONVERSOR ESTATICO DC/DC", "CONVERSOR ESTÁTICO DC/DC")) {
+    return {
+      family: "energia",
+      type: "Conversores",
+      subtype: "Conversores de Alimentação",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  if (has(name, "PROTETOR ELETRONICO", "PROTETOR ELETRÔNICO", "TOMADA DESMONTAVEL", "TOMADA DESMONTÁVEL", "TOMADA SIMPLES", "PLUGUE DESMONTAV", "PLUGUE DESMONTÁV", "INT S SX 10A250V", "ARSTOP SOBREPOR")) {
+    return {
+      family: "energia",
+      type: "Proteção e Distribuição",
+      subtype: has(name, "PROTETOR") ? "Protetores de Linha" : has(name, "TOMADA") ? "Tomadas" : "Acessórios Elétricos",
+      line: null,
+      attributes: {
+        ...(extractVoltage(text) ? { tensao: extractVoltage(text) } : {}),
+      },
+    };
+  }
+
+  // ----------------------------------------------------------
+  // CONTROLE DE ACESSO — SUPORTES / CREMALHEIRAS / SENSORES
+  // ----------------------------------------------------------
+  if (categoryIsAny(categories, "CONTROLE DE ACESSO", "CONTROLE ACESSO") && has(name, "SUPORTE")) {
+    return {
+      family: "controle-acesso",
+      type: "Acessórios de Controle de Acesso",
+      subtype: "Suportes",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  if (has(name, "CREMALHEIRA") && categoryIsAny(categories, "CONTROLE DE ACESSO", "AUTOMATIZADORES")) {
+    return {
+      family: "automatizadores",
+      type: "Acessórios de Automatizadores",
+      subtype: "Cremalheiras",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // ----------------------------------------------------------
+  // DIVERSOS COM SINAL DE PRODUTO FERRAMENTA / FIXAÇÃO
+  // ----------------------------------------------------------
+  if (has(name, "ESTILETE", "ALICATE", "BROCA", "CHAVE FENDA", "CHAVE PHILLIPS", "JG FERRAMENTAS", "JOGO DE FERRAMENTAS", "BOLSA EM LONA", "CAIXA BAU", "CAIXA BAÚ", "TINTA SPRAY", "VASELINA", "GRAXA BISNAGA")) {
+    return {
+      family: "ferramentas",
+      type: "Ferramentas e Acessórios",
+      subtype: has(name, "BROCA") ? "Brocas" : has(name, "ALICATE") ? "Alicates" : has(name, "CHAVE") ? "Chaves" : "Ferramentas e Acessórios",
+      line: null,
+      attributes: {},
+    };
+  }
 
   // ==========================================================
   // EXCLUSÕES
@@ -366,30 +1353,6 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 5 — CÂMERAS MULTI-HD (VHD)
-  // IMPORTANTE: ANTES DE HD PARA CFTV.
-  // VHD é linha de câmera, não armazenamento.
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "VHD",
-      "VHDM",
-      "CAMERA VHD",
-      "CAMERA VHDM"
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "Multi-HD",
-      line: has(name, "VHDM") ? "VHDM" : "VHD",
-      attributes: {},
-    };
-  }
-
-  // ==========================================================
   // 5 — HD PARA CFTV
   // ==========================================================
 
@@ -436,16 +1399,7 @@ export function classifyProduct(
     "VIP",
     "VIPW",
     "VHD",
-    "VHDM",
-    "VHD 1",
-    "VHD 2",
-    "VHD 3",
-    "VHD 4",
-    "VHD 5",
-    "VHD 6",
-    "VHD 7",
-    "VHD 8",
-    "VHD 9"
+    "VHDM"
   );
 
   if (
@@ -512,30 +1466,6 @@ export function classifyProduct(
             }
           : {}),
       },
-    };
-  }
-
-  // ==========================================================
-  // 7 — PORTEIRO RESIDENCIAL
-  // IPR é linha de porteiro residencial Intelbras.
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "PORTEIRO RESIDENCIAL",
-      "PORTEIRO RESIDENCIAL IPR",
-      "IPR1010",
-      "IPR 1010",
-      "IPR"
-    )
-  ) {
-    return {
-      family: "porteiros",
-      type: "Porteiros",
-      subtype: "Porteiros Residenciais",
-      line: has(name, "IPR") ? "IPR" : null,
-      attributes: {},
     };
   }
 
@@ -776,42 +1706,6 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 11 — ALARMES DE INCÊNDIO: DETECTORES
-  // IMPORTANTE: antes de sensores genéricos.
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "DETECTOR DE FUMACA",
-      "DETECTOR DE FUMAÇA",
-      "DETECTOR DE FUMO",
-      "DETECTOR TERMICO",
-      "DETECTOR TÉRMICO",
-      "DETECTOR DE CALOR",
-      "DETECTOR DE INCENDIO",
-      "DETECTOR DE INCÊNDIO",
-      "DFC"
-    )
-  ) {
-    let subtype = "Detectores de Incêndio";
-
-    if (has(name, "FUMACA", "FUMAÇA", "FUMO")) {
-      subtype = "Detectores de Fumaça";
-    } else if (has(name, "TERMICO", "TÉRMICO", "CALOR")) {
-      subtype = "Detectores de Calor";
-    }
-
-    return {
-      family: "alarmes",
-      type: "Alarmes de Incêndio",
-      subtype,
-      line: has(name, "DFC") ? "DFC" : null,
-      attributes: {},
-    };
-  }
-
-  // ==========================================================
   // 11 — ALARMES: SENSORES
   // ==========================================================
 
@@ -877,38 +1771,6 @@ export function classifyProduct(
       type: "Sensores",
       subtype,
       line: null,
-      attributes: {},
-    };
-  }
-
-  // ==========================================================
-  // 12 — ALARMES: TRANSMISSORES / CONTROLES
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "TRANSMISSOR",
-      "TRANSMISSOR XAC",
-      "TX 434",
-      "TX434",
-      "XAC2000",
-      "XAC4000",
-      "TX CAR",
-      "TX CAR EVO"
-    )
-  ) {
-    return {
-      family: "alarmes",
-      type: "Transmissores",
-      subtype: has(name, "XAC")
-        ? "Transmissores XAC"
-        : "Controles e Transmissores",
-      line: has(name, "XAC")
-        ? "XAC"
-        : has(name, "TX")
-          ? "TX"
-          : null,
       attributes: {},
     };
   }
@@ -1103,15 +1965,9 @@ export function classifyProduct(
   const accessPointModelSignal = has(
     name,
     "U7-PRO",
-    "U7-LR",
-    "U7-LITE",
     "U6-PRO",
     "U6-LITE",
     "U6+",
-    "U6-LR",
-    "U6-LR+",
-    "U5",
-    "UAP",
     "UAP-AC",
     "UAP-AC-PRO",
     "UAP-AC-LITE",
@@ -1361,65 +2217,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 27 — ANTENAS / DISTRIBUIÇÃO DE RF E TV
-  // ==========================================================
-
-  if (
-    has(
-      name,
-      "ANTENA",
-      "ANTENA DIGITAL",
-      "ANTENA UHF",
-      "ANTENA VHF",
-      "ANTENA INTERNA",
-      "ANTENA EXTERNA",
-      "ANTENA PARABOLICA",
-      "ANTENA PARABÓLICA"
-    )
-  ) {
-    return {
-      family: "antenas",
-      type: "Antenas",
-      subtype: has(name, "UHF")
-        ? "Antenas UHF"
-        : has(name, "VHF")
-          ? "Antenas VHF"
-          : has(name, "PARABOLICA", "PARABÓLICA")
-            ? "Antenas Parabólicas"
-            : null,
-      line: null,
-      attributes: {},
-    };
-  }
-
-  if (
-    has(
-      name,
-      "DIVISOR",
-      "DIVISOR DE SINAL",
-      "SPLITTER",
-      "DERIVADOR",
-      "TAP",
-      "MODULADOR",
-      "MODULADOR DIGITAL",
-      "MIXER"
-    )
-  ) {
-    return {
-      family: "antenas",
-      type: "Distribuição de Sinal",
-      subtype: has(name, "MODULADOR")
-        ? "Moduladores"
-        : has(name, "SPLITTER", "DIVISOR")
-          ? "Divisores e Splitters"
-          : "Distribuição de Sinal",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  // ==========================================================
-  // 28 — FONTES
+  // 27 — FONTES
   // ==========================================================
 
   if (
@@ -1448,7 +2246,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 29 — CONECTORES
+  // 28 — CONECTORES
   // ==========================================================
 
   if (
@@ -1508,7 +2306,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 30 — CABOS CAT5
+  // 29 — CABOS CAT5
   // ==========================================================
 
   if (
@@ -1531,7 +2329,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 31 — CABOS CAT6
+  // 30 — CABOS CAT6
   // ==========================================================
 
   if (
@@ -1552,7 +2350,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 32 — CABOS GENÉRICOS
+  // 31 — CABOS GENÉRICOS
   // ==========================================================
 
   if (
@@ -1575,7 +2373,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 33 — TELEFONIA: CENTRAIS
+  // 32 — TELEFONIA: CENTRAIS
   // IMPORTANTE:
   // CP4030 só entra aqui quando houver contexto de telefonia.
   // ==========================================================
@@ -1626,7 +2424,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 34 — TELEFONES
+  // 33 — TELEFONES
   // ==========================================================
 
   if (
@@ -1689,7 +2487,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 35 — AUTOMATIZADORES
+  // 34 — AUTOMATIZADORES
   // ==========================================================
 
   if (
@@ -1697,73 +2495,27 @@ export function classifyProduct(
       name,
       "AUTOMATIZADOR",
       "MOTOR PARA PORTAO",
-      "MOTOR PARA PORTÃO",
-      "MOTOR DESLIZANTE",
-      "MOTOR PIVOTANTE",
-      "CENTRAL DE COMANDO",
-      "CENTRAL COMANDO",
-      "CP4030",
-      "CP 4030",
-      "CONTROLE REMOTO",
-      "CONTROLE EP",
-      "EP 02",
-      "FOTOCELULA",
-      "FOTOCÉLULA",
-      "RECEPTOR DE PORTAO",
-      "RECEPTOR DE PORTÃO"
+      "MOTOR PARA PORTÃO"
     ) ||
     (
       categoryIsAny(categories, "AUTOMATIZADORES", "AUTOMATIZADOR") &&
       has(
         name,
         "MOTOR",
-        "CENTRAL",
+        "CENTRAL DE COMANDO",
+        "CENTRAL COMANDO",
         "RECEPTOR",
-        "CONTROLE",
+        "CONTROLE REMOTO",
         "FOTOCELULA",
         "FOTOCÉLULA"
       )
     )
   ) {
-    let subtype = "Automatizadores";
-
-    if (
-      has(
-        name,
-        "CONTROLE REMOTO",
-        "CONTROLE EP",
-        "EP 02"
-      )
-    ) {
-      subtype = "Controles Remotos";
-    } else if (
-      has(
-        name,
-        "CENTRAL DE COMANDO",
-        "CENTRAL COMANDO",
-        "CP4030",
-        "CP 4030"
-      )
-    ) {
-      subtype = "Centrais de Comando";
-    } else if (has(name, "RECEPTOR")) {
-      subtype = "Receptores";
-    } else if (has(name, "FOTOCELULA", "FOTOCÉLULA")) {
-      subtype = "Fotocélulas";
-    } else if (
-      has(
-        name,
-        "MOTOR",
-        "AUTOMATIZADOR"
-      )
-    ) {
-      subtype = "Motores e Automatizadores";
-    }
 
     return {
       family: "automatizadores",
       type: "Automatizadores",
-      subtype,
+      subtype: null,
       line: null,
       attributes: {
         ...(extractVoltage(text)
@@ -1776,7 +2528,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 36 — PEÇAS DE AUTOMATIZADORES
+  // 35 — PEÇAS DE AUTOMATIZADORES
   // ==========================================================
 
   if (
@@ -1790,7 +2542,6 @@ export function classifyProduct(
         "MANCAL",
         "FUSO",
         "ROLAMENTO",
-        "FREIO",
         "REPOSICAO",
         "REPOSIÇÃO"
       )
@@ -1829,9 +2580,7 @@ export function classifyProduct(
 
     let subtype = "Acessórios de Automatizadores";
 
-    if (has(name, "FREIO")) {
-      subtype = "Freios";
-    } else if (has(name, "CREMALHEIRA")) {
+    if (has(name, "CREMALHEIRA")) {
       subtype = "Cremalheiras";
     } else if (has(name, "ENGRENAGEM")) {
       subtype = "Engrenagens";
@@ -1867,7 +2616,7 @@ export function classifyProduct(
   }
 
   // ==========================================================
-  // 37 — FALLBACK
+  // FALLBACK
   // ==========================================================
 
   return {
