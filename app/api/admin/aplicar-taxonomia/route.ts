@@ -236,6 +236,27 @@ async function applyAttributes(
   return createdLinks;
 }
 
+export async function GET(req: Request) {
+  /*
+   * Acesso pelo navegador.
+   *
+   * GET nunca executa aplicação real.
+   * Ele chama a mesma lógica em DRY_RUN.
+   */
+  const request = new Request(req.url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      dryRun: true,
+    }),
+  });
+
+  return POST(request);
+}
+
+
 export async function POST(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
