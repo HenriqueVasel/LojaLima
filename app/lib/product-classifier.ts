@@ -57,32 +57,211 @@ export function classifyProduct(input: ProductInput): Classification {
   // ============================================================
   // 1. CFTV: "HD" de FULL HD / MULTI-HD não pode virar HD storage
   // ============================================================
-  if (has(name, "CAMERA", "CÂMERA")) {
-    let subtype = "Câmeras";
+ // ==========================================================
+// CFTV — CÂMERAS V14
+// ==========================================================
 
-    if (has(text, "WI-FI", "WIFI")) {
-      subtype = "Câmeras Wi-Fi";
-    } else if (has(text, "VEICULAR")) {
-      subtype = "Câmeras Veiculares";
-    } else if (has(text, "VHD", "MULTI-HD", "MULTI HD")) {
-      subtype = "Multi-HD";
-    } else if (has(text, "IP", "VIP")) {
-      subtype = "IP";
-    }
+if (
+  has(
+    name,
+    "CAMERA",
+    "CÂMERA",
+    "CAMERA IP",
+    "CÂMERA IP",
+    "CAMERA WI-FI",
+    "CAMERA WIFI",
+    "CÂMERA WI-FI",
+    "CÂMERA WIFI"
+  )
+) {
+  // --------------------------------------------------------
+  // CÂMERAS VEICULARES
+  // --------------------------------------------------------
 
-    const line = has(text, "VIP")
-      ? "VIP"
-      : has(text, "VHD")
-        ? "VHD"
-        : (base as any).line ?? null;
-
-    return setClassification(base, {
+  if (
+    has(
+      name,
+      "CAMERA VEICULAR",
+      "CÂMERA VEICULAR",
+      "CAMERA VEICULAR FULL HD",
+      "CÂMERA VEICULAR FULL HD",
+      "CAMERA PARA VEICULO",
+      "CÂMERA PARA VEÍCULO"
+    )
+  ) {
+    return {
       family: "cftv",
       type: "Câmeras",
-      subtype,
-      line,
-    } as Partial<Classification>);
+      subtype: "Veiculares",
+      line: null,
+      attributes: {},
+    };
   }
+
+  // --------------------------------------------------------
+  // SPEED DOME
+  // --------------------------------------------------------
+
+  if (
+    has(
+      name,
+      "SPEED DOME",
+      "SPEEDDOME",
+      "PTZ SPEED DOME",
+      "CAMERA PTZ",
+      "CÂMERA PTZ"
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "Speed Dome",
+      line: null,
+      attributes: {},
+    };
+  }
+
+  // --------------------------------------------------------
+  // CÂMERAS WI-FI
+  // --------------------------------------------------------
+
+  if (
+    has(
+      name,
+      "CAMERA WI-FI",
+      "CAMERA WIFI",
+      "CÂMERA WI-FI",
+      "CÂMERA WIFI",
+      "CAMERA WIFI FULL HD",
+      "CAMERA WI-FI FULL HD"
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "Wi-Fi",
+      line: null,
+      attributes: {
+        wifi: true,
+      },
+    };
+  }
+
+  // --------------------------------------------------------
+  // CÂMERAS ANALÓGICAS / VHD
+  // --------------------------------------------------------
+
+  if (
+    has(
+      name,
+      "CAMERA ANALOGICA",
+      "CÂMERA ANALÓGICA",
+      "CAMERA ANALOG",
+      "CÂMERA ANALOG",
+      "VHD",
+      "VHDM",
+      "HDCVI",
+      "HD-CVI"
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: has(name, "VHD", "VHDM")
+        ? "Multi-HD"
+        : "Analógicas",
+      line: has(name, "VHDM")
+        ? "VHDM"
+        : has(name, "VHD")
+          ? "VHD"
+          : null,
+      attributes: {},
+    };
+  }
+
+  // --------------------------------------------------------
+  // CÂMERAS IP
+  // --------------------------------------------------------
+  //
+  // IMPORTANTE:
+  // NÃO usamos apenas "IP" no texto inteiro.
+  // Só classificamos como IP quando houver sinais fortes
+  // de que o produto é uma câmera IP.
+  // --------------------------------------------------------
+
+  if (
+    has(
+      name,
+      "CAMERA IP",
+      "CÂMERA IP",
+      "CAMERA IP FULL HD",
+      "CÂMERA IP FULL HD",
+      "CAMERA IP POE",
+      "CÂMERA IP POE",
+      "CAMERA POE",
+      "CÂMERA POE",
+      "CAMERA NETWORK",
+      "CÂMERA NETWORK"
+    ) ||
+    (
+      has(name, "CAMERA", "CÂMERA") &&
+      has(name, "POE")
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "IP",
+      line: has(name, "VIPW")
+        ? "VIPW"
+        : has(name, "VIP")
+          ? "VIP"
+          : null,
+      attributes: {
+        ...(has(name, "POE") ? { poe: true } : {}),
+      },
+    };
+  }
+
+  // --------------------------------------------------------
+  // CÂMERAS COM LINHAS VIP / VIPW
+  // --------------------------------------------------------
+
+  if (
+    has(
+      name,
+      "VIPW",
+      "VIP 1230",
+      "VIP 1220",
+      "VIP 3230",
+      "VIP 5450",
+      "VIP 5460",
+      "VIP 7260"
+    )
+  ) {
+    return {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "IP",
+      line: has(name, "VIPW")
+        ? "VIPW"
+        : "VIP",
+      attributes: {},
+    };
+  }
+
+  // --------------------------------------------------------
+  // CÂMERA GENÉRICA
+  // --------------------------------------------------------
+
+  return {
+    family: "cftv",
+    type: "Câmeras",
+    subtype: "Câmeras",
+    line: null,
+    attributes: {},
+  };
+}
 
   // ============================================================
   // 2. PATCH CORD é CABO, não PATCH PANEL

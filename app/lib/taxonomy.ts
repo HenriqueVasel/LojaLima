@@ -16,22 +16,25 @@ export const TAXONOMY: Record<string, TaxonomyDefinition> = {
     name: "CFTV",
 
     types: {
-      cameras: {
-        name: "Câmeras",
-        subtypes: [
-          "IP",
-          "Wi-Fi",
-          "Multi-HD",
-          "Analógicas",
-          "Speed Dome",
-        ],
-        lines: [
-          "VIP",
-          "VIPW",
-          "VHD",
-          "VHDM",
-        ],
-      },
+     cameras: {
+  name: "Câmeras",
+
+  subtypes: [
+    "IP",
+    "Wi-Fi",
+    "Analógicas",
+    "Multi-HD",
+    "Speed Dome",
+    "Veiculares",
+  ],
+
+  lines: [
+    "VIP",
+    "VIPW",
+    "VHD",
+    "VHDM",
+  ],
+},
 
       dvr: {
         name: "DVR",
