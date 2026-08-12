@@ -213,63 +213,81 @@ if (
       };
     }
 
-    // ----------------------------------------------------------
-    // SPEED DOME / PTZ
-    // ----------------------------------------------------------
-    if (
-      has(
-        name,
-        "SPEED DOME",
-        "SPEEDDOME",
-        "PTZ SPEED DOME",
-        "CAMERA PTZ",
-        "CÂMERA PTZ"
-      )
-    ) {
-      return {
-        family: "cftv",
-        type: "Câmeras",
-        subtype: "Speed Dome",
-        line: null,
-        attributes: {
-          ...(formato ? { formato } : {}),
-        },
-      };
-    }
+   // --------------------------------------------------------
+// CÂMERAS WI-FI
+// --------------------------------------------------------
+// Wi-Fi SEMPRE tem prioridade sobre IP.
+// Ex.: CÂMERA IP WI-FI VIPW 1210 C
+// deve ser Câmeras Wi-Fi, e não IP.
+// --------------------------------------------------------
 
-    // ----------------------------------------------------------
-    // CÂMERAS WI-FI
-    // ----------------------------------------------------------
-    if (
-      has(
-        name,
-        "CAMERA WI-FI",
-        "CAMERA WIFI",
-        "CÂMERA WI-FI",
-        "CÂMERA WIFI",
-        "CAMERA WIFI FULL HD",
-        "CAMERA WI-FI FULL HD",
-        "VIDEO WI-FI",
-        "VIDEO WIFI",
-        "VÍDEO WI-FI",
-        "VÍDEO WIFI",
-        "CAMERA VIDEO WI-FI",
-        "CAMERA VIDEO WIFI",
-        "CÂMERA DE VIDEO WI-FI",
-        "CÂMERA DE VIDEO WIFI"
-      )
-    ) {
-      return {
-        family: "cftv",
-        type: "Câmeras",
-        subtype: "Câmeras Wi-Fi",
-        line: has(name, "VIPW") ? "VIPW" : null,
-        attributes: {
-          wifi: true,
-          ...(formato ? { formato } : {}),
-        },
-      };
-    }
+if (
+  has(
+    name,
+    "CAMERA WI-FI",
+    "CAMERA WIFI",
+    "CÂMERA WI-FI",
+    "CÂMERA WIFI",
+    "CAMERA WIFI FULL HD",
+    "CAMERA WI-FI FULL HD",
+    "VIDEO WI-FI",
+    "VIDEO WIFI",
+    "VÍDEO WI-FI",
+    "VÍDEO WIFI",
+    "CAMERA VIDEO WI-FI",
+    "CAMERA VIDEO WIFI",
+    "CÂMERA DE VIDEO WI-FI",
+    "CÂMERA DE VIDEO WIFI"
+  )
+) {
+  return {
+    family: "cftv",
+    type: "Câmeras",
+    subtype: "Câmeras Wi-Fi",
+    line: has(name, "VIPW")
+      ? "VIPW"
+      : null,
+    attributes: {
+      wifi: true,
+    },
+  };
+}
+
+// --------------------------------------------------------
+// SPEED DOME
+// --------------------------------------------------------
+// A palavra "SPEED DOME" sozinha não basta.
+// Fonte, cabo, suporte e acessórios não são câmeras.
+// --------------------------------------------------------
+
+if (
+  has(
+    name,
+    "SPEED DOME",
+    "SPEEDDOME",
+    "PTZ SPEED DOME",
+    "CAMERA PTZ",
+    "CÂMERA PTZ"
+  ) &&
+  !has(
+    name,
+    "FONTE",
+    "CABO",
+    "SUPORTE",
+    "ACESSORIO",
+    "ACESSÓRIO"
+  )
+) {
+  return {
+    family: "cftv",
+    type: "Câmeras",
+    subtype: "Speed Dome",
+    line: null,
+    attributes: {},
+  };
+}
+
+ 
 
     // ----------------------------------------------------------
     // CÂMERAS ANALÓGICAS / HDCVI
@@ -325,22 +343,26 @@ if (
     // CÂMERAS IP
     // VIP, VIPW e VLP são tratados como linhas IP.
     // ----------------------------------------------------------
-    if (
-      has(
-        name,
-        "CAMERA IP",
-        "CÂMERA IP",
-        "CAMERA POE",
-        "CÂMERA POE",
-        "CAMERA NETWORK",
-        "CÂMERA NETWORK",
-        "CAMERA ONVIF",
-        "CÂMERA ONVIF",
-        "VLP",
-        "VIP",
-        "VIPW"
-      )
-    ) {
+   if (
+  has(
+    name,
+    "CAMERA IP",
+    "CÂMERA IP",
+    "CAMERA POE",
+    "CÂMERA POE",
+    "CAMERA NETWORK",
+    "CÂMERA NETWORK",
+    "CAMERA ONVIF",
+    "CÂMERA ONVIF",
+    "VIP",
+    "VIPW"
+ ) &&
+  !has(
+    name,
+    "WIFI",
+    "WI-FI"
+  )
+) {
       return {
         family: "cftv",
         type: "Câmeras",
