@@ -57,6 +57,54 @@ export function classifyProduct(input: ProductInput): Classification {
   // ============================================================
 // ACESSÓRIOS DE CÂMERAS NÃO SÃO CÂMERAS
 // ============================================================
+// ============================================================
+// EXCEÇÕES — PRODUTOS QUE CONTÊM "CAMERA" MAS NÃO SÃO CÂMERAS
+// ============================================================
+
+if (
+  has(
+    name,
+"SUPORTE DE PAREDE CAMERA",
+"SUPORTE DE TETO CAMERA",
+"SUPORTE PARA CAMERA",
+"SUPORTE DE CAMERA",
+"SUPORTE DE CÂMERA",
+"ACESSORIO PARA CAMERA",
+"ACESSÓRIO PARA CÂMERA",
+"CABO MULTICAMERA",
+"CABO MULTICAMERAS",
+"CABO MULTICÂMERA",
+"CABO MULTICÂMERAS"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Acessórios de Câmeras",
+    line: null,
+  });
+}
+
+
+// ============================================================
+// WEBCAMS NÃO SÃO HDs DE CFTV
+// ============================================================
+
+if (
+  has(
+    name,
+    "WEBCAM",
+    "WEBCAM CAM"
+  )
+) {
+  return {
+    family: null,
+    type: null,
+    subtype: null,
+    line: null,
+    attributes: {},
+  };
+}
 
 if (
   has(
@@ -151,16 +199,24 @@ if (
   // --------------------------------------------------------
 
   if (
-    has(
-      name,
-      "CAMERA WI-FI",
-      "CAMERA WIFI",
-      "CÂMERA WI-FI",
-      "CÂMERA WIFI",
-      "CAMERA WIFI FULL HD",
-      "CAMERA WI-FI FULL HD"
-    )
-  ) {
+  has(
+    name,
+    "CAMERA WI-FI",
+    "CAMERA WIFI",
+    "CÂMERA WI-FI",
+    "CÂMERA WIFI",
+    "CAMERA WIFI FULL HD",
+    "CAMERA WI-FI FULL HD",
+    "VIDEO WI-FI",
+    "VIDEO WIFI",
+    "VÍDEO WI-FI",
+    "VÍDEO WIFI",
+    "CAMERA VIDEO WI-FI",
+    "CAMERA VIDEO WIFI",
+    "CÂMERA DE VIDEO WI-FI",
+    "CÂMERA DE VIDEO WIFI"
+  )
+) {
     return {
       family: "cftv",
       type: "Câmeras",
