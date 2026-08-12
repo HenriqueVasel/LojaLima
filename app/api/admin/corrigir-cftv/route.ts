@@ -9,11 +9,7 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-  const body = await req.json().catch(() => ({}));
-
-  const dryRun = body?.dryRun !== false;
-
-  return executar(dryRun);
+  return executar(false);
 }
 
 async function executar(dryRun: boolean) {
