@@ -5,32 +5,26 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const categorias = await prisma.category.findMany({
+    const cftv = await prisma.category.findUnique({
+      where: {
+        id: 92,
+      },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        parentId: true,
+      },
+    });
+
+    const cameras = await prisma.category.findMany({
       where: {
         OR: [
           {
-            slug: {
-              contains: "cftv",
-              mode: "insensitive",
-            },
+            id: 99,
           },
           {
-            name: {
-              contains: "cftv",
-              mode: "insensitive",
-            },
-          },
-          {
-            slug: {
-              contains: "camera",
-              mode: "insensitive",
-            },
-          },
-          {
-            name: {
-              contains: "camera",
-              mode: "insensitive",
-            },
+            parentId: 99,
           },
         ],
       },
@@ -48,25 +42,52 @@ export async function GET() {
       },
     });
 
+    const categoriasCFTV =
+      await prisma.category.findMany({
+        where: {
+          parentId: 92,
+        },
+
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          parentId: true,
+          active: true,
+        },
+
+        orderBy: {
+          id: "asc",
+        },
+      });
+
     return NextResponse.json({
       sucesso: true,
-      total: categorias.length,
-      categorias,
+
+      cftv,
+
+      categoriasFilhasCFTV:
+        categoriasCFTV,
+
+      camerasEFilhas:
+        cameras,
     });
   } catch (error) {
     console.error(
-      "Erro no diagnóstico CFTV:",
+      "Erro no diagnóstico:",
       error
     );
 
     return NextResponse.json(
       {
         sucesso: false,
+
         erro:
           error instanceof Error
             ? error.message
             : "Erro desconhecido",
       },
+
       {
         status: 500,
       }
