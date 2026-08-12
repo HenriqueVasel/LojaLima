@@ -335,4 +335,68 @@ export function classifyProduct(input: ProductInput): Classification {
   return base;
 }
 
+
+/**
+ * Calcula a confiança da classificação.
+ *
+ * Estas funções ficam exportadas porque as rotas de
+ * /api/admin/analisar-produtos e /api/admin/aplicar-taxonomia
+ * também as importam.
+ */
+export function calculateScore(
+  classification: Classification
+): number {
+  let score = 0;
+
+  if (classification.family) {
+    score += 40;
+  }
+
+  if (classification.type) {
+    score += 25;
+  }
+
+  if (classification.subtype) {
+    score += 20;
+  }
+
+  if (classification.line) {
+    score += 10;
+  }
+
+  if (
+    classification.attributes &&
+    Object.keys(classification.attributes).length > 0
+  ) {
+    score += 5;
+  }
+
+  return Math.min(score, 100);
+}
+
+/**
+ * Define o status da auditoria.
+ *
+ * A classificação precisa ter pelo menos uma família.
+ * Quanto mais completa a classificação, maior a confiança.
+ */
+export function getStatus(
+  classification: Classification,
+  score: number
+): "APROVADO" | "REVISAR" | "CORRIGIR" {
+  if (!classification.family) {
+    return "CORRIGIR";
+  }
+
+  if (score >= 80) {
+    return "APROVADO";
+  }
+
+  if (score >= 50) {
+    return "REVISAR";
+  }
+
+  return "CORRIGIR";
+}
+
 export default classifyProduct;
