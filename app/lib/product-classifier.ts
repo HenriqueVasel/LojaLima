@@ -180,7 +180,34 @@ if (
 
   if (cameraByName) {
 
-    // ACESSÓRIOS / COMPONENTES DE SPEED DOME // Não são câmeras. // -------------------------------------------------------- if ( has( name, "FONTE", "CABO", "SUPORTE", "ACESSORIO", "ACESSÓRIO" ) && has( name, "SPEED DOME", "SPEEDDOME" ) ) { return { family: "cftv", type: "Acessórios de CFTV", subtype: null, line: null, attributes: {}, }; }
+       // --------------------------------------------------------
+    // ACESSÓRIOS / COMPONENTES DE SPEED DOME
+    // Não são câmeras.
+    // --------------------------------------------------------
+
+    if (
+      has(
+        name,
+        "FONTE",
+        "CABO",
+        "SUPORTE",
+        "ACESSORIO",
+        "ACESSÓRIO"
+      ) &&
+      has(
+        name,
+        "SPEED DOME",
+        "SPEEDDOME"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Acessórios de CFTV",
+        subtype: null,
+        line: null,
+        attributes: {},
+      };
+    }
     const formato =
       has(name, "BULLET")
         ? "Bullet"
