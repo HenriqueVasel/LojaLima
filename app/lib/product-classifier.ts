@@ -176,7 +176,11 @@ if (
     "SPEEDDOME"
   );
 
+  
+
   if (cameraByName) {
+
+    // ACESSÓRIOS / COMPONENTES DE SPEED DOME // Não são câmeras. // -------------------------------------------------------- if ( has( name, "FONTE", "CABO", "SUPORTE", "ACESSORIO", "ACESSÓRIO" ) && has( name, "SPEED DOME", "SPEEDDOME" ) ) { return { family: "cftv", type: "Acessórios de CFTV", subtype: null, line: null, attributes: {}, }; }
     const formato =
       has(name, "BULLET")
         ? "Bullet"
@@ -225,9 +229,15 @@ if (
   has(
     name,
     "CAMERA WI-FI",
-    "CAMERA WIFI",
-    "CÂMERA WI-FI",
-    "CÂMERA WIFI",
+"CAMERA WIFI",
+"CÂMERA WI-FI",
+"CÂMERA WIFI",
+"CAMERA IP WI-FI",
+"CAMERA IP WIFI",
+"CÂMERA IP WI-FI",
+"CÂMERA IP WIFI",
+"IP WI-FI",
+"IP WIFI",
     "CAMERA WIFI FULL HD",
     "CAMERA WI-FI FULL HD",
     "VIDEO WI-FI",
