@@ -134,14 +134,24 @@ if (
 }
 
   // ============================================================
-  // 1. CFTV: "HD" de FULL HD / MULTI-HD não pode virar HD storage
+  // 1. CFTV — CÂMERAS
   // ============================================================
- // ==========================================================
-// CFTV — CÂMERAS V14
-// ==========================================================
+  //
+  // Ordem das regras:
+  // 1) Veiculares
+  // 2) Speed Dome / PTZ
+  // 3) Wi-Fi
+  // 4) Analógicas / HDCVI / VHL / VHC
+  // 5) Multi-HD / VHD / VHDM
+  // 6) IP / PoE / ONVIF / VIP / VIPW / VLP
+  // 7) contexto da categoria
+  //
+  // IMPORTANTE:
+  // "Bullet" e "Dome" são formatos físicos da câmera, não
+  // categorias da TAXONOMY. Eles ficam em attributes.formato.
+  // ============================================================
 
-if (
-  has(
+  const cameraByName = has(
     name,
     "CAMERA",
     "CÂMERA",
@@ -150,201 +160,299 @@ if (
     "CAMERA WI-FI",
     "CAMERA WIFI",
     "CÂMERA WI-FI",
-    "CÂMERA WIFI"
-  )
-) {
-  // --------------------------------------------------------
-  // CÂMERAS VEICULARES
-  // --------------------------------------------------------
-
-  if (
-    has(
-      name,
-      "CAMERA VEICULAR",
-      "CÂMERA VEICULAR",
-      "CAMERA VEICULAR FULL HD",
-      "CÂMERA VEICULAR FULL HD",
-      "CAMERA PARA VEICULO",
-      "CÂMERA PARA VEÍCULO"
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "Câmeras Veiculares",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  // --------------------------------------------------------
-  // SPEED DOME
-  // --------------------------------------------------------
-
-  if (
-    has(
-      name,
-      "SPEED DOME",
-      "SPEEDDOME",
-      "PTZ SPEED DOME",
-      "CAMERA PTZ",
-      "CÂMERA PTZ"
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "Speed Dome",
-      line: null,
-      attributes: {},
-    };
-  }
-
-  // --------------------------------------------------------
-  // CÂMERAS WI-FI
-  // --------------------------------------------------------
-
-  if (
-  has(
-    name,
-    "CAMERA WI-FI",
-    "CAMERA WIFI",
-    "CÂMERA WI-FI",
     "CÂMERA WIFI",
-    "CAMERA WIFI FULL HD",
-    "CAMERA WI-FI FULL HD",
-    "VIDEO WI-FI",
-    "VIDEO WIFI",
-    "VÍDEO WI-FI",
-    "VÍDEO WIFI",
-    "CAMERA VIDEO WI-FI",
-    "CAMERA VIDEO WIFI",
-    "CÂMERA DE VIDEO WI-FI",
-    "CÂMERA DE VIDEO WIFI"
-  )
-) {
+    "CAMERA VEICULAR",
+    "CÂMERA VEICULAR",
+    "VLP",
+    "VHL",
+    "VHC",
+    "VHD",
+    "VHDM",
+    "VIPW",
+    "VIP",
+    "DCM",
+    "DASHCAM",
+    "SPEED DOME",
+    "SPEEDDOME"
+  );
+
+  if (cameraByName) {
+    const formato =
+      has(name, "BULLET")
+        ? "Bullet"
+        : has(name, "DOME") && !has(name, "SPEED DOME", "SPEEDDOME")
+          ? "Dome"
+          : null;
+
+    // ----------------------------------------------------------
+    // CÂMERAS VEICULARES
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "CAMERA VEICULAR",
+        "CÂMERA VEICULAR",
+        "CAMERA VEICULAR FULL HD",
+        "CÂMERA VEICULAR FULL HD",
+        "CAMERA PARA VEICULO",
+        "CÂMERA PARA VEÍCULO",
+        "DCM 5004",
+        "DCM 5006",
+        "DCM 3002",
+        "DASHCAM"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Câmeras Veiculares",
+        line: has(name, "DCM") ? "DCM" : null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // SPEED DOME / PTZ
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "SPEED DOME",
+        "SPEEDDOME",
+        "PTZ SPEED DOME",
+        "CAMERA PTZ",
+        "CÂMERA PTZ"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Speed Dome",
+        line: null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // CÂMERAS WI-FI
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "CAMERA WI-FI",
+        "CAMERA WIFI",
+        "CÂMERA WI-FI",
+        "CÂMERA WIFI",
+        "CAMERA WIFI FULL HD",
+        "CAMERA WI-FI FULL HD",
+        "VIDEO WI-FI",
+        "VIDEO WIFI",
+        "VÍDEO WI-FI",
+        "VÍDEO WIFI",
+        "CAMERA VIDEO WI-FI",
+        "CAMERA VIDEO WIFI",
+        "CÂMERA DE VIDEO WI-FI",
+        "CÂMERA DE VIDEO WIFI"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Câmeras Wi-Fi",
+        line: has(name, "VIPW") ? "VIPW" : null,
+        attributes: {
+          wifi: true,
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // CÂMERAS ANALÓGICAS / HDCVI
+    // VHL/VHC são tratadas como analógicas.
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "CAMERA ANALOGICA",
+        "CÂMERA ANALÓGICA",
+        "CAMERA ANALOG",
+        "CÂMERA ANALOG",
+        "VHL",
+        "VHC",
+        "HDCVI",
+        "HD-CVI"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Analógicas",
+        line: has(name, "VHL")
+          ? "VHL"
+          : has(name, "VHC")
+            ? "VHC"
+            : null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // MULTI-HD
+    // VHD/VHDM permanecem separados das analógicas genéricas.
+    // ----------------------------------------------------------
+    if (has(name, "VHDM", "VHD")) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Multi-HD",
+        line: has(name, "VHDM")
+          ? "VHDM"
+          : "VHD",
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // CÂMERAS IP
+    // VIP, VIPW e VLP são tratados como linhas IP.
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "CAMERA IP",
+        "CÂMERA IP",
+        "CAMERA POE",
+        "CÂMERA POE",
+        "CAMERA NETWORK",
+        "CÂMERA NETWORK",
+        "CAMERA ONVIF",
+        "CÂMERA ONVIF",
+        "VLP",
+        "VIP",
+        "VIPW"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "IP",
+        line: has(name, "VLP")
+          ? "VLP"
+          : has(name, "VIPW")
+            ? "VIPW"
+            : has(name, "VIP")
+              ? "VIP"
+              : null,
+        attributes: {
+          ...(has(name, "POE") ? { poe: true } : {}),
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // MODELOS VIP/VIPW SEM A PALAVRA "CAMERA" NO NOME
+    // ----------------------------------------------------------
+    if (
+      has(
+        name,
+        "VIPW",
+        "VIP 1230",
+        "VIP 1220",
+        "VIP 3230",
+        "VIP 5450",
+        "VIP 5460",
+        "VIP 7260"
+      )
+    ) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "IP",
+        line: has(name, "VIPW") ? "VIPW" : "VIP",
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // CONTEXTO DA CATEGORIA ATUAL
+    // Evita inventar IP/analógica quando o nome é genérico.
+    // ----------------------------------------------------------
+    if (has(categories, "CFTV IP", " IP ", "IP")) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "IP",
+        line: null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    if (has(categories, "CÂMERAS WI-FI", "CAMERAS WI-FI", "WI-FI")) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Câmeras Wi-Fi",
+        line: null,
+        attributes: {
+          wifi: true,
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    if (has(categories, "MULTI-HD")) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Multi-HD",
+        line: null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    if (has(categories, "ANALOGICA", "ANALÓGICA", "HDCVI")) {
+      return {
+        family: "cftv",
+        type: "Câmeras",
+        subtype: "Analógicas",
+        line: null,
+        attributes: {
+          ...(formato ? { formato } : {}),
+        },
+      };
+    }
+
+    // ----------------------------------------------------------
+    // CÂMERA GENÉRICA
+    // Não inventamos IP/analógica.
+    // O classificador mantém a família CFTV para auditoria.
+    // ----------------------------------------------------------
     return {
       family: "cftv",
       type: "Câmeras",
-      subtype: "Câmeras Wi-Fi",
+      subtype: null,
       line: null,
       attributes: {
-        wifi: true,
+        ...(formato ? { formato } : {}),
       },
     };
   }
-
-  // --------------------------------------------------------
-  // CÂMERAS ANALÓGICAS / VHD
-  // --------------------------------------------------------
-
-  if (
-    has(
-      name,
-      "CAMERA ANALOGICA",
-      "CÂMERA ANALÓGICA",
-      "CAMERA ANALOG",
-      "CÂMERA ANALOG",
-      "VHD",
-      "VHDM",
-      "HDCVI",
-      "HD-CVI"
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: has(name, "VHD", "VHDM")
-        ? "Multi-HD"
-        : "Analógicas",
-      line: has(name, "VHDM")
-        ? "VHDM"
-        : has(name, "VHD")
-          ? "VHD"
-          : null,
-      attributes: {},
-    };
-  }
-
-// --------------------------------------------------------
-// CÂMERAS IP
-// --------------------------------------------------------
-//
-// Se o produto é uma câmera e possui sinais fortes de IP,
-// classificamos como IP.
-//
-// VIP / VIPW são linhas de câmeras IP da Intelbras.
-// --------------------------------------------------------
-
-if (
-  has(
-    name,
-    "CAMERA IP",
-    "CÂMERA IP",
-    "CAMERA POE",
-    "CÂMERA POE",
-    "CAMERA NETWORK",
-    "CÂMERA NETWORK",
-    "CAMERA ONVIF",
-    "CÂMERA ONVIF",
-    "VIP",
-    "VIPW"
-  )
-) {
-  return {
-    family: "cftv",
-    type: "Câmeras",
-    subtype: "IP",
-    line: has(name, "VIPW")
-      ? "VIPW"
-      : has(name, "VIP")
-        ? "VIP"
-        : null,
-    attributes: {
-      ...(has(name, "POE") ? { poe: true } : {}),
-    },
-  };
-}
-
-  // --------------------------------------------------------
-  // CÂMERAS COM LINHAS VIP / VIPW
-  // --------------------------------------------------------
-
-  if (
-    has(
-      name,
-      "VIPW",
-      "VIP 1230",
-      "VIP 1220",
-      "VIP 3230",
-      "VIP 5450",
-      "VIP 5460",
-      "VIP 7260"
-    )
-  ) {
-    return {
-      family: "cftv",
-      type: "Câmeras",
-      subtype: "IP",
-      line: has(name, "VIPW")
-        ? "VIPW"
-        : "VIP",
-      attributes: {},
-    };
-  }
-
-  // --------------------------------------------------------
-  // CÂMERA GENÉRICA
-  // --------------------------------------------------------
-
-  return {
-    family: "cftv",
-    type: "Câmeras",
-    subtype: "Câmeras",
-    line: null,
-    attributes: {},
-  };
-}
 
   // ============================================================
   // 2. PATCH CORD é CABO, não PATCH PANEL
