@@ -77,16 +77,13 @@ if (
 "SUPORTE DE TETO P/ CÂMERA",
 "SUPORTE METALICO P/ SUSTENTACAO DE CAMERAS",
 "SUPORTE METÁLICO P/ SUSTENTAÇÃO DE CÂMERAS",
-"CABO MULTICAMERA",
-"CABO MULTICAMERAS",
-"CABO MULTICÂMERA",
-"CABO MULTICÂMERAS"
+
   )
 ) {
   return setClassification(base, {
     family: "cftv",
     type: "Acessórios de CFTV",
-    subtype: "Acessórios de Câmeras",
+    subtype: null,
     line: null,
   });
 }
@@ -112,6 +109,202 @@ if (
   };
 }
 
+// ============================================================
+// V13 — ACESSÓRIOS DE CFTV
+// IMPORTANTE:
+// Essas regras vêm ANTES das regras de câmeras.
+// Alguns acessórios possuem "CAMERA" no nome e não
+// podem ser classificados como câmeras.
+// ============================================================
+
+// ------------------------------------------------------------
+// VBOX / CAIXAS DE PASSAGEM
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "VBOX",
+    "CAIXA DE PASSAGEM",
+    "CAIXA PASSAGEM"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Caixas de Passagem",
+    line: has(name, "VBOX") ? "VBOX" : null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// BALUNS DE VÍDEO
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "BALUN",
+    "BALUN DE VIDEO",
+    "BALUN DE VÍDEO",
+    "TRANSFORMADOR BALUN"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Baluns de Vídeo",
+    line: null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// TESTADORES DE CFTV
+// Não existe uma categoria específica de "Testadores"
+// na árvore atual, então permanecem em Acessórios de CFTV.
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "TESTADOR DE CFTV",
+    "TESTER CFTV",
+    "TESTER DE CFTV"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: null,
+    line: null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// MICROFONES PARA SISTEMA DE SEGURANÇA / CFTV
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "MICROFONE P/ SISTEMA DE SEGURANCA",
+    "MICROFONE PARA SISTEMA DE SEGURANCA",
+    "MICROFONE P/ SISTEMA DE SEGURANÇA",
+    "MICROFONE PARA SISTEMA DE SEGURANÇA"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: null,
+    line: null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// SUPORTES / BRACKETS PARA CÂMERAS
+// XSD e outros suportes não são câmeras.
+// Como não existe "Suportes" na árvore de CFTV,
+// ficam diretamente em Acessórios de CFTV.
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "BRACKET DE POSTE",
+    "BRACKET DE QUINA",
+    "BRACKET DE PAREDE",
+    "SUPORTE DE POSTE",
+    "SUPORTE DE PAREDE",
+    "SUPORTE DE TETO",
+    "SUPORTE METALICO",
+    "SUPORTE METÁLICO"
+  ) &&
+  has(
+    name,
+    "XSD",
+    "CAMERA",
+    "CÂMERA"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: null,
+    line: has(name, "XSD") ? "XSD" : null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// CABOS MULTICÂMERA
+// São cabos/acessórios de CFTV.
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "CABO MULTICAMERA",
+    "CABO MULTICAMERAS",
+    "CABO MULTICÂMERA",
+    "CABO MULTICÂMERAS"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Cabos e Extensões",
+    line: null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// EXTENSORES HDMI / VEX
+// Já existe "Extensores HDMI" dentro de Acessórios de CFTV.
+// Só aplicamos quando o próprio produto é claramente
+// um extensor HDMI.
+// ------------------------------------------------------------
+if (
+  has(
+    name,
+    "EXTENSOR HDMI",
+    "EXTENSOR HDMI +",
+    "EXTENSOR E DIVISOR HDMI",
+    "EXTENSOR HDMI TX",
+    "EXTENSOR HDMI RX"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Extensores HDMI",
+    line: has(name, "VEX") ? "VEX" : null,
+  } as Partial<Classification>);
+}
+
+
+// ------------------------------------------------------------
+// ACESSÓRIOS VEX DE VÍDEO
+// Produtos VEX que são claramente equipamentos de distribuição
+// de vídeo/HDMI.
+// ------------------------------------------------------------
+if (
+  has(name, "VEX") &&
+  has(
+    name,
+    "DIVISOR HDMI",
+    "DISTRIBUIDOR HDMI",
+    "MULTI-VISUALIZADOR HDMI",
+    "SWITCH HDMI"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Acessórios de CFTV",
+    subtype: "Extensores HDMI",
+    line: "VEX",
+  } as Partial<Classification>);
+}
+
 if (
   has(
     name,
@@ -128,7 +321,7 @@ if (
   return setClassification(base, {
     family: "cftv",
     type: "Acessórios de CFTV",
-    subtype: "Acessórios de Câmeras",
+    subtype: null,
     line: null,
   });
 }
