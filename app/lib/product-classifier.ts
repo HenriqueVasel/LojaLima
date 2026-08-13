@@ -144,6 +144,7 @@ if (
   has(
     name,
     "BALUN",
+    "BALLUN",
     "BALUN DE VIDEO",
     "BALUN DE VÍDEO",
     "TRANSFORMADOR BALUN"
