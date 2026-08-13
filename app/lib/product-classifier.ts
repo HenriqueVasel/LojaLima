@@ -167,6 +167,7 @@ if (
     "VHL",
     "VHC",
     "VHD",
+    "VLP",
     "VHDM",
     "VIPW",
     "VIP",
@@ -176,7 +177,48 @@ if (
     "SPEEDDOME"
   );
 
-  
+  // --------------------------------------------------------
+// KITS DE CÂMERAS
+// --------------------------------------------------------
+
+if (
+  has(name, "KIT") &&
+  has(name, "CAMERA", "CÂMERA")
+) {
+  if (
+    has(
+      name,
+      "ANALOGICA",
+      "ANALÓGICA",
+      "HDCVI",
+      "VHD",
+      "VHDM"
+    )
+  ) {
+    return setClassification(base, {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "Analógicas",
+      line: null,
+    } as Partial<Classification>);
+  }
+
+  if (
+    has(
+      name,
+      "IP",
+      "POE",
+      "ONVIF"
+    )
+  ) {
+    return setClassification(base, {
+      family: "cftv",
+      type: "Câmeras",
+      subtype: "IP",
+      line: null,
+    } as Partial<Classification>);
+  }
+}
 
   if (cameraByName) {
 
@@ -392,7 +434,8 @@ if (
     "CAMERA ONVIF",
     "CÂMERA ONVIF",
     "VIP",
-    "VIPW"
+    "VIPW",
+    "VLP"
  ) &&
   !has(
     name,
