@@ -713,26 +713,175 @@ MOBILE SMALL
 
 /* RESPONSIVO */
 
+/* =====================================================
+   RESPONSIVO
+===================================================== */
+
 @media (max-width: 900px) {
 
   .storeLayout {
-    grid-template-columns: 220px 1fr;
-    gap: 20px;
+    grid-template-columns: 210px minmax(0, 1fr);
+    gap: 18px;
 
-    padding: 0 16px 40px;
+    padding: 0 14px 40px;
+  }
+
+  .sidebar {
+    position: sticky;
+    top: 12px;
   }
 
 }
 
 
+/* =====================================================
+   MOBILE
+   FILTRO + PRODUTOS LADO A LADO
+===================================================== */
+
 @media (max-width: 700px) {
 
   .storeLayout {
-    grid-template-columns: 1fr;
+    grid-template-columns: 145px minmax(0, 1fr);
+
+    gap: 12px;
+
+    padding: 0 10px 35px;
+
+    align-items: start;
   }
 
+
+  /* -----------------------------------------
+     FILTRO
+  ----------------------------------------- */
+
   .sidebar {
-    position: static;
+    position: sticky;
+    top: 10px;
+
+    width: 100%;
+
+    border-radius: 12px;
+  }
+
+  .sidebarHeader {
+    padding: 14px 12px;
+  }
+
+  .sidebarHeader h2 {
+    font-size: 16px;
+  }
+
+  .clearFilters {
+    font-size: 11px;
+  }
+
+  .filterTitle {
+    padding: 13px 11px;
+
+    font-size: 12px;
+  }
+
+  .filterContent {
+    padding: 0 11px 14px;
+  }
+
+  .filterSearch input {
+    height: 36px;
+
+    padding: 0 8px 0 30px;
+
+    font-size: 11px;
+  }
+
+  .searchIcon {
+    left: 9px;
+
+    font-size: 16px;
+  }
+
+  .categoryList {
+    gap: 9px;
+
+    max-height: 220px;
+  }
+
+  .checkboxItem {
+    gap: 7px;
+
+    font-size: 11px;
+  }
+
+  .checkboxItem input {
+    width: 14px;
+    height: 14px;
+  }
+
+  .categoryLabel {
+    gap: 5px;
+  }
+
+  .categoryCount {
+    font-size: 10px;
+  }
+
+  .showMoreButton {
+    margin-top: 10px;
+
+    font-size: 11px;
+  }
+
+  .priceValues {
+    font-size: 10px;
+  }
+
+  .slider {
+    gap: 4px;
+  }
+
+  .applyButton {
+    padding: 8px 7px;
+
+    margin-top: 10px;
+
+    font-size: 10px;
+  }
+
+
+  /* -----------------------------------------
+     PRODUTOS
+  ----------------------------------------- */
+
+  .storeContent {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .storeToolbar {
+    margin-bottom: 12px;
+
+    min-height: 36px;
+  }
+
+  .sortBlock {
+    width: 100%;
+
+    gap: 5px;
+  }
+
+  .sortBlock label {
+    font-size: 10px;
+  }
+
+  .sortBlock select {
+    min-width: 0;
+
+    width: 100%;
+
+    padding: 7px 8px;
+
+    font-size: 10px;
   }
 
 }
