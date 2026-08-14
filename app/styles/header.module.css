@@ -233,29 +233,37 @@ color: #111827;
   background: rgba(37, 211, 102, 0.14);
 }
 
-/* ===== Menu Desktop ===== */
+/* =========================================================
+   MENU DESKTOP
+   ========================================================= */
+
 .menu {
   display: flex;
   justify-content: space-between;
   align-items: center;
 
-  padding: 12px 4px 2px;
-  gap: 10px;
+  padding: 12px 4px 3px;
+  gap: 8px;
+
+  border-top: 1px solid rgba(255, 255, 255, 0.035);
 }
 
-/* =====================================================
-   MEGA MENU
-   ===================================================== */
+
+/* =========================================================
+   ITEM PRINCIPAL
+   ========================================================= */
 
 .menuItem {
   position: relative;
+
   display: flex;
   align-items: center;
+
   height: 100%;
 }
 
-/* Área invisível que mantém o hover ativo
-   enquanto o mouse desce até o mega menu */
+
+/* Área invisível entre menu e dropdown */
 .menuItem::after {
   content: "";
 
@@ -266,87 +274,241 @@ color: #111827;
 
   top: 100%;
 
-  height: 28px;
+  height: 24px;
 
   background: transparent;
 
   z-index: 999999;
 }
 
-/* Área clicável do item */
-.menuItem > .menuLink {
-  cursor: pointer;
+
+/* =========================================================
+   LINKS PRINCIPAIS
+   ========================================================= */
+
+.menuLink {
+  position: relative;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
   white-space: nowrap;
+
+  color: rgba(255, 255, 255, 0.88);
+
+  text-decoration: none;
+
+  font-family: inherit;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  letter-spacing: 0.1px;
+
+  padding: 10px 15px;
+
+  border-radius: 999px;
+
+  background: transparent;
+
+  border: 1px solid transparent;
+
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease;
 }
 
-/* Menu que aparece ao passar o mouse */
+
+/* Pequeno indicador verde */
+.menuLink::after {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  bottom: 3px;
+
+  width: 0;
+  height: 2px;
+
+  border-radius: 999px;
+
+  background: #22c55e;
+
+  transform: translateX(-50%);
+
+  opacity: 0;
+
+  transition:
+    width 180ms ease,
+    opacity 180ms ease;
+}
+
+
+/* Hover */
+.menuLink:hover {
+  color: #ffffff;
+
+  background: rgba(255, 255, 255, 0.065);
+
+  border-color: rgba(255, 255, 255, 0.10);
+
+  transform: translateY(-1px);
+}
+
+.menuLink:hover::after {
+  width: 22px;
+  opacity: 1;
+}
+
+
+/* Categoria ativa */
+.menuLink.active,
+.active {
+  color: #22c55e;
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(34, 197, 94, 0.13),
+      rgba(34, 197, 94, 0.06)
+    );
+
+  border-color: rgba(34, 197, 94, 0.30);
+
+  box-shadow:
+    0 0 0 1px rgba(34, 197, 94, 0.04),
+    0 8px 24px rgba(34, 197, 94, 0.06);
+}
+
+.menuLink.active::after,
+.active::after {
+  width: 22px;
+  opacity: 1;
+}
+
+
+/* Botões que usam menuLink */
+.menuItem > button.menuLink {
+  cursor: pointer;
+
+  appearance: none;
+
+  outline: none;
+}
+
+
+/* =========================================================
+   MEGA MENU
+   ========================================================= */
 
 .megaMenu {
   position: absolute;
 
-  top: calc(100% + 4px);
-  left: 0;
+  top: calc(100% + 7px);
+  left: 50%;
 
-  width: 640px;
+  width: 850px;
   max-width: calc(100vw - 40px);
 
   background: #ffffff;
 
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
 
-  padding: 22px;
+  border-radius: 20px;
+
+  padding: 24px;
 
   box-shadow:
-    0 20px 50px rgba(0, 0, 0, 0.22),
-    0 4px 12px rgba(0, 0, 0, 0.08);
+    0 30px 80px rgba(0, 0, 0, 0.20),
+    0 10px 30px rgba(0, 0, 0, 0.08);
 
   opacity: 0;
+
   visibility: hidden;
+
   pointer-events: none;
 
-  transform: translateY(8px);
+  transform:
+    translateX(-50%)
+    translateY(10px)
+    scale(0.985);
+
+  transform-origin: top center;
 
   transition:
     opacity 180ms ease,
-    transform 180ms ease,
+    transform 200ms ease,
     visibility 180ms ease;
 
   z-index: 1000000;
 }
 
-/* Mantém o menu aberto enquanto o mouse estiver no item */
+
+/* Abre o mega menu */
 .menuItem:hover .megaMenu {
   opacity: 1;
+
   visibility: visible;
+
   pointer-events: auto;
 
-  transform: translateY(0);
-}
-/* Fechaduras Digitais */
-.menuItem:nth-child(6) .megaMenu {
-  left: auto;
-  right: 0;
+  transform:
+    translateX(-50%)
+    translateY(0)
+    scale(1);
 }
 
-/* Instalações e Soluções */
+
+/* =========================================================
+   POSIÇÃO DOS MENUS DAS EXTREMIDADES
+   ========================================================= */
+
+/* Fechaduras Digitais = 7º produto */
 .menuItem:nth-child(7) .megaMenu {
   left: auto;
   right: 0;
+
+  transform-origin: top right;
+
+  transform:
+    translateY(10px)
+    scale(0.985);
 }
 
-.menuItem:last-child .megaMenu {
+.menuItem:nth-child(7):hover .megaMenu {
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+/* Instalações e Soluções = 8º item */
+.menuItem:nth-child(8) .megaMenu {
   left: auto;
   right: 0;
 
-  transform: translateY(8px);
+  transform-origin: top right;
+
+  transform:
+    translateY(10px)
+    scale(0.985);
 }
 
-.menuItem:last-child:hover .megaMenu {
-  transform: translateY(0);
+.menuItem:nth-child(8):hover .megaMenu {
+  transform:
+    translateY(0)
+    scale(1);
 }
 
-/* Pequena seta visual acima do menu */
+
+/* =========================================================
+   SETA DO MEGA MENU
+   ========================================================= */
+
 .megaMenu::before {
   content: "";
 
@@ -360,158 +522,321 @@ color: #111827;
 
   background: #ffffff;
 
-  transform: translateX(-50%) rotate(45deg);
+  transform:
+    translateX(-50%)
+    rotate(45deg);
 
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
-  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  border-left: 1px solid rgba(15, 23, 42, 0.08);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
 
   z-index: 1;
 }
 
-.menuItem:nth-child(6) .megaMenu::before,
-.menuItem:nth-child(7) .megaMenu::before {
+
+/* Seta dos menus alinhados à direita */
+.menuItem:nth-child(7) .megaMenu::before,
+.menuItem:nth-child(8) .megaMenu::before {
   left: auto;
   right: 45px;
+
   transform: rotate(45deg);
 }
 
-/* Conteúdo interno */
+
+/* =========================================================
+   CONTEÚDO
+   ========================================================= */
+
 .megaContent {
   position: relative;
+
   z-index: 2;
 }
 
 
-/* Cabeçalho do mega menu */
+/* =========================================================
+   CABEÇALHO DO MEGA MENU
+   ========================================================= */
+
 .megaHeader {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  margin-bottom: 18px;
-  padding-bottom: 14px;
+  gap: 20px;
 
-  border-bottom: 1px solid #eeeeee;
+  margin-bottom: 22px;
+
+  padding-bottom: 18px;
+
+  border-bottom: 1px solid #edf0ed;
 }
 
+
+/* Título */
 .megaHeader span {
+  position: relative;
+
   color: #111827;
 
-  font-size: 18px;
+  font-size: 20px;
+
   font-weight: 800;
+
+  letter-spacing: -0.3px;
 }
 
+
+/* Pequena linha verde abaixo do título */
+.megaHeader span::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  bottom: -7px;
+
+  width: 28px;
+  height: 3px;
+
+  border-radius: 999px;
+
+  background: #22c55e;
+}
+
+
+/* Ver todos */
 .megaHeader a {
-  color: #16a34a;
+  display: inline-flex;
 
-  font-size: 12px;
-  font-weight: 700;
-
-  text-decoration: none;
-}
-
-.megaHeader a:hover {
-  text-decoration: underline;
-}
-
-
-/* Links das categorias */
-.megaGrid {
-  display: grid;
-
-  grid-template-columns: repeat(2, 1fr);
-
-  gap: 8px 12px;
-}
-
-
-.megaLink {
-  display: flex;
   align-items: center;
 
-  min-height: 42px;
-
-  padding: 10px 12px;
-
-  border-radius: 10px;
-
-  color: #374151;
-
-  font-size: 14px;
-  font-weight: 600;
-
-  text-decoration: none;
-
-  transition: 160ms ease;
-}
-
-.megaLink::before {
-  content: none;
-}
-
-
-.megaLink:hover {
-  background: #f0fdf4;
+  gap: 5px;
 
   color: #15803d;
 
-  transform: translateX(3px);
-}
-
-
-
-.megaColumns {
-  display: grid;
-
-  grid-template-columns: repeat(3, 1fr);
-
-  gap: 28px;
-
-  padding-top: 4px;
-}
-
-.megaColumn {
-  min-width: 0;
-}
-
-.megaColumnTitle {
-  margin: 0 0 10px;
-
-  color: #111827;
-
   font-size: 13px;
+
   font-weight: 800;
+
+  text-decoration: none;
+
+  padding: 9px 13px;
+
+  border-radius: 10px;
+
+  border: 1px solid rgba(34, 197, 94, 0.35);
+
+  background: rgba(34, 197, 94, 0.035);
+
+  transition:
+    background 180ms ease,
+    color 180ms ease,
+    transform 180ms ease;
 }
 
-.megaColumnLinks {
-  display: flex;
-  flex-direction: column;
 
-  gap: 2px;
-}
+.megaHeader a:hover {
+  color: #ffffff;
 
-.megaColumn .megaLink {
-  min-height: auto;
+  background: #15803d;
 
-  padding: 7px 8px;
-
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.megaColumn .megaLink:hover {
   transform: translateX(2px);
 }
 
 
-/* =====================================================
+/* =========================================================
+   COLUNAS
+   ========================================================= */
+
+.megaColumns {
+  display: grid;
+
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+
+  gap: 28px;
+
+  padding-top: 2px;
+}
+
+
+/* Separador entre colunas */
+.megaColumn {
+  min-width: 0;
+
+  position: relative;
+}
+
+.megaColumn:not(:last-child)::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  right: -14px;
+
+  width: 1px;
+  height: 100%;
+
+  background: #edf0ed;
+}
+
+
+/* =========================================================
+   TÍTULO DAS COLUNAS
+   ========================================================= */
+
+.megaColumnTitle {
+  position: relative;
+
+  margin: 0 0 11px;
+
+  padding-left: 10px;
+
+  color: #111827;
+
+  font-size: 13px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.1px;
+}
+
+
+/* Barrinha verde */
+.megaColumnTitle::before {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  top: 2px;
+
+  width: 3px;
+  height: 15px;
+
+  border-radius: 999px;
+
+  background: #22c55e;
+}
+
+
+/* =========================================================
+   LINKS DAS COLUNAS
+   ========================================================= */
+
+.megaColumnLinks {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+
+/* Link */
+.megaColumn .megaLink {
+  position: relative;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  min-height: 38px;
+
+  padding: 8px 10px;
+
+  border-radius: 10px;
+
+  color: #4b5563;
+
+  font-size: 13px;
+
+  font-weight: 550;
+
+  text-decoration: none;
+
+  background: transparent;
+
+  border: 1px solid transparent;
+
+  transition:
+    color 170ms ease,
+    background 170ms ease,
+    border-color 170ms ease,
+    transform 170ms ease,
+    padding 170ms ease;
+}
+
+
+/* Seta */
+.megaColumn .megaLink::after {
+  content: "→";
+
+  color: #9ca3af;
+
+  font-size: 14px;
+
+  opacity: 0;
+
+  transform: translateX(-4px);
+
+  transition:
+    opacity 170ms ease,
+    transform 170ms ease,
+    color 170ms ease;
+}
+
+
+/* Hover */
+.megaColumn .megaLink:hover {
+  color: #15803d;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(34, 197, 94, 0.10),
+      rgba(34, 197, 94, 0.035)
+    );
+
+  border-color: rgba(34, 197, 94, 0.14);
+
+  transform: translateX(3px);
+
+  padding-left: 13px;
+}
+
+
+.megaColumn .megaLink:hover::after {
+  color: #16a34a;
+
+  opacity: 1;
+
+  transform: translateX(0);
+}
+
+
+/* =========================================================
+   LINKS GENÉRICOS DO MEGA MENU
+   ========================================================= */
+
+.megaLink {
+  text-decoration: none;
+}
+
+
+/* =========================================================
    INSTALAÇÕES E SOLUÇÕES
-   ===================================================== */
+   ========================================================= */
 
 .solutionGrid {
   display: grid;
 
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
   gap: 12px;
 }
@@ -519,13 +844,14 @@ color: #111827;
 
 .solutionCard {
   display: flex;
+
   flex-direction: column;
 
   padding: 18px;
 
   min-height: 90px;
 
-  border-radius: 12px;
+  border-radius: 14px;
 
   background: #f8fafc;
 
@@ -533,7 +859,11 @@ color: #111827;
 
   text-decoration: none;
 
-  transition: 180ms ease;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    transform 180ms ease,
+    box-shadow 180ms ease;
 }
 
 
@@ -541,6 +871,7 @@ color: #111827;
   color: #111827;
 
   font-size: 15px;
+
   font-weight: 800;
 
   margin-bottom: 6px;
@@ -551,6 +882,7 @@ color: #111827;
   color: #6b7280;
 
   font-size: 12px;
+
   line-height: 1.4;
 }
 
@@ -562,44 +894,13 @@ color: #111827;
 
   transform: translateY(-2px);
 
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
 
 .solutionCard:hover strong {
   color: #15803d;
-}
-.menuItem > button.menuLink {
-  font-family: inherit;
-  cursor: pointer;
-}
-
-.menuLink {
-  color: rgba(255, 255, 255, 0.92);
-  text-decoration: none;
-  font-weight: 800;
-  font-size: 13px;
-  letter-spacing: 0.2px;
-
-  padding: 10px 12px;
-  border-radius: 999px;
-
-  background: transparent;
-  border: 1px solid transparent;
-
-  transition: 160ms ease;
-  opacity: 0.95;
-}
-
-.menuLink:hover {
-background: rgba(255, 255, 255, 0.10);
-border: 1px solid rgba(255, 255, 255, 0.18);
-
-}
-
-.active {
-  background: rgba(34, 197, 94, 0.12);
-  border-color: rgba(34, 197, 94, 0.28);
 }
 
 /* ===== Mobile ===== */
