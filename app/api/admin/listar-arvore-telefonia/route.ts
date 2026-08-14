@@ -77,7 +77,6 @@ export async function GET() {
 
     // ========================================================
     // 4. DESCOBRIR TODAS AS CATEGORIAS DESCENDENTES
-    //    DAS CATEGORIAS ENCONTRADAS
     // ========================================================
 
     const telefoniaIds = new Set<number>();
