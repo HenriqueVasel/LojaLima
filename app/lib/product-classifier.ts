@@ -110,6 +110,25 @@ if (
 }
 
 // ============================================================
+// STORAGE DE VÍDEO
+// ============================================================
+
+if (
+  has(
+    name,
+    "STORAGE DE VIDEO",
+    "STORAGE DE VÍDEO",
+    "STORAGE VIDEO"
+  )
+) {
+  return setClassification(base, {
+    family: "cftv",
+    type: "Armazenamento",
+    subtype: null,
+    line: null,
+  } as Partial<Classification>);
+}
+// ============================================================
 // V13 — ACESSÓRIOS DE CFTV
 // IMPORTANTE:
 // Essas regras vêm ANTES das regras de câmeras.
