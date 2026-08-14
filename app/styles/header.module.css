@@ -958,12 +958,12 @@ color: #111827;
    ========================================================= */
 
 .menuItem:nth-child(3) .megaMenu {
-  left: 70%;
+  left: 50%;
 
   transform-origin: top center;
 
   transform:
-    translateX(-50%)
+    translateX(-80%)
     translateY(10px)
     scale(0.985);
 }
