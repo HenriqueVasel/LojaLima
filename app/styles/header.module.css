@@ -898,6 +898,61 @@ color: #111827;
     0 12px 28px rgba(0, 0, 0, 0.08);
 }
 
+/* =========================================================
+   AJUSTE DOS PRIMEIROS MENUS
+   CÂMERAS E ALARMES
+   ========================================================= */
+
+/* Câmeras */
+.menuItem:nth-child(1) .megaMenu {
+  left: 0;
+  right: auto;
+
+  transform-origin: top left;
+
+  transform:
+    translateY(10px)
+    scale(0.985);
+}
+
+.menuItem:nth-child(1):hover .megaMenu {
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+/* Alarmes */
+.menuItem:nth-child(2) .megaMenu {
+  left: 0;
+  right: auto;
+
+  transform-origin: top left;
+
+  transform:
+    translateY(10px)
+    scale(0.985);
+}
+
+.menuItem:nth-child(2):hover .megaMenu {
+  transform:
+    translateY(0)
+    scale(1);
+}
+
+
+/* =========================================================
+   SETINHAS DOS PRIMEIROS MENUS
+   ========================================================= */
+
+.menuItem:nth-child(1) .megaMenu::before,
+.menuItem:nth-child(2) .megaMenu::before {
+  left: 45px;
+  right: auto;
+
+  transform: rotate(45deg);
+}
+
 
 .solutionCard:hover strong {
   color: #15803d;
