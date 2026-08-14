@@ -5,50 +5,86 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   try {
-    const telefonia = await prisma.category.findFirst({
-      where: {
-        OR: [
-          {
-            slug: "telefonia",
-          },
-          {
-            name: "Telefonia",
-          },
-        ],
-      },
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        parentId: true,
-        active: true,
-      },
-    });
+    // ========================================================
+    // 1. PROCURAR CATEGORIAS RELACIONADAS A TELEFONIA
+    // ========================================================
 
-    if (!telefonia) {
+    const candidatasTelefonia =
+      await prisma.category.findMany({
+        where: {
+          OR: [
+            {
+              name: {
+                contains: "telefon",
+                mode: "insensitive",
+              },
+            },
+            {
+              slug: {
+                contains: "telefon",
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          parentId: true,
+          active: true,
+        },
+
+        orderBy: {
+          id: "asc",
+        },
+      });
+
+    // ========================================================
+    // 2. SE NÃO ENCONTROU NADA
+    // ========================================================
+
+    if (candidatasTelefonia.length === 0) {
       return NextResponse.json({
         sucesso: false,
-        erro: "Categoria Telefonia não encontrada.",
+
+        erro:
+          "Nenhuma categoria relacionada a Telefonia foi encontrada.",
+
+        categoriasEncontradas: [],
       });
     }
 
-    const todasCategorias = await prisma.category.findMany({
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-        parentId: true,
-        active: true,
-      },
+    // ========================================================
+    // 3. BUSCAR TODAS AS CATEGORIAS
+    // ========================================================
 
-      orderBy: {
-        id: "asc",
-      },
-    });
+    const todasCategorias =
+      await prisma.category.findMany({
+        select: {
+          id: true,
+          name: true,
+          slug: true,
+          parentId: true,
+          active: true,
+        },
+
+        orderBy: {
+          id: "asc",
+        },
+      });
+
+    // ========================================================
+    // 4. DESCOBRIR TODAS AS CATEGORIAS DESCENDENTES
+    //    DAS CATEGORIAS ENCONTRADAS
+    // ========================================================
 
     const telefoniaIds = new Set<number>();
 
-    telefoniaIds.add(telefonia.id);
+    for (const categoria of candidatasTelefonia) {
+      telefoniaIds.add(categoria.id);
+    }
 
     let encontrou = true;
 
@@ -67,23 +103,35 @@ export async function GET() {
       }
     }
 
-    const categoriasTelefonia = todasCategorias.filter((categoria) =>
-      telefoniaIds.has(categoria.id)
-    );
+    // ========================================================
+    // 5. MONTAR RESULTADO
+    // ========================================================
+
+    const categoriasEncontradas =
+      todasCategorias.filter((categoria) =>
+        telefoniaIds.has(categoria.id)
+      );
+
+    // ========================================================
+    // 6. RETORNO
+    // ========================================================
 
     return NextResponse.json({
       sucesso: true,
 
-      totalCategoriasTelefonia:
-        categoriasTelefonia.length,
+      totalCategoriasEncontradas:
+        candidatasTelefonia.length,
 
-      telefonia,
+      candidatasTelefonia,
 
-      categorias: categoriasTelefonia,
+      totalCategoriasArvore:
+        categoriasEncontradas.length,
+
+      categorias: categoriasEncontradas,
     });
   } catch (error) {
     console.error(
-      "Erro ao listar árvore Telefonia:",
+      "Erro ao listar categorias de Telefonia:",
       error
     );
 
