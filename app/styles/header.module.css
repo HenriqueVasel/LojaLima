@@ -951,6 +951,37 @@ color: #111827;
   right: auto;
 
   transform: rotate(45deg);
+} 
+
+/* =========================================================
+   CONTROLE DE ACESSO
+   ========================================================= */
+
+.menuItem:nth-child(3) .megaMenu {
+  left: 50%;
+
+  transform-origin: top center;
+
+  transform:
+    translateX(-50%)
+    translateY(10px)
+    scale(0.985);
+}
+
+.menuItem:nth-child(3):hover .megaMenu {
+  transform:
+    translateX(-50%)
+    translateY(0)
+    scale(1);
+}
+
+
+/* Setinha alinhada ao centro do botão */
+.menuItem:nth-child(3) .megaMenu::before {
+  left: 50%;
+  right: auto;
+
+  transform: rotate(45deg);
 }
 
 
