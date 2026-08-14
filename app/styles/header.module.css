@@ -958,7 +958,7 @@ color: #111827;
    ========================================================= */
 
 .menuItem:nth-child(3) .megaMenu {
-  left: 100px;
+  left: 45px;
   right: auto;
 
   transform-origin: top left;
@@ -980,7 +980,7 @@ color: #111827;
    ========================================================= */
 
 .menuItem:nth-child(3) .megaMenu::before {
-  left: -38px;
+  left: 25px;
   right: auto;
 
   transform: rotate(45deg);
