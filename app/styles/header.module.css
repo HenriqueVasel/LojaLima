@@ -958,32 +958,33 @@ color: #111827;
    ========================================================= */
 
 .menuItem:nth-child(3) .megaMenu {
-  left: 50%;
+  left: 100px;
+  right: auto;
 
-  transform-origin: top center;
+  transform-origin: top left;
 
   transform:
-    translateX(-80%)
     translateY(10px)
     scale(0.985);
 }
 
 .menuItem:nth-child(3):hover .megaMenu {
   transform:
-    translateX(-50%)
     translateY(0)
     scale(1);
 }
 
 
-/* Setinha alinhada ao centro do botão */
+/* =========================================================
+   SETA DO CONTROLE DE ACESSO
+   ========================================================= */
+
 .menuItem:nth-child(3) .megaMenu::before {
-  left: 50%;
+  left: -38px;
   right: auto;
 
   transform: rotate(45deg);
 }
-
 
 .solutionCard:hover strong {
   color: #15803d;
