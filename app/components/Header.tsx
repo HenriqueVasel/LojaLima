@@ -362,6 +362,76 @@ const productMenus = [
   },
 
   // ==========================================================
+  // TELEFONIA
+  // ==========================================================
+  {
+    label: "Telefonia",
+    href: productCategory("telefonia"),
+
+    columns: [
+      {
+        title: "Telefones",
+        items: [
+          {
+            label: "Telefones",
+            href: productCategory("telefones"),
+          },
+          {
+            label: "Sem Fio",
+            href: productCategory("sem-fio"),
+          },
+          {
+            label: "Telefones Com Fio",
+            href: productCategory("telefones-com-fio"),
+          },
+        ],
+      },
+
+      {
+        title: "Centrais",
+        items: [
+          {
+            label: "Centrais Telefônicas",
+            href: productCategory("centrais-telefonicas"),
+          },
+          {
+            label: "Centrais PABX",
+            href: productCategory("centrais-pabx"),
+          },
+          {
+            label: "Comunicação Condominial",
+            href: productCategory(
+              "centrais-de-comunicacao-condominial"
+            ),
+          },
+        ],
+      },
+
+      {
+        title: "Acessórios e Comunicação",
+        items: [
+          {
+            label: "Acessórios de Telefonia",
+            href: productCategory("acessorios-de-telefonia"),
+          },
+          {
+            label: "Gateways",
+            href: productCategory("gateways"),
+          },
+          {
+            label: "Rádios Comunicadores",
+            href: productCategory("radios-comunicadores"),
+          },
+          {
+            label: "Headsets e Fones",
+            href: productCategory("headsets-e-fones"),
+          },
+        ],
+      },
+    ],
+  },
+
+  // ==========================================================
   // ENERGIA
   // ==========================================================
   {
