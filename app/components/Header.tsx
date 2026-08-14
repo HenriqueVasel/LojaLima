@@ -47,31 +47,38 @@ const productMenus = [
 
     columns: [
       {
-        title: "Câmeras",
-        items: [
-          {
-            label: "Câmeras",
-            href: productCategory("cameras"),
-          },
-          {
-            label: "Câmeras Wi-Fi",
-            href: productCategory("cameras-wi-fi"),
-          },
-          {
-            label: "Câmeras IP",
-            href: productCategory("ip"),
-          },
-          {
-            label: "Câmeras Veiculares",
-            href: productCategory("cameras-veiculares"),
-          },
-          {
-            label: "Multi-HD",
-            href: productCategory("multi-hd"),
-          },
-        ],
-      },
-
+  title: "Câmeras",
+  items: [
+    {
+      label: "Câmeras",
+      href: productCategory("cameras"),
+    },
+    {
+      label: "Câmeras Wi-Fi",
+      href: productCategory("cameras-wi-fi"),
+    },
+    {
+      label: "Câmeras IP",
+      href: productCategory("ip"),
+    },
+    {
+      label: "Câmeras Analógicas",
+      href: productCategory("analogicas"),
+    },
+    {
+      label: "Câmeras Veiculares",
+      href: productCategory("cameras-veiculares"),
+    },
+    {
+      label: "Multi-HD",
+      href: productCategory("multi-hd"),
+    },
+    {
+      label: "Speed Dome",
+      href: productCategory("speed-dome"),
+    },
+  ],
+},
       {
         title: "Gravadores",
         items: [
