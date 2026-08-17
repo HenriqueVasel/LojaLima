@@ -47,35 +47,35 @@ export async function GET(req: Request) {
     // PRODUTOS
     // ==========================================================
 
-    const conditions = terms.flatMap((term) => [
-      {
-        name: {
-          contains: term,
-          mode: "insensitive",
-        },
-      },
+  const conditions: any[] = terms.flatMap((term) => [
+  {
+    name: {
+      contains: term,
+      mode: "insensitive",
+    },
+  },
 
-      {
-        brand: {
-          contains: term,
-          mode: "insensitive",
-        },
-      },
+  {
+    brand: {
+      contains: term,
+      mode: "insensitive",
+    },
+  },
 
-      {
-        slug: {
-          contains: term,
-          mode: "insensitive",
-        },
-      },
+  {
+    slug: {
+      contains: term,
+      mode: "insensitive",
+    },
+  },
 
-      {
-        sku: {
-          contains: term,
-          mode: "insensitive",
-        },
-      },
-    ]);
+  {
+    sku: {
+      contains: term,
+      mode: "insensitive",
+    },
+  },
+]);
 
     const products = await prisma.product.findMany({
       where: {
