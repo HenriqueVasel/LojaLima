@@ -1565,7 +1565,7 @@ MOBILE SMALL
     top: 0;
     left: 0;
 
-    width: min(340px, 88vw);
+    width: min(400px, 94vw);
     height: 100dvh;
 
     z-index: 9999;
@@ -1776,7 +1776,7 @@ MOBILE SMALL
   }
 
   .sidebar {
-    width: min(330px, 90vw);
+    width: min(380px, 95vw);
   }
 
   .productsGrid,
