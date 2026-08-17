@@ -759,9 +759,25 @@ async function fetchCartCount() {
       setLoading(true);
 
       const res = await fetch("/api/search/suggest?q=" + search);
-      const data = await res.json();
+     const data = await res.json();
 
-      setSuggestions(data);
+const productSuggestions = (data.products || []).map((item: any) => ({
+  ...item,
+  type: "product",
+}));
+
+const brandSuggestions = (data.brands || []).map((item: any) => ({
+  ...item,
+  type: "brand",
+}));
+
+setSuggestions([
+  ...brandSuggestions,
+  ...productSuggestions,
+]);
+
+setSelectedIndex(-1);
+setLoading(false);
       setSelectedIndex(-1);
       setLoading(false);
     }, 300);
@@ -935,59 +951,148 @@ async function fetchCartCount() {
                     </div>
                   )}
 
-                  {suggestions.map((item, index) => (
-                    <Link
-                      key={item.id}
-                      href={"/produto/" + item.slug}
-                      onClick={() => {
-                        saveHistory(item.name);
-                        setSuggestions([]);
-                      }}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        padding: 12,
-                        background:
-                          selectedIndex === index ? "#1a1a1a" : "transparent",
-                        color: "#fff",
-                        textDecoration: "none",
-                        borderBottom: "1px solid #222",
-                      }}
-                    >
-                      <img
-                        src={item.productimage?.[0]?.url}
-                        style={{
-                          width: 45,
-                          height: 45,
-                          objectFit: "cover",
-                          borderRadius: 6,
-                        }}
-                      />
+                 {suggestions.map((item, index) => {
 
-                      <div>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: highlight(item.name),
-                          }}
-                          style={{ fontSize: 14 }}
-                        />
+  // ========================================================
+  // MARCA
+  // ========================================================
 
-                        <div
-                          style={{
-                            fontSize: 13,
-                            color: "#00c853",
-                            marginTop: 4,
-                          }}
-                        >
-                          R${" "}
-                          {(calcularPrecoVenda(item.priceCents) / 100).toFixed(
-                            2
-                          )}
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
+  if (item.type === "brand") {
+    return (
+      <Link
+        key={`brand-${item.id}`}
+        href={`/loja?brand=${encodeURIComponent(item.slug)}`}
+        onClick={() => {
+          setSuggestions([]);
+          setShowSearchBox(false);
+        }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          padding: 14,
+          background:
+            selectedIndex === index
+              ? "#1a1a1a"
+              : "transparent",
+          color: "#fff",
+          textDecoration: "none",
+          borderBottom: "1px solid #222",
+        }}
+      >
+
+        <div
+          style={{
+            width: 42,
+            height: 42,
+            borderRadius: 10,
+            background: "rgba(0,166,81,.12)",
+            border: "1px solid rgba(0,166,81,.25)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: "#00c853",
+            fontSize: 20,
+          }}
+        >
+          🏷️
+        </div>
+
+        <div>
+
+          <div
+            style={{
+              fontSize: 11,
+              color: "#777",
+              marginBottom: 3,
+              textTransform: "uppercase",
+            }}
+          >
+            Marca
+          </div>
+
+          <div
+            style={{
+              fontSize: 14,
+              fontWeight: 600,
+            }}
+          >
+            {item.name}
+          </div>
+
+        </div>
+
+      </Link>
+    );
+  }
+
+  // ========================================================
+  // PRODUTO
+  // ========================================================
+
+  return (
+    <Link
+      key={`product-${item.id}`}
+      href={"/produto/" + item.slug}
+      onClick={() => {
+        saveHistory(item.name);
+        setSuggestions([]);
+        setShowSearchBox(false);
+      }}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: 12,
+        background:
+          selectedIndex === index
+            ? "#1a1a1a"
+            : "transparent",
+        color: "#fff",
+        textDecoration: "none",
+        borderBottom: "1px solid #222",
+      }}
+    >
+
+      <img
+        src={item.productimage?.[0]?.url}
+        style={{
+          width: 45,
+          height: 45,
+          objectFit: "cover",
+          borderRadius: 6,
+        }}
+      />
+
+      <div>
+
+        <div
+          dangerouslySetInnerHTML={{
+            __html: highlight(item.name),
+          }}
+          style={{
+            fontSize: 14,
+          }}
+        />
+
+        <div
+          style={{
+            fontSize: 13,
+            color: "#00c853",
+            marginTop: 4,
+          }}
+        >
+          R${" "}
+          {(
+            calcularPrecoVenda(item.priceCents) / 100
+          ).toFixed(2)}
+        </div>
+
+      </div>
+
+    </Link>
+  );
+})}
                 </div>
               )}
           </div>

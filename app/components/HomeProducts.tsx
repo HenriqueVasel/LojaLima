@@ -33,12 +33,12 @@ const isResults = search || category || brand;
       <StoreToolbar />
 
       <ProductGrid
-        title={
+       title={
   search
     ? `Resultados para: ${search}`
-    : category
-      ? `Categoria: ${category}`
-      : `Marca: ${brand}`
+    : brand
+      ? `Marca: ${brand}`
+      : `Categoria: ${category}`
 }
         endpoint={`/api/products?${query}`}
         key={query}
