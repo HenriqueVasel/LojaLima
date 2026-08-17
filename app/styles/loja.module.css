@@ -1440,3 +1440,225 @@ MOBILE SMALL
   }
 
 }
+
+/* =====================================================
+   FILTROS MOBILE
+===================================================== */
+
+/* Botão não aparece no desktop */
+.mobileFilterButton {
+  display: none;
+}
+
+
+/* Botão fechar não aparece no desktop */
+.closeFilters {
+  display: none;
+}
+
+
+/* Overlay */
+.filterOverlay {
+  display: none;
+}
+
+
+/* Ações do cabeçalho */
+.sidebarHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  /* Layout principal */
+  .storeLayout {
+    display: block;
+    position: relative;
+  }
+
+
+  /* Toolbar */
+  .storeToolbar {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+
+  /* Botão filtros */
+  .mobileFilterButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    height: 38px;
+    padding: 0 14px;
+
+    border-radius: 9px;
+
+    border: 1px solid #dedede;
+    background: #fff;
+
+    color: #111;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+  }
+
+
+  .mobileFilterButton:active {
+    transform: scale(.98);
+  }
+
+
+  /* Ordenação */
+  .sortBlock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+
+  .sortBlock label {
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+
+  .sortBlock select {
+    height: 38px;
+    max-width: 125px;
+
+    padding: 0 8px;
+
+    border-radius: 9px;
+    border: 1px solid #dedede;
+
+    background: #fff;
+
+    font-size: 12px;
+  }
+
+
+  /* =================================================
+     SIDEBAR COMO GAVETA
+  ================================================= */
+
+  .sidebar {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: min(330px, 88vw);
+    height: 100dvh;
+
+    z-index: 9999;
+
+    background: #fff;
+
+    overflow-y: auto;
+
+    transform: translateX(-105%);
+
+    transition: transform .25s ease;
+
+    box-shadow: 8px 0 30px rgba(0,0,0,.18);
+
+    margin: 0 !important;
+
+    border-radius: 0 !important;
+  }
+
+
+  /* sidebar aberta */
+  .sidebarMobileOpen {
+    transform: translateX(0);
+  }
+
+
+  /* Fundo atrás do filtro */
+  .filterOverlay {
+    display: block;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 9998;
+
+    background: rgba(0,0,0,.55);
+
+    backdrop-filter: blur(2px);
+  }
+
+
+  /* Botão X */
+  .closeFilters {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    background: #f2f2f2;
+
+    color: #111;
+
+    font-size: 16px;
+
+    cursor: pointer;
+  }
+
+
+  /* Cabeçalho do filtro */
+  .sidebarHeader {
+    position: sticky;
+
+    top: 0;
+
+    z-index: 2;
+
+    background: #fff;
+
+    padding: 16px;
+
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+
+  /* =================================================
+     PRODUTOS
+  ================================================= */
+
+  .storeContent {
+    width: 100%;
+    min-width: 0;
+  }
+
+
+  .productsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+}

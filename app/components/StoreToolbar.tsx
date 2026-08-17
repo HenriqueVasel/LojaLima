@@ -3,7 +3,13 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "@/app/styles/loja.module.css";
 
-export default function StoreToolbar() {
+type Props = {
+  onOpenFilters?: () => void;
+};
+
+export default function StoreToolbar({
+  onOpenFilters,
+}: Props) {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -19,6 +25,15 @@ export default function StoreToolbar() {
 
   return (
     <div className={styles.storeToolbar}>
+
+      {/* BOTÃO FILTROS — MOBILE */}
+      <button
+        type="button"
+        className={styles.mobileFilterButton}
+        onClick={onOpenFilters}
+      >
+        ☰ Filtros
+      </button>
 
       <div className={styles.sortBlock}>
 

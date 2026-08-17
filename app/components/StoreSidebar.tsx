@@ -4,7 +4,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import styles from "@/app/styles/loja.module.css";
 
-export default function StoreSidebar() {
+type Props = {
+  mobileOpen?: boolean;
+  onClose?: () => void;
+};
+
+export default function StoreSidebar({
+  mobileOpen = false,
+  onClose,
+}: Props) {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -136,7 +144,48 @@ const visibleCategories = showAllCategories
   : filteredCategories.slice(0, 7);
 
   return (
-    <aside className={styles.sidebar}>
+  <>
+    {/* FUNDO ESCURO DO FILTRO NO MOBILE */}
+    {mobileOpen && (
+      <div
+        className={styles.filterOverlay}
+        onClick={onClose}
+      />
+    )}
+
+    <aside
+      className={`${styles.sidebar} ${
+        mobileOpen ? styles.sidebarMobileOpen : ""
+      }`}
+    >
+
+      {/* CABEÇALHO */}
+      <div className={styles.sidebarHeader}>
+
+        <h2>Filtros</h2>
+
+        <div className={styles.sidebarHeaderActions}>
+
+          <button
+            type="button"
+            onClick={() => router.push("/loja")}
+            className={styles.clearFilters}
+          >
+            Limpar
+          </button>
+
+          {/* FECHAR — MOBILE */}
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.closeFilters}
+          >
+            ✕
+          </button>
+
+        </div>
+
+      </div>
 
       {/* CABEÇALHO */}
 
@@ -532,5 +581,7 @@ const visibleCategories = showAllCategories
       </div>
 
     </aside>
+
+      </>
   );
 }

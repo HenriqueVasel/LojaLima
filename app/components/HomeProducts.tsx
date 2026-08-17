@@ -9,15 +9,17 @@ import WhatsAppSection from "@/app/components/WhatsAppSection";
 import HomeKitBanner from "@/app/components/HomeKitSection";
 import HomeBreakSection from "@/app/components/HomeBreakSection";
 import styles from "@/app/styles/loja.module.css";
+import { useState } from "react";
 
 export default function HomeProducts() {
 
+
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const params = useSearchParams();
   const query = new URLSearchParams(params).toString();
-
- const search = params.get("q");
-const category = params.get("category");
-const brand = params.get("brand");
+  const search = params.get("q");
+  const category = params.get("category");
+  const brand = params.get("brand");
 
 const isResults = search || category || brand;
   return (
@@ -26,11 +28,16 @@ const isResults = search || category || brand;
       {isResults && (
   <div className={styles.storeLayout}>
 
-    <StoreSidebar />
+    <StoreSidebar
+  mobileOpen={filtersOpen}
+  onClose={() => setFiltersOpen(false)}
+/>
 
     <div className={styles.storeContent}>
 
-      <StoreToolbar />
+      <StoreToolbar
+  onOpenFilters={() => setFiltersOpen(true)}
+/>
 
       <ProductGrid
        title={
