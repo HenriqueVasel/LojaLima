@@ -1253,3 +1253,176 @@ MOBILE SMALL
   background: #008f45;
   transform: translateY(-1px);
 }
+
+@media (max-width: 700px) {
+
+  .storeLayout {
+    width: 100%;
+    max-width: 100%;
+
+    display: grid;
+    grid-template-columns: 125px minmax(0, 1fr);
+
+    gap: 8px;
+
+    padding: 10px 6px 30px;
+
+    box-sizing: border-box;
+
+    align-items: start;
+  }
+
+  /* FILTRO */
+  .sidebar {
+    width: 125px;
+    max-width: 125px;
+    min-width: 0;
+
+    position: sticky;
+    top: 8px;
+
+    box-sizing: border-box;
+
+    border-radius: 10px;
+  }
+
+  .sidebarHeader {
+    padding: 12px 8px;
+  }
+
+  .sidebarHeader h2 {
+    font-size: 14px;
+  }
+
+  .clearFilters {
+    font-size: 9px;
+  }
+
+  .filterTitle {
+    padding: 10px 8px;
+    font-size: 10px;
+  }
+
+  .filterContent {
+    padding: 0 8px 10px;
+  }
+
+  .filterSearch input {
+    height: 30px;
+    font-size: 9px;
+    padding-left: 25px;
+  }
+
+  .searchIcon {
+    left: 7px;
+    font-size: 11px;
+  }
+
+  .checkboxItem {
+    gap: 5px;
+    font-size: 9px;
+  }
+
+  .checkboxItem input {
+    width: 12px;
+    height: 12px;
+  }
+
+  .categoryName {
+    max-width: 75px;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .categoryCount {
+    font-size: 8px;
+  }
+
+  .categoryList {
+    max-height: 190px;
+    gap: 7px;
+  }
+
+  .showMoreButton {
+    font-size: 9px;
+  }
+
+
+  /* CONTEÚDO */
+  .storeContent {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
+  }
+
+
+  /* ORDENAÇÃO */
+  .storeToolbar {
+    width: 100%;
+
+    margin-bottom: 10px;
+  }
+
+  .sortBlock {
+    width: 100%;
+    gap: 4px;
+  }
+
+  .sortBlock label {
+    font-size: 8px;
+    white-space: nowrap;
+  }
+
+  .sortBlock select {
+    min-width: 0;
+    width: 100%;
+
+    padding: 6px 4px;
+
+    font-size: 8px;
+  }
+
+
+  /* TÍTULO */
+  .categoryTitle {
+    width: 100%;
+
+    margin-bottom: 12px;
+
+    font-size: 15px;
+
+    line-height: 1.15;
+
+    overflow-wrap: anywhere;
+  }
+
+
+  /* PRODUTOS */
+  .productsGrid,
+  .productGrid,
+  .products {
+    width: 100%;
+    min-width: 0;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+
+    gap: 6px;
+  }
+
+
+  /* CARDS */
+  .productCard {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+
+    overflow: hidden;
+  }
+
+}
