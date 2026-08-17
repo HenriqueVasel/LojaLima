@@ -15,11 +15,11 @@ export default function HomeProducts() {
   const params = useSearchParams();
   const query = new URLSearchParams(params).toString();
 
-  const search = params.get("q");
-  const category = params.get("category");
+ const search = params.get("q");
+const category = params.get("category");
+const brand = params.get("brand");
 
-  const isResults = search || category;
-
+const isResults = search || category || brand;
   return (
     <>
       {/* RESULTADOS */}
@@ -34,10 +34,12 @@ export default function HomeProducts() {
 
       <ProductGrid
         title={
-          search
-            ? `Resultados para: ${search}`
-            : `Categoria: ${category}`
-        }
+  search
+    ? `Resultados para: ${search}`
+    : category
+      ? `Categoria: ${category}`
+      : `Marca: ${brand}`
+}
         endpoint={`/api/products?${query}`}
         key={query}
         itemsPerRow={4}
