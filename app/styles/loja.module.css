@@ -1008,7 +1008,7 @@ MOBILE SMALL
     font-size: 10px;
   }
 
-}
+
 
 
 /* =====================================================
@@ -1017,18 +1017,24 @@ MOBILE SMALL
 
 @media (max-width: 430px) {
 
-  .storeLayout {
-    grid-template-columns: 175px minmax(0, 1fr);
+ .storeLayout {
+  width: 100%;
 
-    gap: 9px;
+  display: grid;
 
-    padding-left: 8px;
-    padding-right: 8px;
-  }
+  grid-template-columns: 135px minmax(0, 1fr);
 
-  .sidebar {
-    max-width: 175px;
-  }
+  gap: 8px;
+
+  padding: 8px 6px 30px;
+
+  box-sizing: border-box;
+
+  overflow: hidden;
+}
+.sidebar {
+  max-width: 135px;
+}
 
   .sidebarHeader {
     padding: 13px 10px;
