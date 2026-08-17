@@ -745,7 +745,9 @@ async function fetchCartCount() {
 
     saveHistory(search);
     setSuggestions([]);
-    router.push("/loja?q=" + search);
+    router.push(
+  "/loja?q=" + encodeURIComponent(search)
+);
   }
 
   // ===== AUTOCOMPLETE =====
@@ -871,12 +873,25 @@ setLoading(false);
                       }
 
                       if (e.key === "Enter" && selectedIndex >= 0) {
-                        e.preventDefault();
-                        const item = suggestions[selectedIndex];
-                        saveHistory(item.name);
-                        router.push("/produto/" + item.slug);
-                        setSuggestions([]);
-                      }
+  e.preventDefault();
+
+  const item = suggestions[selectedIndex];
+
+  if (item.type === "brand") {
+    router.push(
+      "/loja?brand=" + encodeURIComponent(item.slug)
+    );
+  } else {
+    saveHistory(item.name);
+
+    router.push(
+      "/produto/" + encodeURIComponent(item.slug)
+    );
+  }
+
+  setSuggestions([]);
+  setShowSearchBox(false);
+}
                     }}
                   />
 

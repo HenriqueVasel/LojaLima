@@ -11,34 +11,68 @@ export async function GET(req: Request) {
 
     if (q.length < 2) {
       return NextResponse.json({
-        products: [],
         brands: [],
+        products: [],
       });
     }
 
     const terms = expandTerms(q).slice(0, 5);
 
-    // ========================================================
+    // ==========================================================
+    // MARCAS
+    // ==========================================================
+
+    const brands = await prisma.brand.findMany({
+      where: {
+        name: {
+          contains: q,
+          mode: "insensitive",
+        },
+      },
+
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+      },
+
+      orderBy: {
+        name: "asc",
+      },
+
+      take: 8,
+    });
+
+    // ==========================================================
     // PRODUTOS
-    // ========================================================
+    // ==========================================================
 
     const conditions = terms.flatMap((term) => [
       {
         name: {
           contains: term,
-          mode: "insensitive" as const,
+          mode: "insensitive",
         },
       },
+
       {
         brand: {
           contains: term,
-          mode: "insensitive" as const,
+          mode: "insensitive",
         },
       },
+
       {
         slug: {
           contains: term,
-          mode: "insensitive" as const,
+          mode: "insensitive",
+        },
+      },
+
+      {
+        sku: {
+          contains: term,
+          mode: "insensitive",
         },
       },
     ]);
@@ -57,6 +91,20 @@ export async function GET(req: Request) {
 
           {
             slug: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            brand: {
+              contains: q,
+              mode: "insensitive",
+            },
+          },
+
+          {
+            sku: {
               contains: q,
               mode: "insensitive",
             },
@@ -84,67 +132,18 @@ export async function GET(req: Request) {
       take: 8,
     });
 
-    // ========================================================
-    // MARCAS
-    // ========================================================
-
-    const brands = await prisma.brand.findMany({
-      where: {
-        active: true,
-
-        OR: [
-          {
-            name: {
-              contains: q,
-              mode: "insensitive",
-            },
-          },
-
-          {
-            slug: {
-              contains: q,
-              mode: "insensitive",
-            },
-          },
-
-          ...terms.map((term) => ({
-            name: {
-              contains: term,
-              mode: "insensitive" as const,
-            },
-          })),
-        ],
-      },
-
-      select: {
-        id: true,
-        name: true,
-        slug: true,
-      },
-
-      orderBy: {
-        name: "asc",
-      },
-
-      take: 5,
-    });
-
-    // ========================================================
-    // RETORNO
-    // ========================================================
-
     return NextResponse.json({
-      products,
       brands,
+      products,
     });
 
   } catch (error) {
-    console.error("Erro na busca de sugestões:", error);
+    console.error("Erro no autocomplete:", error);
 
     return NextResponse.json(
       {
-        products: [],
         brands: [],
+        products: [],
       },
       {
         status: 500,
