@@ -264,6 +264,7 @@ if (
   category === "cftv" &&
   page === 1 &&
   !search &&
+  !brand &&
   !min &&
   !max &&
   !sort
