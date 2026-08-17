@@ -720,19 +720,24 @@ MOBILE SMALL
 @media (max-width: 700px) {
 
   /* Área geral */
-  .storeLayout {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
+.storeLayout {
+  width: 100%;
+  max-width: 100%;
 
-    grid-template-columns: 205px minmax(0, 1fr);
-    gap: 12px;
+  display: grid;
 
-    padding: 0 10px 40px;
-    align-items: start;
+  grid-template-columns: 145px minmax(0, 1fr);
 
-    overflow: hidden;
-  }
+  gap: 10px;
+
+  padding: 10px 8px 40px;
+
+  box-sizing: border-box;
+
+  align-items: start;
+
+  overflow: hidden;
+}
 
 
   /* ===================================================
@@ -740,18 +745,19 @@ MOBILE SMALL
   =================================================== */
 
   .sidebar {
-    position: sticky;
-    top: 10px;
+  position: sticky;
+  top: 10px;
 
-    width: 100%;
-    min-width: 0;
-    max-width: 205px;
+  width: 100%;
+  min-width: 0;
+  max-width: 145px;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
 
-    border-radius: 14px;
-    overflow: hidden;
-  }
+  border-radius: 12px;
+
+  overflow: hidden;
+}
 
   .sidebarHeader {
     padding: 14px 12px;
@@ -928,20 +934,20 @@ MOBILE SMALL
      GRID DOS PRODUTOS
   =================================================== */
 
-  .productGrid,
-  .productsGrid,
-  .products {
-    width: 100%;
-    max-width: 100%;
-    min-width: 0;
+.productGrid,
+.productsGrid,
+.products {
+  width: 100%;
+  min-width: 0;
 
-    display: grid;
+  display: grid;
 
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 
-    gap: 10px;
+  gap: 8px;
 
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
   }
 
 
