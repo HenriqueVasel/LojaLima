@@ -17,9 +17,45 @@ export default function StoreSidebar() {
 }[]
 >([]);
 
+const [brands, setBrands] = useState<
+  {
+    id: number;
+    name: string;
+    slug: string;
+    productCount: number;
+  }[]
+>([]);
+
+const [loadingBrands, setLoadingBrands] = useState(true);
+const [brandSearch, setBrandSearch] = useState("");
+const [showAllBrands, setShowAllBrands] = useState(false);
+
 const [loadingCategories, setLoadingCategories] = useState(true);
 const [categorySearch, setCategorySearch] = useState("");
 const [showAllCategories, setShowAllCategories] = useState(false);
+
+
+useEffect(() => {
+  async function loadBrands() {
+    try {
+      const response = await fetch("/api/brands");
+
+      if (!response.ok) {
+        throw new Error("Erro ao buscar marcas");
+      }
+
+      const data = await response.json();
+
+      setBrands(data);
+    } catch (error) {
+      console.error("Erro ao carregar marcas:", error);
+    } finally {
+      setLoadingBrands(false);
+    }
+  }
+
+  loadBrands();
+}, []);
 
 useEffect(() => {
   async function loadCategories() {
@@ -84,6 +120,16 @@ useEffect(() => {
     .toLowerCase()
     .includes(categorySearch.toLowerCase())
 );
+
+const filteredBrands = brands.filter((brand) =>
+  brand.name
+    .toLowerCase()
+    .includes(brandSearch.toLowerCase())
+);
+
+const visibleBrands = showAllBrands
+  ? filteredBrands
+  : filteredBrands.slice(0, 7);
 
 const visibleCategories = showAllCategories
   ? filteredCategories
@@ -242,27 +288,145 @@ const visibleCategories = showAllCategories
 
       {/* MARCA */}
 
-      <div className={styles.filterSection}>
+      {/* MARCA */}
 
-        <button
-          type="button"
-          className={styles.filterTitle}
-        >
-          <span>Marca</span>
-          <span>⌃</span>
-        </button>
+<div className={styles.filterSection}>
 
-        <div className={styles.filterContent}>
+  <button
+    type="button"
+    className={styles.filterTitle}
+  >
+    <span>Marca</span>
+    <span>⌃</span>
+  </button>
 
-          <label className={styles.checkboxItem}>
-            <input type="checkbox" />
-            <span>Intelbras</span>
-          </label>
+  <div className={styles.filterContent}>
 
-        </div>
+    {/* BUSCA MARCA */}
+
+    <div className={styles.filterSearch}>
+
+      <span className={styles.searchIcon}>
+        ⌕
+      </span>
+
+      <input
+        type="text"
+        placeholder="Buscar marca..."
+        value={brandSearch}
+        onChange={(e) =>
+          setBrandSearch(e.target.value)
+        }
+      />
+
+    </div>
+
+
+    {/* MARCAS */}
+
+    {loadingBrands ? (
+
+      <p className={styles.filterPlaceholder}>
+        Carregando marcas...
+      </p>
+
+    ) : (
+
+      <div className={styles.categoryList}>
+
+        {visibleBrands.map((brand) => {
+
+          const selected =
+            params.get("brand") === brand.slug;
+
+          return (
+
+            <label
+              key={brand.id}
+              className={styles.checkboxItem}
+            >
+
+              <input
+                type="checkbox"
+                checked={selected}
+                onChange={() => {
+
+                  const searchParams =
+                    new URLSearchParams(
+                      params.toString()
+                    );
+
+                  if (selected) {
+                    searchParams.delete("brand");
+                  } else {
+                    searchParams.set(
+                      "brand",
+                      brand.slug
+                    );
+                  }
+
+                  router.push(
+                    `/loja?${searchParams.toString()}`
+                  );
+
+                }}
+              />
+
+              <div className={styles.categoryLabel}>
+
+                <span className={styles.categoryName}>
+                  {brand.name}
+                </span>
+
+                <span className={styles.categoryCount}>
+                  {brand.productCount}
+                </span>
+
+              </div>
+
+            </label>
+
+          );
+
+        })}
 
       </div>
 
+    )}
+
+
+    {/* VER MAIS */}
+
+    {!brandSearch &&
+      filteredBrands.length > 7 && (
+
+      <button
+        type="button"
+        className={styles.showMoreButton}
+        onClick={() =>
+          setShowAllBrands(
+            !showAllBrands
+          )
+        }
+      >
+
+        {showAllBrands
+          ? "Ver menos"
+          : "Ver mais"}
+
+        <span>
+          {showAllBrands
+            ? "⌃"
+            : "⌄"}
+        </span>
+
+      </button>
+
+    )}
+
+  </div>
+
+</div>
 
       {/* PREÇO */}
 

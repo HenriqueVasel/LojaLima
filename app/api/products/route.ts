@@ -15,6 +15,7 @@ const limit = Number(searchParams.get("limit") || 20);
 const sort = searchParams.get("sort");
 const search = searchParams.get("q") || searchParams.get("search");
 const category = searchParams.get("category");
+const brand = searchParams.get("brand");
 console.log("URL:", req.url);
 console.log("SEARCH PARAM Q:", searchParams.get("q"));
 
@@ -184,6 +185,39 @@ if (category) {
 
   }
 
+}
+
+
+/* =========================
+MARCA
+========================= */
+
+if (brand) {
+
+  const selectedBrand =
+    await prisma.brand.findUnique({
+      where: {
+        slug: brand,
+      },
+
+      select: {
+        id: true,
+      },
+    });
+
+  if (selectedBrand) {
+
+    where.brandRefId =
+      selectedBrand.id;
+
+  } else {
+
+    // Marca não existe:
+    // força nenhum produto a aparecer
+
+    where.brandRefId = -1;
+
+  }
 }
 
 /* preço */
