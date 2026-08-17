@@ -105,9 +105,44 @@ export default function ProductGrid({
         }
 
         {/* PRODUTOS FILTRADOS */}
-        {products.map((p) => (
-          <ProductCard key={p.id} product={p} />
-        ))}
+     {/* PRODUTOS / ESTADO VAZIO */}
+
+{!loading && products.length === 0 ? (
+
+  <div className="emptyProducts">
+
+    <div className="emptyProductsIcon">
+      🔎
+    </div>
+
+    <h3>
+      Nenhum produto encontrado
+    </h3>
+
+    <p>
+      Não encontramos produtos para os filtros selecionados.
+      <br />
+      Tente escolher outra marca, categoria ou remover algum filtro.
+    </p>
+
+    <button
+      type="button"
+      onClick={() => {
+        window.location.href = "/loja";
+      }}
+    >
+      Limpar filtros
+    </button>
+
+  </div>
+
+) : (
+
+  products.map((p) => (
+    <ProductCard key={p.id} product={p} />
+  ))
+
+)}
 
       </div>
 
