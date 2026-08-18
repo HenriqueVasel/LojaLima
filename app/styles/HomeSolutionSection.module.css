@@ -207,6 +207,11 @@
     a foto real da equipe.
   */
 
+  .previewImage {
+  object-fit: cover;
+  object-position: center;
+}
+
   background-image:
     linear-gradient(
       90deg,

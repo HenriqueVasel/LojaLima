@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import {
   ShieldCheck,
@@ -19,6 +20,10 @@ export default function HomeSolutionSection() {
       <section className={s.section}>
         <div className={s.container}>
 
+          {/* =========================
+              CONTEÚDO
+          ========================= */}
+
           <div className={s.content}>
 
             <span className={s.badge}>
@@ -36,6 +41,8 @@ export default function HomeSolutionSection() {
               Conte com nossa equipe especializada para realizar
               a instalação e deixar seu projeto pronto para funcionar.
             </p>
+
+            {/* BENEFÍCIOS */}
 
             <div className={s.features}>
 
@@ -61,6 +68,8 @@ export default function HomeSolutionSection() {
 
             </div>
 
+            {/* CTA */}
+
             <div className={s.actions}>
 
               <button
@@ -79,29 +88,28 @@ export default function HomeSolutionSection() {
 
           </div>
 
+
+          {/* =========================
+              FOTO DA INSTALAÇÃO
+          ========================= */}
+
           <div className={s.preview}>
 
-            <div className={s.previewOverlay} />
-
-            <div className={s.previewContent}>
-              <span>
-                <ShieldCheck size={16} />
-                Projeto completo
-              </span>
-
-              <strong>
-                Equipamento + instalação
-              </strong>
-
-              <p>
-                Segurança profissional do início ao fim.
-              </p>
-            </div>
+            <Image
+              src="/imagens/instalacao-profissional.webp"
+              alt="Técnico realizando instalação profissional de câmera de segurança"
+              fill
+              className={s.previewImage}
+              sizes="(max-width: 900px) 100vw, 40vw"
+            />
 
           </div>
 
         </div>
       </section>
+
+
+      {/* MODAL DE ORÇAMENTO */}
 
       <ProjectModal
         open={openModal}
