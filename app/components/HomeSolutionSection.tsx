@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
+
 import {
   ShieldCheck,
   Wrench,
@@ -26,10 +27,15 @@ export default function HomeSolutionSection() {
 
           <div className={s.content}>
 
+            {/* BADGE */}
+
             <span className={s.badge}>
               <Wrench size={15} />
               INSTALAÇÃO PROFISSIONAL
             </span>
+
+
+            {/* TÍTULO */}
 
             <h2>
               Compre seu equipamento.
@@ -37,10 +43,14 @@ export default function HomeSolutionSection() {
               <span>Nós instalamos para você.</span>
             </h2>
 
+
+            {/* DESCRIÇÃO */}
+
             <p>
               Conte com nossa equipe especializada para realizar
               a instalação e deixar seu projeto pronto para funcionar.
             </p>
+
 
             {/* BENEFÍCIOS */}
 
@@ -68,30 +78,46 @@ export default function HomeSolutionSection() {
 
             </div>
 
+
             {/* CTA */}
 
-           <div className={s.actions}>
+            <div className={s.actions}>
 
-  <div className={s.freeQuote}>
-    <strong>Solicite seu orçamento gratuitamente</strong>
-    <span>Sem compromisso e sem custo para solicitar.</span>
-  </div>
+              {/* DESTAQUE DO ORÇAMENTO */}
 
-  <div className={s.actionRow}>
-    <button
-      className={s.button}
-      onClick={() => setOpenModal(true)}
-    >
-      Solicitar orçamento
-      <ArrowRight size={17} />
-    </button>
+              <div className={s.freeQuote}>
 
-    <span className={s.info}>
-      Atendimento rápido pelo WhatsApp
-    </span>
-  </div>
+                <strong>
+                  Solicite seu orçamento
+                  <span> GRATUITAMENTE</span>
+                </strong>
 
-</div>
+                <p>
+                  Sem compromisso e sem custo para solicitar.
+                </p>
+
+              </div>
+
+
+              {/* BOTÃO */}
+
+              <div className={s.actionRow}>
+
+                <button
+                  className={s.button}
+                  onClick={() => setOpenModal(true)}
+                >
+                  Solicitar orçamento
+                  <ArrowRight size={17} />
+                </button>
+
+                <span className={s.info}>
+                  Atendimento rápido pelo WhatsApp
+                </span>
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -116,12 +142,15 @@ export default function HomeSolutionSection() {
       </section>
 
 
-      {/* MODAL DE ORÇAMENTO */}
+      {/* =========================
+          MODAL DE ORÇAMENTO
+      ========================= */}
 
       <ProjectModal
         open={openModal}
         onClose={() => setOpenModal(false)}
       />
+
     </>
   );
 }
