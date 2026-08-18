@@ -1468,8 +1468,8 @@ color: #111827;
   }
 
   .menuLink {
-    font-size: 14px;
-    padding: 12px 14px;
+    font-size: 13px;
+    padding: 9px 4px;
   }
 
   .icons {
@@ -1540,7 +1540,7 @@ color: #111827;
   }
 
   .menu {
-    gap: 24px;
+    gap: 4px;
   }
 
   .icons {
