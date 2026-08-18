@@ -11,29 +11,6 @@ const SOCIALS = {
     "https://www.linkedin.com/company/lima-e-lima-instala%C3%A7%C3%A3o-e-manuten%C3%A7%C3%A3o/",
 };
 
-/*
-|--------------------------------------------------------------------------
-| IMAGENS DO FOOTER
-|--------------------------------------------------------------------------
-| Quando você tiver os arquivos, coloque-os nesses caminhos:
-|
-| public/footer/pagamentos/
-| public/footer/parceiro/
-| public/footer/seguranca/
-|
-| Por enquanto os cards funcionam sem essas imagens.
-|--------------------------------------------------------------------------
-*/
-
-const PAYMENT_METHODS = [
-  { name: "Boleto", className: "boleto" },
-  { name: "Visa", className: "visa" },
-  { name: "Mastercard", className: "mastercard" },
-  { name: "Amex", className: "amex" },
-  { name: "Elo", className: "elo" },
-  { name: "Hipercard", className: "hipercard" },
-];
-
 export default function Footer() {
   return (
     <footer className={s.footer}>
@@ -287,7 +264,7 @@ export default function Footer() {
 
 
         {/* ==================================================
-            CONFIANÇA / PAGAMENTOS
+            ÁREA DE CONFIANÇA
         ================================================== */}
 
         <div className={s.trustArea}>
@@ -302,14 +279,50 @@ export default function Footer() {
 
             <div className={s.paymentGrid}>
 
-              {PAYMENT_METHODS.map((payment) => (
-                <div
-                  key={payment.name}
-                  className={`${s.paymentCard} ${s[payment.className]}`}
-                >
-                  {payment.name}
-                </div>
-              ))}
+              <div className={s.paymentCard}>
+                <Image
+                  src="/produtos/boleto.png"
+                  alt="Boleto"
+                  width={55}
+                  height={32}
+                />
+              </div>
+
+              <div className={s.paymentCard}>
+                <Image
+                  src="/produtos/visa.png"
+                  alt="Visa"
+                  width={55}
+                  height={32}
+                />
+              </div>
+
+              <div className={s.paymentCard}>
+                <Image
+                  src="/produtos/mastercard.png"
+                  alt="Mastercard"
+                  width={55}
+                  height={32}
+                />
+              </div>
+
+              <div className={s.paymentCard}>
+                <Image
+                  src="/produtos/elo.png"
+                  alt="Elo"
+                  width={55}
+                  height={32}
+                />
+              </div>
+
+              <div className={s.paymentCard}>
+                <Image
+                  src="/produtos/hipercard.png"
+                  alt="Hipercard"
+                  width={55}
+                  height={32}
+                />
+              </div>
 
             </div>
 
@@ -320,7 +333,7 @@ export default function Footer() {
           </div>
 
 
-          {/* PARCEIRO */}
+          {/* PARCEIRO CREDENCIADO */}
 
           <div className={s.trustBlock}>
 
@@ -330,19 +343,13 @@ export default function Footer() {
 
             <div className={s.partnerCard}>
 
-              <div className={s.partnerLogo}>
-                INTELBRAS
-              </div>
-
-              <div className={s.partnerText}>
-                <strong>
-                  Parceiro Credenciado
-                </strong>
-
-                <span>
-                  Revenda Ouro
-                </span>
-              </div>
+              <Image
+                src="/produtos/intelbras-revenda-ouro.png"
+                alt="Intelbras Parceiro Credenciado Revenda Ouro"
+                width={180}
+                height={65}
+                className={s.partnerImage}
+              />
 
             </div>
 
@@ -353,7 +360,7 @@ export default function Footer() {
           </div>
 
 
-          {/* SEGURANÇA */}
+          {/* COMPRA SEGURA */}
 
           <div className={s.trustBlock}>
 
@@ -364,36 +371,27 @@ export default function Footer() {
             <div className={s.securityGrid}>
 
               <div className={s.securityCard}>
-                <span className={s.securityIcon}>
-                  ✓
-                </span>
 
-                <div>
-                  <strong>
-                    Compra segura
-                  </strong>
+                <Image
+                  src="/produtos/compra-segura.png"
+                  alt="Compra segura"
+                  width={110}
+                  height={45}
+                  className={s.securityImage}
+                />
 
-                  <span>
-                    Ambiente protegido
-                  </span>
-                </div>
               </div>
 
-
               <div className={s.securityCard}>
-                <span className={s.securityIcon}>
-                  ✓
-                </span>
 
-                <div>
-                  <strong>
-                    Site seguro
-                  </strong>
+                <Image
+                  src="/produtos/google-safe.png"
+                  alt="Google Safe Browsing"
+                  width={110}
+                  height={45}
+                  className={s.securityImage}
+                />
 
-                  <span>
-                    Navegação protegida
-                  </span>
-                </div>
               </div>
 
             </div>
@@ -486,7 +484,6 @@ function FacebookIcon() {
   );
 }
 
-
 function InstagramIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -497,7 +494,6 @@ function InstagramIcon() {
     </svg>
   );
 }
-
 
 function LinkedInIcon() {
   return (
@@ -510,7 +506,6 @@ function LinkedInIcon() {
   );
 }
 
-
 function PinIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -521,7 +516,6 @@ function PinIcon() {
     </svg>
   );
 }
-
 
 function PhoneIcon() {
   return (
@@ -534,7 +528,6 @@ function PhoneIcon() {
   );
 }
 
-
 function ChatIcon() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -545,7 +538,6 @@ function ChatIcon() {
     </svg>
   );
 }
-
 
 function MailIcon() {
   return (
