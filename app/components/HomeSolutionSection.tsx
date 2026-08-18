@@ -96,7 +96,7 @@ export default function HomeSolutionSection() {
           <div className={s.preview}>
 
             <Image
-              src="/imagens/instalacao-profissional.webp"
+              src="/produtos/instalacao-profissional.webp"
               alt="Técnico realizando instalação profissional de câmera de segurança"
               fill
               className={s.previewImage}
