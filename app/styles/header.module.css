@@ -222,6 +222,50 @@ color: #111827;
   flex: 0 0 auto;
 }
 
+/* =========================================================
+   CARRINHO + CONTADOR
+   ========================================================= */
+
+.cartIcon {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+}
+
+.cartBadge {
+  position: absolute;
+
+  top: -6px;
+  right: -6px;
+
+  min-width: 18px;
+  height: 18px;
+
+  padding: 0 4px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #e60000;
+  color: #ffffff;
+
+  border: 2px solid #000000;
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+
+  box-sizing: border-box;
+
+  z-index: 999999;
+}
+
 /* Whats destacado */
 .whatsapp {
   border-color: rgba(37, 211, 102, 0.35);
@@ -1176,18 +1220,17 @@ color: #111827;
     height: 19px;
   }
 
-  .cartBadge {
-    top: -5px;
-    right: -5px;
+ .cartBadge {
+  top: -5px;
+  right: -5px;
 
-    width: 17px;
-    height: 17px;
+  width: 17px;
+  height: 17px;
 
-    padding: 0;
+  padding: 0;
 
-    font-size: 10px;
-  }
-
+  font-size: 10px;
+}
 
   /* -----------------------------------------
      BOTÃO MENU
