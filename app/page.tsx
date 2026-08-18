@@ -105,7 +105,7 @@ export default function HomePage() {
           
         <TrustBar />
 
-        <HomeSolutionSection />
+        
 
       <section className={`${s.productsSection} shopScope`}></section>
           
@@ -114,6 +114,8 @@ export default function HomePage() {
           <Suspense>
             <HomeProducts />
           </Suspense>
+
+          <HomeSolutionSection />
 
           <TrustBar />
 
