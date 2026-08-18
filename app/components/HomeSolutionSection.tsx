@@ -18,66 +18,88 @@ export default function HomeSolutionSection() {
     <>
       <section className={s.section}>
         <div className={s.container}>
+
           <div className={s.content}>
+
             <span className={s.badge}>
-              <ShieldCheck size={18} />
-              Soluções completas
+              <Wrench size={15} />
+              INSTALAÇÃO PROFISSIONAL
             </span>
 
             <h2>
-  Soluções completas em segurança eletrônica.
-</h2>
+              Compre seu equipamento.
+              <br />
+              <span>Nós instalamos para você.</span>
+            </h2>
 
             <p>
-              Projeto, instalação e suporte especializado para residências,
-              empresas e indústrias.
+              Conte com nossa equipe especializada para realizar
+              a instalação e deixar seu projeto pronto para funcionar.
             </p>
 
             <div className={s.features}>
+
               <div>
-                <BadgeCheck size={18} />
+                <BadgeCheck size={17} />
                 Projeto personalizado
               </div>
 
               <div>
-                <Wrench size={18} />
+                <Wrench size={17} />
+                Equipe especializada
+              </div>
+
+              <div>
+                <ShieldCheck size={17} />
                 Instalação profissional
               </div>
 
               <div>
-                <BadgeCheck size={18} />
-                Produtos Intelbras Originais
+                <BadgeCheck size={17} />
+                Suporte pós-instalação
               </div>
 
-              <div>
-                <BadgeCheck size={18} />
-                Suporte especializado
-              </div>
             </div>
 
-            <button
-              className={s.button}
-              onClick={() => setOpenModal(true)}
-            >
-              Solicite um projeto gratuitamente
-              <ArrowRight size={18} />
-            </button>
+            <div className={s.actions}>
 
-            <span className={s.info}>
-              ✓ Sem compromisso • Atendimento rápido pelo WhatsApp
-            </span>
+              <button
+                className={s.button}
+                onClick={() => setOpenModal(true)}
+              >
+                Solicitar orçamento
+                <ArrowRight size={17} />
+              </button>
+
+              <span className={s.info}>
+                Atendimento rápido pelo WhatsApp
+              </span>
+
+            </div>
+
           </div>
 
           <div className={s.preview}>
-            <ShieldCheck size={70} />
 
-            <h3>Seu projeto começa aqui</h3>
+            <div className={s.previewOverlay} />
 
-            <p>
-              Em breve adicionaremos uma foto da equipe realizando instalações
-              profissionais.
-            </p>
+            <div className={s.previewContent}>
+              <span>
+                <ShieldCheck size={16} />
+                Projeto completo
+              </span>
+
+              <strong>
+                Equipamento + instalação
+              </strong>
+
+              <p>
+                Segurança profissional do início ao fim.
+              </p>
+            </div>
+
           </div>
+
         </div>
       </section>
 
