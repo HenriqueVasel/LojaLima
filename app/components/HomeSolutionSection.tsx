@@ -70,21 +70,28 @@ export default function HomeSolutionSection() {
 
             {/* CTA */}
 
-            <div className={s.actions}>
+           <div className={s.actions}>
 
-              <button
-                className={s.button}
-                onClick={() => setOpenModal(true)}
-              >
-                Solicitar orçamento
-                <ArrowRight size={17} />
-              </button>
+  <div className={s.freeQuote}>
+    <strong>Solicite seu orçamento gratuitamente</strong>
+    <span>Sem compromisso e sem custo para solicitar.</span>
+  </div>
 
-              <span className={s.info}>
-                Atendimento rápido pelo WhatsApp
-              </span>
+  <div className={s.actionRow}>
+    <button
+      className={s.button}
+      onClick={() => setOpenModal(true)}
+    >
+      Solicitar orçamento
+      <ArrowRight size={17} />
+    </button>
 
-            </div>
+    <span className={s.info}>
+      Atendimento rápido pelo WhatsApp
+    </span>
+  </div>
+
+</div>
 
           </div>
 

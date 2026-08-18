@@ -343,3 +343,33 @@
   }
 
 }
+
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.freeQuote {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.freeQuote strong {
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.freeQuote span {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
