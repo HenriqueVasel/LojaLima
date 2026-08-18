@@ -6,7 +6,7 @@ import ProductsCarousel from "@/app/components/ProductsCarousel";
 import StoreToolbar from "@/app/components/StoreToolbar";
 import StoreSidebar from "@/app/components/StoreSidebar";
 import WhatsAppSection from "@/app/components/WhatsAppSection";
-import HomeKitBanner from "@/app/components/HomeKitSection";
+import HomeSolutionSection from "@/app/components/HomeSolutionSection";
 import HomeBreakSection from "@/app/components/HomeBreakSection";
 import styles from "@/app/styles/loja.module.css";
 import { useState } from "react";
@@ -66,23 +66,24 @@ const isResults = search || category || brand;
       
 
 
-        {/* CAMERAS WIFI */}
-          <div className="homeSection">
-            <ProductsCarousel
-              title="Câmeras Wi-Fi"
-              endpoint="/api/products/store?category=cameras-wifi&limit=10"
-            />
-          </div>
+       {/* CÂMERAS WI-FI */}
+<div className="homeSection">
+  <ProductsCarousel
+    title="Câmeras Wi-Fi"
+    endpoint="/api/products/store?category=cameras-wifi&limit=10"
+  />
+</div>
 
-         
+{/* INSTALAÇÃO PROFISSIONAL */}
+<HomeSolutionSection />
 
-          {/* CFTV */}
-          <div className="homeSection">
-            <ProductsCarousel
-              title="Câmeras e Gravadores"
-              endpoint="/api/products/store?category=cftv&limit=10"
-            />
-          </div>
+{/* CÂMERAS + GRAVADORES */}
+<div className="homeSection">
+  <ProductsCarousel
+    title="Câmeras e Gravadores"
+    endpoint="/api/products/store?category=cftv&limit=10"
+  />
+</div>
 
           <div className="homeSection">
   <HomeBreakSection />
