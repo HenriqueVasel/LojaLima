@@ -35,24 +35,33 @@ export default function HomeSolutionSection() {
             </span>
 
 
-            {/* TÍTULO */}
+            {/* =========================
+                DESTAQUE PRINCIPAL
+            ========================= */}
 
-            <h2>
-              Compre seu equipamento.
-              <br />
-              <span>Nós instalamos para você.</span>
-            </h2>
+            <div className={s.freeQuote}>
+
+              <span className={s.freeQuoteLabel}>
+                ORÇAMENTO GRATUITO
+              </span>
+
+              <h2>
+                Solicite seu orçamento
+                <br />
+                <span>sem compromisso.</span>
+              </h2>
+
+              <p>
+                Conte com nossa equipe especializada para realizar
+                a instalação e deixar seu projeto pronto para funcionar.
+              </p>
+
+            </div>
 
 
-            {/* DESCRIÇÃO */}
-
-            <p>
-              Conte com nossa equipe especializada para realizar
-              a instalação e deixar seu projeto pronto para funcionar.
-            </p>
-
-
-            {/* BENEFÍCIOS */}
+            {/* =========================
+                BENEFÍCIOS
+            ========================= */}
 
             <div className={s.features}>
 
@@ -79,27 +88,11 @@ export default function HomeSolutionSection() {
             </div>
 
 
-            {/* CTA */}
+            {/* =========================
+                CTA
+            ========================= */}
 
             <div className={s.actions}>
-
-              {/* DESTAQUE DO ORÇAMENTO */}
-
-              <div className={s.freeQuote}>
-
-                <strong>
-                  Solicite seu orçamento
-                  <span> GRATUITAMENTE</span>
-                </strong>
-
-                <p>
-                  Sem compromisso e sem custo para solicitar.
-                </p>
-
-              </div>
-
-
-              {/* BOTÃO */}
 
               <div className={s.actionRow}>
 
@@ -107,7 +100,7 @@ export default function HomeSolutionSection() {
                   className={s.button}
                   onClick={() => setOpenModal(true)}
                 >
-                  Solicitar orçamento
+                  Solicitar orçamento gratuitamente
                   <ArrowRight size={17} />
                 </button>
 
