@@ -106,44 +106,91 @@ export default function ProductGrid({
           ))}
 
         {/* ESTADO VAZIO */}
-        {!loading && products.length === 0 ? (
-          <div className={styles.emptyProducts}>
+        {/* PRODUTOS / ESTADO VAZIO */}
 
-            <div className={styles.emptyProductsIcon}>
-              🔎
-            </div>
+{!loading && products.length === 0 ? (() => {
 
-            <h3>
-              Nenhum produto encontrado
-            </h3>
+  const urlParams = new URLSearchParams(
+    endpoint.split("?")[1] || ""
+  );
 
-            <p>
-              Não encontramos produtos para os filtros selecionados.
-              <br />
-              Tente escolher outra marca, categoria ou remover algum filtro.
-            </p>
+  const category = urlParams.get("category");
+  const brand = urlParams.get("brand");
+  const search = urlParams.get("q");
 
-            <button
-              type="button"
-              onClick={() => {
-                window.location.href = "/";
-              }}
-            >
-              Limpar filtros
-            </button>
+  return (
+    <div className="emptyProducts">
 
-          </div>
+      <div className="emptyProductsIcon">
+        🔎
+      </div>
+
+      <h3>
+        Nenhum produto encontrado
+      </h3>
+
+      <p>
+        {brand && category ? (
+          <>
+            Não encontramos produtos da marca{" "}
+            <strong>{brand}</strong>{" "}
+            na categoria{" "}
+            <strong>{category}</strong>.
+            <br />
+            Tente escolher outra marca ou remover a categoria.
+          </>
+        ) : brand ? (
+          <>
+            Não encontramos produtos da marca{" "}
+            <strong>{brand}</strong>.
+            <br />
+            Tente escolher outra marca ou remover algum filtro.
+          </>
+        ) : category ? (
+          <>
+            Não encontramos produtos na categoria{" "}
+            <strong>{category}</strong>.
+            <br />
+            Tente escolher outra categoria ou remover algum filtro.
+          </>
+        ) : search ? (
+          <>
+            Não encontramos produtos para{" "}
+            <strong>"{search}"</strong>.
+            <br />
+            Tente pesquisar por outro termo.
+          </>
         ) : (
-
-          /* PRODUTOS */
-          products.map((p) => (
-            <ProductCard
-              key={p.id}
-              product={p}
-            />
-          ))
-
+          <>
+            Não encontramos produtos para os filtros selecionados.
+            <br />
+            Tente remover algum filtro.
+          </>
         )}
+      </p>
+
+      <button
+        type="button"
+        onClick={() => {
+          window.location.href = "/loja";
+        }}
+      >
+        Limpar filtros
+      </button>
+
+    </div>
+  );
+
+})() : (
+
+  products.map((p) => (
+    <ProductCard
+      key={p.id}
+      product={p}
+    />
+  ))
+
+)}
 
       </div>
 
