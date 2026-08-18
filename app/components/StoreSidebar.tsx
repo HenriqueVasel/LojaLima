@@ -187,20 +187,7 @@ const visibleCategories = showAllCategories
 
       </div>
 
-      {/* CABEÇALHO */}
-
-      <div className={styles.sidebarHeader}>
-        <h2>Filtros</h2>
-
-        <button
-          type="button"
-          onClick={() => router.push("/loja")}
-          className={styles.clearFilters}
-        >
-          Limpar
-        </button>
-      </div>
-
+  
 
      {/* CATEGORIA */}
 
