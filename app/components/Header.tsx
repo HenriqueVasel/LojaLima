@@ -1151,7 +1151,13 @@ setLoading(false);
               )}
             </div>
 
-            <div ref={userMenuRef} style={{ position: "relative" }}>
+            <div
+  ref={userMenuRef}
+  style={{
+    position: "relative",
+    zIndex: 1000000,
+  }}
+>
               <button
                 className={s.iconLink}
                 onClick={(e) => {
@@ -1174,7 +1180,7 @@ setLoading(false);
       borderRadius: 18,
       minWidth: 240,
       overflow: "hidden",
-      zIndex: 999,
+      zIndex: 1000001,
       boxShadow: "0 20px 60px rgba(0,0,0,0.45)",
       backdropFilter: "blur(10px)",
     }}
