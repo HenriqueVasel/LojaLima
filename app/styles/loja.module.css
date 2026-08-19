@@ -1791,3 +1791,13 @@ MOBILE SMALL
   }
 
 }
+
+.mobileHideSolution {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobileHideSolution {
+    display: none;
+  }
+}

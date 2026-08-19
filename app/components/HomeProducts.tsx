@@ -75,7 +75,9 @@ const isResults = search || category || brand;
 </div>
 
 {/* INSTALAÇÃO PROFISSIONAL */}
-<HomeSolutionSection />
+<div className={styles.mobileHideSolution}>
+  <HomeSolutionSection />
+</div>
 
 {/* CÂMERAS + GRAVADORES */}
 <div className="homeSection">
