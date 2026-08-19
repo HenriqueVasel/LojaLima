@@ -1062,14 +1062,7 @@ border: 1px solid #e5e7eb;
 
 @media (max-width: 767px) {
   .bannerTop {
-    height: 135px;
-    aspect-ratio: auto;
-  }
-}
-
-@media (max-width: 767px) {
-  .bannerTop {
-    height: 135px;
+    height: 115px;
     aspect-ratio: auto;
   }
 
@@ -1077,5 +1070,11 @@ border: 1px solid #e5e7eb;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding-top: 10px;
   }
 }
