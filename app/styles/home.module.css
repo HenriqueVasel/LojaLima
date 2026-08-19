@@ -1059,3 +1059,10 @@ border: 1px solid #e5e7eb;
     display: none;
   }
 }
+
+@media (max-width: 767px) {
+  .bannerTop {
+    height: 230px;
+    aspect-ratio: auto;
+  }
+}
