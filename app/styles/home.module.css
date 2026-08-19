@@ -1062,7 +1062,7 @@ border: 1px solid #e5e7eb;
 
 @media (max-width: 767px) {
   .bannerTop {
-    height: 115px;
+    height: 90px;
     aspect-ratio: auto;
   }
 
@@ -1071,10 +1071,8 @@ border: 1px solid #e5e7eb;
     background-position: center;
     background-repeat: no-repeat;
   }
-}
 
-@media (max-width: 768px) {
   .section {
-    padding-top: 10px;
+    padding-top: 0;
   }
 }
