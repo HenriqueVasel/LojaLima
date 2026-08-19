@@ -1062,8 +1062,9 @@ border: 1px solid #e5e7eb;
 
 @media (max-width: 767px) {
   .bannerTop {
-    height: 90px;
-    aspect-ratio: auto;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 5;
   }
 
   .slide {
