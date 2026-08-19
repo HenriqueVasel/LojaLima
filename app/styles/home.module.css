@@ -1062,7 +1062,20 @@ border: 1px solid #e5e7eb;
 
 @media (max-width: 767px) {
   .bannerTop {
-    height: 230px;
+    height: 135px;
     aspect-ratio: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .bannerTop {
+    height: 135px;
+    aspect-ratio: auto;
+  }
+
+  .slide {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
   }
 }
