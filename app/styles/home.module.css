@@ -1049,3 +1049,13 @@ border: 1px solid #e5e7eb;
       rgba(0,0,0,.55)
     );
 }
+
+.mobileHideTrust {
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .mobileHideTrust {
+    display: none;
+  }
+}

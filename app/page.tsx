@@ -103,8 +103,9 @@ export default function HomePage() {
         <div className={s.productsWrapper}>
 
           
-        <TrustBar />
-
+        <div className={s.mobileHideTrust}>
+  <TrustBar />
+</div>
         
 
       <section className={`${s.productsSection} shopScope`}></section>
@@ -117,7 +118,9 @@ export default function HomePage() {
 
           
 
-          <TrustBar />
+          <div className={s.mobileHideTrust}>
+  <TrustBar />
+</div>
 
           {/* QUEBRA VISUAL */}
 
