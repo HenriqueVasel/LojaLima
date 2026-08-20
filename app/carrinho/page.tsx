@@ -9,7 +9,9 @@ import { CartSummaryCard } from "@/app/components/cart/CartSummaryCard";
 export default function CarrinhoPage() {
 
   const [items, setItems] = useState<CartItem[]>([]);
-
+  const [updatingItems, setUpdatingItems] = useState<
+  Set<number>
+>(new Set());
   const [coupon, setCoupon] = useState("");
   const [discount, setDiscount] = useState(0);
   const [couponLoading, setCouponLoading] = useState(false);
@@ -119,121 +121,166 @@ export default function CarrinhoPage() {
 
   }, []);
 
-  async function removeItem(id: number) {
-
-    const res = await fetch("/api/cart", {
-      credentials: "include"
-    });
-
-    if (res.status === 401) {
-
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const novoCarrinho = cart.filter((item: any) => item.id !== id);
-
-      localStorage.setItem("cart", JSON.stringify(novoCarrinho));
-
-      if (novoCarrinho.length === 0) {
-        setItems([]);
-      } else {
-
-        const guestRes = await fetch("/api/cart/guest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ guestCart: novoCarrinho }),
-        });
-
-        const guestItems = await guestRes.json();
-
-        setItems(guestItems);
-      }
-
-      window.dispatchEvent(new Event("cartUpdated"));
-
-      return;
-    }
-
-    await fetch(`/api/cart/item/${id}`, {
-      method: "DELETE",
-      credentials: "include"
-    });
-
-    window.dispatchEvent(new Event("cartUpdated"));
+async function updateQty(id: number, qty: number) {
+  // 🔒 Impede clicar várias vezes no mesmo produto
+  if (updatingItems.has(id)) {
+    return;
   }
 
-  async function updateQty(id: number, qty: number) {
+  // Se chegar em zero, remove o produto
+  if (qty <= 0) {
+    await removeItem(id);
+    return;
+  }
 
-    if (qty <= 0) {
-      removeItem(id);
-      return;
-    }
+  const item = items.find(i => i.id === id);
 
-    const item = items.find(i => i.id === id);
+  if (!item) return;
 
-    console.log("ITEM DO CARRINHO:", item);
+  // Verifica estoque
+  if (!item.product.isKit && qty > item.product.stock) {
+    alert(
+      `Apenas ${item.product.stock} unidade${
+        item.product.stock !== 1 ? "s" : ""
+      } disponível${
+        item.product.stock !== 1 ? "is" : ""
+      } em estoque.`
+    );
 
-    if (!item) return;
+    return;
+  }
 
-    if (!item.product.isKit && qty > item.product.stock) {
-      alert(
-        `Apenas ${item.product.stock} unidade${item.product.stock !== 1 ? "s" : ""} disponível${item.product.stock !== 1 ? "is" : ""} em estoque.`
-      );
-      return;
-    }
+  // 🔒 Marca esse produto como "atualizando"
+  setUpdatingItems(prev => {
+    const next = new Set(prev);
+    next.add(id);
+    return next;
+  });
+
+  try {
+    // ==========================
+    // CARRINHO DE CONVIDADO
+    // ==========================
 
     if (isGuest) {
+      const cart = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      );
 
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
-
-      const index = cart.findIndex((item: any) => item.id === id);
+      const index = cart.findIndex(
+        (item: any) => item.id === id
+      );
 
       if (index >= 0) {
-
         cart[index].qty = qty;
 
-        localStorage.setItem("cart", JSON.stringify(cart));
+        localStorage.setItem(
+          "cart",
+          JSON.stringify(cart)
+        );
 
-        const guestRes = await fetch("/api/cart/guest", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ guestCart: cart }),
-        });
+        const guestRes = await fetch(
+          "/api/cart/guest",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              guestCart: cart,
+            }),
+          }
+        );
 
-        const guestItems = await guestRes.json();
+        if (!guestRes.ok) {
+          throw new Error(
+            "Não foi possível atualizar o carrinho."
+          );
+        }
+
+        const guestItems =
+          await guestRes.json();
 
         setItems(guestItems);
 
-        window.dispatchEvent(new Event("cartUpdated"));
+        window.dispatchEvent(
+          new Event("cartUpdated")
+        );
       }
 
       return;
     }
+
+    // ==========================
+    // USUÁRIO LOGADO
+    // ==========================
 
     const oldItems = items;
 
+    // Atualiza a quantidade imediatamente na tela
     setItems(prev =>
-      prev.map(item => (item.id === id ? { ...item, qty } : item))
+      prev.map(item =>
+        item.id === id
+          ? {
+              ...item,
+              qty,
+            }
+          : item
+      )
     );
 
-    const res = await fetch(`/api/cart/item/${id}`, {
-      method: "PUT",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ qty }),
-    });
+    // Atualiza no banco
+    const res = await fetch(
+      `/api/cart/item/${id}`,
+      {
+        method: "PUT",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          qty,
+        }),
+      }
+    );
 
     const data = await res.json();
 
+    // Se o backend rejeitar, volta para a quantidade anterior
     if (!res.ok) {
       setItems(oldItems);
-      alert(data.error);
+
+      alert(
+        data?.error ||
+          "Não foi possível atualizar a quantidade."
+      );
+
       return;
     }
 
-    window.dispatchEvent(new Event("cartUpdated"));
+    window.dispatchEvent(
+      new Event("cartUpdated")
+    );
 
-    fetchCart();
+  } catch (error) {
+    console.error(
+      "Erro ao atualizar quantidade:",
+      error
+    );
+
+    alert(
+      "Não foi possível atualizar a quantidade."
+    );
+
+  } finally {
+    // 🔓 Libera o produto novamente
+    setUpdatingItems(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
   }
+}
 
   async function aplicarCupom() {
 
