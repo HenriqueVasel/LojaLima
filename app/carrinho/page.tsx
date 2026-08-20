@@ -121,6 +121,130 @@ export default function CarrinhoPage() {
 
   }, []);
 
+  async function removeItem(id: number) {
+  // 🔒 Impede remover o mesmo produto várias vezes
+  if (updatingItems.has(id)) {
+    return;
+  }
+
+  const oldItems = items;
+
+  // 🔒 Marca o produto como processando
+  setUpdatingItems(prev => {
+    const next = new Set(prev);
+    next.add(id);
+    return next;
+  });
+
+  // Remove imediatamente da tela
+  setItems(prev =>
+    prev.filter(item => item.id !== id)
+  );
+
+  try {
+    // ==========================
+    // CARRINHO DE CONVIDADO
+    // ==========================
+
+    if (isGuest) {
+      const cart = JSON.parse(
+        localStorage.getItem("cart") || "[]"
+      );
+
+      const novoCarrinho = cart.filter(
+        (item: any) => item.id !== id
+      );
+
+      localStorage.setItem(
+        "cart",
+        JSON.stringify(novoCarrinho)
+      );
+
+      if (novoCarrinho.length === 0) {
+        setItems([]);
+      } else {
+        const guestRes = await fetch(
+          "/api/cart/guest",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              guestCart: novoCarrinho,
+            }),
+          }
+        );
+
+        if (!guestRes.ok) {
+          throw new Error(
+            "Não foi possível atualizar o carrinho."
+          );
+        }
+
+        const guestItems =
+          await guestRes.json();
+
+        setItems(guestItems);
+      }
+
+      window.dispatchEvent(
+        new Event("cartUpdated")
+      );
+
+      return;
+    }
+
+    // ==========================
+    // USUÁRIO LOGADO
+    // ==========================
+
+    const res = await fetch(
+      `/api/cart/item/${id}`,
+      {
+        method: "DELETE",
+        credentials: "include",
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(
+        data?.error ||
+          "Não foi possível remover o produto."
+      );
+    }
+
+    window.dispatchEvent(
+      new Event("cartUpdated")
+    );
+
+  } catch (error) {
+    console.error(
+      "Erro ao remover item:",
+      error
+    );
+
+    // Se falhar, devolve o produto
+    setItems(oldItems);
+
+    alert(
+      error instanceof Error
+        ? error.message
+        : "Não foi possível remover o produto."
+    );
+
+  } finally {
+    // 🔓 Libera o produto novamente
+    setUpdatingItems(prev => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  }
+}
+
 async function updateQty(id: number, qty: number) {
   // 🔒 Impede clicar várias vezes no mesmo produto
   if (updatingItems.has(id)) {
