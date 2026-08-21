@@ -399,3 +399,14 @@ model Navigation {
   @@index([order])
 
 }
+
+model MercadoLivreConnection {
+  id           String   @id @default(cuid())
+  userId       String?
+  sellerId     BigInt   @unique
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
