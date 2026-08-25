@@ -53,6 +53,7 @@ console.log(
 const [freteSelecionado, setFreteSelecionado] = useState<any>(null);
 const [manualFreight, setManualFreight] = useState(false);
 const [manualMessage, setManualMessage] = useState("");
+const [manualProducts, setManualProducts] = useState<any[]>([]);
 
 
 useEffect(() => {
@@ -204,6 +205,8 @@ const freteData = await freteRes.json();
 
 if (freteData.manualFreight) {
 
+    setManualProducts(freteData.products || []);
+
   setManualFreight(true);
 
   setManualMessage(freteData.message);
@@ -334,6 +337,28 @@ function nomeServico(item:any){
   }
 
 }
+
+function gerarMensagemWhatsApp() {
+  const itensCotacao = items.map((item) => ({
+    productId: item.product.id,
+    quantity: item.qty,
+  }));
+
+  const produtosTexto = itensCotacao
+    .map(
+      (item) =>
+        `• Produto ID: ${item.productId}\n  Quantidade: ${item.quantity}`
+    )
+    .join("\n\n");
+
+  const mensagem = `Olá! Gostaria de cotar o frete dos seguintes produtos:
+
+${produtosTexto}
+
+CEP: ${cep}`;
+
+  return `https://wa.me/554738423235?text=${encodeURIComponent(mensagem)}`;
+} 
 
 function logoTransportadora(item: any) {
 
@@ -491,43 +516,55 @@ Retire em nossa loja
 
 {manualFreight && (
 
-<div className={s.manualFreightCard}>
+  <div className={s.manualFreightCard}>
 
-<div className={s.manualHeader}>
+    <div className={s.manualHeader}>
 
-<div className={s.manualIcon}>
-🚚
-</div>
+      <div className={s.manualIcon}>
+        🚚
+      </div>
 
-<div>
+      <div>
 
-<h3 className={s.manualTitle}>
-Frete sob medida
-</h3>
+        <h3 className={s.manualTitle}>
+          Frete sob consulta
+        </h3>
 
-<p className={s.manualSubtitle}>
-Este produto precisa de cotação personalizada.
-</p>
+        <p className={s.manualSubtitle}>
+          Este produto não possui medidas cadastradas para cálculo automático.
+        </p>
 
-</div>
+      </div>
 
-</div>
+    </div>
 
-<p className={s.manualMessage}>
-{manualMessage}
-</p>
+    <p className={s.manualMessage}>
+      Consulte o valor do frete pelo WhatsApp.
+    </p>
 
-<a
-href="https://wa.me/554738423235?text=Olá,%20gostaria%20de%20calcular%20o%20frete."
-target="_blank"
-className={s.manualButton}
->
+    <a
+      href={`https://wa.me/554738423235?text=${encodeURIComponent(
+        `Olá! Gostaria de cotar o frete do produto:
 
-Solicitar orçamento
+${manualProducts
+  .map(
+    (product) =>
+      `Produto: ${product.name}
+SKU: ${product.sku}
+Quantidade: ${product.quantity}`
+  )
+  .join("\n\n")}
 
-</a>
+CEP: ${cep}`
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.manualButton}
+    >
+      📲 Solicitar cotação pelo WhatsApp
+    </a>
 
-</div>
+  </div>
 
 )}
 

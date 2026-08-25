@@ -74,7 +74,6 @@ for (const item of items as any[]) {
 
   if (!produto) continue;
 
-  // Se faltar qualquer dimensão ou peso, não calcula frete
 if (
   !produto.height ||
   !produto.width ||
@@ -84,9 +83,17 @@ if (
   return NextResponse.json({
     manualFreight: true,
     message:
-      "Este produto precisa de cotação manual de frete."
+      "Este produto não possui medidas cadastradas para cálculo automático.",
+    products: [
+      {
+        name: produto.name,
+        sku: produto.sku,
+        quantity: item.quantity,
+      },
+    ],
   });
 }
+
 
 console.log({
   id: produto.id,
