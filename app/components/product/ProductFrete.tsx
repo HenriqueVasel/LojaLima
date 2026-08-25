@@ -25,6 +25,8 @@ export default function ProductFrete({ items }: Props) {
   const [endereco, setEndereco] = useState<any>(null);
 
   const [fretes, setFretes] = useState<any[]>([]);
+  const [manualFreight, setManualFreight] = useState(false);
+const [manualProducts, setManualProducts] = useState<any[]>([]);
 
 
     function nomeTransportadora(item: any) {
@@ -103,6 +105,12 @@ async function calcularFrete() {
 
   setLoading(true);
 
+  setManualFreight(false);
+setManualProducts([]);
+setFretes([]);
+
+setLoading(true);
+
   try {
 
     // Busca endereço
@@ -136,19 +144,30 @@ async function calcularFrete() {
 
     const data = await res.json();
 
-    const opcoes = Array.isArray(data)
-      ? data.filter(
-          (item: any) =>
-            !item.error &&
-            item.price &&
-            Number(item.price) > 0
-        )
-      : [];
+if (data.manualFreight) {
+  setManualFreight(true);
+  setManualProducts(data.products || []);
+  setFretes([]);
 
-    if (!opcoes.length) {
-      alert("Não foi possível calcular o frete.");
-      return;
-    }
+  return;
+}
+
+const opcoes = Array.isArray(data)
+  ? data.filter(
+      (item: any) =>
+        !item.error &&
+        item.price &&
+        Number(item.price) > 0
+    )
+  : [];
+
+if (!opcoes.length) {
+  setManualFreight(true);
+  setManualProducts(data.products || []);
+  setFretes([]);
+
+  return;
+}
 
     const ordenadas = [...opcoes].sort(
       (a, b) => Number(a.price) - Number(b.price)
@@ -224,6 +243,57 @@ return (
       </div>
 
     )}
+
+    {manualFreight && (
+  <div className={s.manualFreightCard}>
+
+    <div className={s.manualHeader}>
+
+      <div className={s.manualIcon}>
+        🚚
+      </div>
+
+      <div>
+        <h3 className={s.manualTitle}>
+          Frete sob consulta
+        </h3>
+
+        <p className={s.manualSubtitle}>
+          Este produto não possui medidas cadastradas
+          para cálculo automático.
+        </p>
+      </div>
+
+    </div>
+
+    <p className={s.manualMessage}>
+      Consulte o valor do frete pelo WhatsApp.
+    </p>
+
+    <a
+      href={`https://wa.me/554738423235?text=${encodeURIComponent(
+        `Olá! Gostaria de cotar o frete do produto:
+
+${manualProducts
+  .map(
+    (product) =>
+      `Produto: ${product.name}
+SKU: ${product.sku}
+Quantidade: ${product.quantity}`
+  )
+  .join("\n\n")}
+
+CEP: ${cep}`
+      )}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={s.manualButton}
+    >
+      📲 Solicitar cotação pelo WhatsApp
+    </a>
+
+  </div>
+)}
 
     {fretes.length > 0 && (
 
