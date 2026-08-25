@@ -186,6 +186,7 @@ localStorage.setItem("bairro", data.bairro || "");
       // limpa uma consulta anterior
 setManualFreight(false);
 setManualMessage("");
+setManualProducts([]);
 
      const freteRes = await fetch("/api/frete", {
   method: "POST",
@@ -241,7 +242,23 @@ const opcoes = Array.isArray(freteData)
   : [];
 
 if (opcoes.length === 0) {
-  alert("Não foi possível calcular o frete");
+  setManualFreight(true);
+
+  setManualMessage(
+    "Este produto não possui medidas cadastradas para cálculo automático."
+  );
+
+  setFretes([]);
+  setFrete(null);
+
+  sessionStorage.setItem("manualFreight", "true");
+  sessionStorage.removeItem("freteCents");
+  sessionStorage.removeItem("shipping");
+
+  window.dispatchEvent(
+    new Event("freteUpdated")
+  );
+
   return;
 }
 
@@ -573,7 +590,7 @@ CEP: ${cep}`
       </div>
 
       {/* ENDEREÇO */}
-      {endereco && !retirada && (
+      {endereco && !retirada && !manualFreight && (
         <div className={s.address}>
           {endereco.logradouro} <br />
           {endereco.bairro} <br />
@@ -581,7 +598,7 @@ CEP: ${cep}`
         </div>
       )}
 
-    {endereco && !retirada && (
+    {endereco && !retirada && !manualFreight && (
   <input
     placeholder="Número da casa"
     value={numero}
