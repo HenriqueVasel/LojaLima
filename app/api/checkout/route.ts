@@ -702,17 +702,10 @@ payment_methods:
 
     : (
 
-        paymentMethod === "pix"
+       paymentMethod === "pix"
 
   ? {
-      default_payment_method_id: "pix",
-
-      excluded_payment_types: [
-        { id: "credit_card" },
-        { id: "debit_card" },
-        { id: "ticket" },
-        { id: "bank_transfer" }
-      ]
+      default_payment_method_id: "pix"
     }
 
   : undefined
