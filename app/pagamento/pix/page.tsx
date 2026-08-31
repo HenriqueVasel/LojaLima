@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import {
@@ -14,7 +14,7 @@ import {
 
 import s from "@/app/styles/pix.module.css";
 
-export default function PixPage() {
+function PixPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -281,5 +281,26 @@ export default function PixPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function PixPage() {
+  return (
+    <Suspense
+      fallback={
+        <div
+          style={{
+            minHeight: "100vh",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          Carregando pagamento...
+        </div>
+      }
+    >
+      <PixPageContent />
+    </Suspense>
   );
 }
