@@ -1,0 +1,420 @@
+.page {
+  min-height: 100vh;
+  padding: 40px 20px;
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(34, 197, 94, 0.08),
+      transparent 35%
+    ),
+    #f8fafc;
+}
+
+.container {
+  width: 100%;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  margin-bottom: 20px;
+
+  color: #475569;
+
+  transition: 0.2s;
+}
+
+.backButton:hover {
+  color: #16a34a;
+  transform: translateX(-3px);
+}
+
+.card {
+  background: #ffffff;
+
+  border-radius: 22px;
+
+  padding: 32px;
+
+  box-shadow:
+    0 20px 60px
+    rgba(15, 23, 42, 0.1);
+
+  border:
+    1px solid
+    rgba(226, 232, 240, 0.9);
+}
+
+.header {
+  display: flex;
+  gap: 16px;
+
+  align-items: center;
+
+  margin-bottom: 28px;
+}
+
+.icon {
+  width: 58px;
+  height: 58px;
+
+  min-width: 58px;
+
+  border-radius: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.header h1 {
+  margin: 0;
+
+  font-size: 25px;
+
+  color: #0f172a;
+}
+
+.header p {
+  margin: 6px 0 0;
+
+  color: #64748b;
+
+  line-height: 1.5;
+}
+
+.priceBox {
+  padding: 22px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #052e16,
+      #166534
+    );
+
+  color: white;
+
+  margin-bottom: 30px;
+}
+
+.priceBox span {
+  display: block;
+
+  font-size: 14px;
+
+  opacity: 0.8;
+}
+
+.priceBox strong {
+  display: block;
+
+  font-size: 32px;
+
+  margin-top: 6px;
+}
+
+.discount {
+  margin-top: 12px;
+
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #bbf7d0;
+
+  font-size: 13px;
+}
+
+.qrSection {
+  text-align: center;
+}
+
+.qrTitle {
+  font-weight: 600;
+
+  color: #334155;
+
+  margin-bottom: 15px;
+}
+
+.qrBox {
+  display: inline-flex;
+
+  padding: 16px;
+
+  background: white;
+
+  border-radius: 18px;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  box-shadow:
+    0 10px 30px
+    rgba(15, 23, 42, 0.08);
+}
+
+.qrCode {
+  width: 230px;
+  height: 230px;
+
+  display: block;
+}
+
+.qrFallback {
+  padding: 30px;
+
+  border-radius: 16px;
+
+  background: #f8fafc;
+
+  color: #64748b;
+}
+
+.divider {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+
+  margin: 30px 0;
+
+  color: #94a3b8;
+
+  font-size: 13px;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+
+  flex: 1;
+
+  height: 1px;
+
+  background: #e2e8f0;
+}
+
+.copySection {
+  width: 100%;
+}
+
+.copyTitle {
+  font-weight: 600;
+
+  color: #334155;
+
+  margin-bottom: 10px;
+}
+
+.pixCode {
+  width: 100%;
+
+  max-height: 85px;
+
+  overflow: hidden;
+
+  padding: 14px;
+
+  box-sizing: border-box;
+
+  border-radius: 12px;
+
+  background: #f8fafc;
+
+  border:
+    1px solid
+    #e2e8f0;
+
+  color: #64748b;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+
+  word-break: break-all;
+
+  margin-bottom: 12px;
+}
+
+.copyButton {
+  width: 100%;
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 15px;
+
+  cursor: pointer;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 9px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  background: #16a34a;
+
+  color: white;
+
+  transition: 0.2s;
+}
+
+.copyButton:hover {
+  background: #15803d;
+
+  transform: translateY(-1px);
+}
+
+.copied {
+  background: #047857;
+}
+
+.statusBox {
+  display: flex;
+
+  gap: 14px;
+
+  padding: 18px;
+
+  margin-top: 25px;
+
+  border-radius: 14px;
+
+  background: #fffbeb;
+
+  border:
+    1px solid
+    #fde68a;
+}
+
+.statusIcon {
+  color: #d97706;
+
+  margin-top: 2px;
+}
+
+.statusBox strong {
+  color: #92400e;
+
+  font-size: 14px;
+}
+
+.statusBox p {
+  margin: 5px 0 0;
+
+  color: #a16207;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+.security {
+  margin-top: 22px;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 8px;
+
+  color: #64748b;
+
+  font-size: 12px;
+}
+
+.checking {
+  margin-top: 15px;
+
+  text-align: center;
+
+  font-size: 12px;
+
+  color: #94a3b8;
+}
+
+.loading {
+  min-height: 80vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 15px;
+
+  color: #64748b;
+}
+
+/* 📱 MOBILE */
+
+@media (max-width: 600px) {
+
+  .page {
+    padding: 20px 12px;
+  }
+
+  .card {
+    padding: 22px 16px;
+
+    border-radius: 18px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .header h1 {
+    font-size: 21px;
+  }
+
+  .header p {
+    font-size: 13px;
+  }
+
+  .icon {
+    width: 48px;
+    height: 48px;
+
+    min-width: 48px;
+  }
+
+  .qrCode {
+    width: 200px;
+    height: 200px;
+  }
+
+  .priceBox strong {
+    font-size: 28px;
+  }
+
+}

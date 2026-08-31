@@ -3,7 +3,7 @@ import { prisma } from "@/app/lib/prisma";
 import { verifyToken } from "@/app/lib/auth";
 import { limparCarrinho } from "@/app/lib/cart";
 import client from "@/app/lib/mercadopago";
-import { Preference } from "mercadopago";
+import { Preference, Payment } from "mercadopago";
 import { cookies } from "next/headers";
 import { getUserId } from "@/app/lib/getUserId";
 import { calcularPrecoVenda } from "@/app/lib/pricing";
@@ -606,9 +606,82 @@ if (isFreeOrder) {
 
     // ================= MERCADO PAGO =================
 
-    const preference = new Preference(client);
-
 const baseUrl = "https://lojalimaelima.com.br";
+
+// 🔥 PAGAMENTO PIX DIRETO
+if (paymentMethod === "pix") {
+
+  const paymentClient = new Payment(client);
+
+  const pixPayment = await paymentClient.create({
+    body: {
+      transaction_amount: totalCents / 100,
+
+      description: `Pedido ${result.order.id}`,
+
+      payment_method_id: "pix",
+
+      external_reference: String(result.order.id),
+
+      notification_url:
+        `${baseUrl}/api/payment/webhook`,
+
+      payer: {
+        email: customerEmail || "",
+
+        identification: {
+          type:
+            customerType === "PJ"
+              ? "CNPJ"
+              : "CPF",
+
+          number:
+            customerType === "PJ"
+              ? (customerCnpj || "").replace(/\D/g, "")
+              : (customerCpf || "").replace(/\D/g, "")
+        }
+      }
+    }
+  });
+
+  return NextResponse.json({
+    success: true,
+
+    orderId: result.order.id,
+
+    paymentId: result.payment.id,
+
+    totalCents,
+
+    paymentMethod: "pix",
+
+    // QR Code PIX
+    qr_code:
+      pixPayment.point_of_interaction
+        ?.transaction_data
+        ?.qr_code,
+
+    // Imagem do QR Code
+    qr_code_base64:
+      pixPayment.point_of_interaction
+        ?.transaction_data
+        ?.qr_code_base64,
+
+    // Código para copiar e colar
+    qr_code_text:
+      pixPayment.point_of_interaction
+        ?.transaction_data
+        ?.qr_code,
+
+    // ID real do pagamento no Mercado Pago
+    externalPaymentId:
+      String(pixPayment.id)
+  });
+}
+
+// ================= CHECKOUT CARTÃO =================
+
+const preference = new Preference(client);
 
 const preferenceData = await preference.create({
   body: {

@@ -218,6 +218,24 @@ if (data.freeOrder) {
 
     
     // 🔥 abre o Mercado Pago em nova aba
+// 🔥 SE FOR PIX DIRETO
+if (payment === "pix") {
+
+  // Salva os dados do PIX temporariamente
+  sessionStorage.setItem(
+    "pixPayment",
+    JSON.stringify(data)
+  );
+
+  // Vai para a página que mostrará o QR Code
+  router.push(
+    `/pagamento/pix?orderId=${data.orderId}`
+  );
+
+  return;
+}
+
+// 💳 CARTÃO CONTINUA NO MERCADO PAGO
 window.location.href = data.init_point;
 
 // 🔥 redireciona pra sua tela de aguardando
