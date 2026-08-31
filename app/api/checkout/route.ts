@@ -704,11 +704,18 @@ payment_methods:
 
         paymentMethod === "pix"
 
-          ? {
-              default_payment_method_id: "pix"
-            }
+  ? {
+      default_payment_method_id: "pix",
 
-          : undefined
+      excluded_payment_types: [
+        { id: "credit_card" },
+        { id: "debit_card" },
+        { id: "ticket" },
+        { id: "bank_transfer" }
+      ]
+    }
+
+  : undefined
 
       ),
 

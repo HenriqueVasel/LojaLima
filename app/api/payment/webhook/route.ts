@@ -185,12 +185,40 @@ console.log(
     }
 
     const status =
-      mapPayment_status(
-        payment.status
-      );
+  mapPayment_status(
+    payment.status
+  );
 
-    let shouldSendEmail =
-      false;
+// 💰 Valor realmente pago no Mercado Pago
+const paidAmountCents = Math.round(
+  Number(payment.transaction_amount) * 100
+);
+
+// 💰 Valor esperado do pedido
+const expectedAmountCents = order.totalCents;
+
+console.log("💰 Valor esperado:", expectedAmountCents);
+console.log("💰 Valor pago:", paidAmountCents);
+
+// 🚨 Segurança: não aprova se o valor for diferente
+if (
+  status === payment_status.approved &&
+  paidAmountCents !== expectedAmountCents
+) {
+  console.error("🚨 PAGAMENTO COM VALOR DIFERENTE!");
+
+  console.error({
+    orderId,
+    paymentId,
+    expectedAmountCents,
+    paidAmountCents,
+  });
+
+  return;
+}
+
+let shouldSendEmail =
+  false;
 
     /* =========================
     🔥 TRANSACTION
