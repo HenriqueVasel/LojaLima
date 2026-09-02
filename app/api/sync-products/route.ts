@@ -717,7 +717,7 @@ shortDescription:
         // UPDATE PRODUTO
         // =========================
 
-      const updateData: any = {
+   const updateData: any = {
   name: product.name,
   brand: product.brand,
   ean: product.ean,
@@ -726,6 +726,8 @@ shortDescription:
   shortDescription:
     stripHtml(product.description)
       .slice(0, 180),
+
+  priceCents: product.price,
 };
 
 
