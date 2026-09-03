@@ -13,6 +13,8 @@ import { getFinalPrice } from "@/app/lib/price";
 
 export async function POST(req: Request) {
 
+  console.log("🚀 API CHECKOUT FOI CHAMADA");
+
   try {
 
     // ================= AUTENTICAÇÃO =================
@@ -528,6 +530,8 @@ if (
       });
     }
   }
+
+  console.log("💾 VOU SALVAR O PEDIDO NO BANCO");
 
 const order = await tx.order.create({
   data: {
