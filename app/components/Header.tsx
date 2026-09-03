@@ -611,6 +611,11 @@ const menu = [
   },
 
   {
+  label: "Kits",
+  href: "/kits",
+},
+
+  {
     label: "Instalações e Soluções",
     href: ROUTES.instalacao,
   },
