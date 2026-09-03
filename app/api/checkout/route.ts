@@ -529,41 +529,50 @@ if (
     }
   }
 
-  const order = await tx.order.create({
-    data: {
+const order = await tx.order.create({
+  data: {
+    userId: userId || null,
 
-      userId,
-      status: "pending",
-      totalCents,
-      shippingCents: freteCents || 0,
+    status: "pending",
 
-      customerName,
-      customerEmail: customerEmail || "",
+    // VALORES
+    totalCents,
+    shippingCents: freteCents || 0,
 
-      customerWhats,
+    // DADOS DO CLIENTE
+    customerName: customerName || "",
+    customerEmail: customerEmail || "",
+    customerWhats: customerWhats || "",
 
-customerCpf: customerCpf || "",
-customerType,
-customerCnpj,
-customerIe,
+    customerType: customerType || "",
+    customerCpf: customerCpf || "",
+    customerCnpj: customerCnpj || null,
+    customerIe: customerIe || null,
 
-customerObs: customerObs || "",
+    customerObs: customerObs || "",
 
-      // 🔥 ENDEREÇO
-      cep: endereco?.cep || "",
-      city: endereco?.cidade || "",
-      state: endereco?.uf || "",
-      street: endereco?.logradouro || "",
-      neighborhood: endereco?.bairro || "",
-      number: numero || "",
+    // ENDEREÇO
+    cep: endereco?.cep || null,
+    city: endereco?.cidade || null,
+    state: endereco?.uf || null,
+    street: endereco?.logradouro || null,
+    neighborhood: endereco?.bairro || null,
+    number: numero || null,
 
-      orderitem: {
-        create: orderItemsData
-      }
+    // PRODUTOS
+    orderitem: {
+      create: orderItemsData,
+    },
+  },
+});
 
-    }
-  });
-
+console.log("✅ PEDIDO SALVO NO BANCO:", {
+  id: order.id,
+  customerName: order.customerName,
+  customerEmail: order.customerEmail,
+  customerWhats: order.customerWhats,
+  totalCents: order.totalCents,
+});
       const payment = await tx.payment.create({
         data: {
           orderId: order.id,
