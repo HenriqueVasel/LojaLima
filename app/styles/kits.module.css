@@ -1,8 +1,12 @@
 .page {
   min-height: 100vh;
   background: #f7f8f7;
-  padding-bottom: 80px;
+  padding-bottom: 70px;
 }
+
+/* =========================
+   HERO
+========================= */
 
 .hero {
   background: linear-gradient(
@@ -10,7 +14,8 @@
     #07120c,
     #0d2b1b
   );
-  padding: 70px 20px;
+
+  padding: 55px 20px;
   color: white;
 }
 
@@ -23,47 +28,55 @@
 .badge {
   display: inline-block;
   color: #65d692;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.5px;
-  margin-bottom: 15px;
+  margin-bottom: 12px;
 }
 
 .hero h1 {
-  font-size: clamp(32px, 5vw, 52px);
-  margin: 0 0 15px;
+  font-size: clamp(30px, 4vw, 46px);
+  margin: 0 0 12px;
   font-weight: 800;
 }
 
 .hero p {
-  max-width: 650px;
+  max-width: 620px;
   margin: 0 auto;
   color: #c9d5ce;
-  font-size: 17px;
+  font-size: 15px;
   line-height: 1.6;
 }
+
+/* =========================
+   CONTAINER
+========================= */
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 45px 20px;
 }
+
+/* =========================
+   TÍTULO
+========================= */
 
 .heading {
   text-align: center;
-  margin-bottom: 45px;
+  margin-bottom: 35px;
 }
 
 .heading span {
   color: #168b48;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 800;
   letter-spacing: 1.5px;
 }
 
 .heading h2 {
-  margin: 10px 0;
-  font-size: 32px;
+  margin: 8px 0;
+  font-size: 28px;
   color: #18231d;
 }
 
@@ -71,33 +84,57 @@
   color: #667068;
   max-width: 600px;
   margin: 0 auto;
+  font-size: 14px;
   line-height: 1.6;
 }
 
+/* =========================
+   GRID DOS KITS
+========================= */
+
 .grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+  align-items: start;
 }
+
+/* =========================
+   CARD
+========================= */
 
 .card {
   background: white;
-  border-radius: 20px;
+  border-radius: 16px;
   overflow: hidden;
   border: 1px solid #e4e8e5;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.1);
 }
+
+/* =========================
+   IMAGEM
+========================= */
 
 .imageContainer {
   position: relative;
-  background: #f4f6f5;
-  aspect-ratio: 4 / 3;
+  width: 100%;
+  height: 190px;
+
+  background: #f1f3f2;
+
   overflow: hidden;
 }
 
@@ -105,126 +142,333 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+
+  display: block;
+
+  transition: transform 0.3s ease;
 }
+
+.card:hover .image {
+  transform: scale(1.04);
+}
+
+/* =========================
+   BADGE PROMOCIONAL
+========================= */
 
 .offer {
   position: absolute;
-  top: 18px;
-  left: 18px;
+
+  top: 12px;
+  left: 12px;
 
   background: #168b48;
   color: white;
 
-  padding: 8px 12px;
+  padding: 6px 10px;
+
   border-radius: 20px;
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
-  letter-spacing: 0.8px;
+
+  letter-spacing: 0.6px;
 }
 
+/* =========================
+   CONTEÚDO
+========================= */
+
 .content {
-  padding: 28px;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+
+  flex: 1;
 }
 
 .content h3 {
-  font-size: 24px;
+  font-size: 18px;
+  line-height: 1.35;
+
   color: #17211b;
+
   margin: 0 0 8px;
+
+  font-weight: 800;
 }
 
 .subtitle {
   color: #68736c;
-  margin-bottom: 25px;
+
+  font-size: 13px;
+
+  margin: 0 0 16px;
+
   line-height: 1.5;
+
+  min-height: 40px;
 }
+
+/* =========================
+   ITENS DO KIT
+========================= */
 
 .items {
   border-top: 1px solid #edf0ee;
   border-bottom: 1px solid #edf0ee;
 
-  padding: 20px 0;
-  margin-bottom: 22px;
+  padding: 14px 0;
+
+  margin-bottom: 16px;
 }
 
 .items h4 {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
+
   color: #26332b;
+
+  font-size: 13px;
 }
 
 .items ul {
   padding: 0;
   margin: 0;
+
   list-style: none;
 }
 
 .items li {
   color: #58635c;
-  font-size: 14px;
-  padding: 5px 0;
+
+  font-size: 12px;
+
+  padding: 4px 0;
+
+  line-height: 1.4;
 }
 
+/* =========================
+   PREÇO
+========================= */
+
 .priceBox {
-  margin-bottom: 22px;
+  margin-bottom: 16px;
+
+  margin-top: auto;
 }
 
 .priceBox span {
   display: block;
+
   color: #168b48;
-  font-size: 13px;
+
+  font-size: 11px;
+
   font-weight: 700;
 }
 
 .priceBox strong {
   display: block;
-  font-size: 30px;
+
+  font-size: 24px;
+
   color: #168b48;
-  margin: 5px 0;
+
+  margin: 4px 0;
+
+  font-weight: 800;
 }
 
 .priceBox small {
   color: #667068;
+
+  font-size: 11px;
 }
+
+/* =========================
+   BOTÃO
+========================= */
 
 .button {
   display: flex;
+
   justify-content: center;
   align-items: center;
 
   width: 100%;
-  min-height: 52px;
+
+  min-height: 46px;
 
   background: #168b48;
+
   color: white;
 
-  border-radius: 10px;
+  border-radius: 8px;
 
   text-decoration: none;
 
   font-weight: 800;
-  font-size: 13px;
 
-  transition: 0.2s;
+  font-size: 11px;
+
+  letter-spacing: 0.3px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
 }
 
 .button:hover {
   background: #0f7038;
+  transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
-  .hero {
-    padding: 50px 20px;
-  }
+/* =========================
+   TABLET
+========================= */
 
-  .container {
-    padding: 40px 16px;
-  }
+@media (max-width: 1000px) {
 
   .grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 768px) {
+
+  .page {
+    padding-bottom: 50px;
+  }
+
+  /* HERO */
+
+  .hero {
+    padding: 42px 16px;
+  }
+
+  .badge {
+    font-size: 10px;
+    margin-bottom: 10px;
+  }
+
+  .hero h1 {
+    font-size: 30px;
+    margin-bottom: 10px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /* CONTAINER */
+
+  .container {
+    padding: 35px 16px;
+  }
+
+  /* TÍTULO */
+
+  .heading {
+    margin-bottom: 28px;
+  }
+
+  .heading span {
+    font-size: 10px;
   }
 
   .heading h2 {
-    font-size: 26px;
+    font-size: 24px;
+    line-height: 1.3;
+    margin: 8px 0;
   }
+
+  .heading p {
+    font-size: 13px;
+  }
+
+  /* GRID */
+
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  /* CARD */
+
+  .card {
+    border-radius: 14px;
+  }
+
+  /* IMAGEM */
+
+  .imageContainer {
+    height: 200px;
+  }
+
+  /* CONTEÚDO */
+
+  .content {
+    padding: 18px;
+  }
+
+  .content h3 {
+    font-size: 18px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    min-height: auto;
+  }
+
+  /* ITENS */
+
+  .items li {
+    font-size: 12px;
+  }
+
+  /* PREÇO */
+
+  .priceBox strong {
+    font-size: 24px;
+  }
+
+  /* BOTÃO */
+
+  .button {
+    min-height: 48px;
+    font-size: 11px;
+  }
+
+}
+
+/* =========================
+   CELULARES PEQUENOS
+========================= */
+
+@media (max-width: 400px) {
+
+  .hero h1 {
+    font-size: 27px;
+  }
+
+  .heading h2 {
+    font-size: 22px;
+  }
+
+  .imageContainer {
+    height: 180px;
+  }
+
+  .content {
+    padding: 16px;
+  }
+
 }
