@@ -1346,7 +1346,15 @@ setLoading(false);
     </div>
   ))}
 
-
+{/* KITS */}
+<Link
+  href="/kits"
+  className={`${s.menuLink} ${
+    isActive("/kits") ? s.active : ""
+  }`}
+>
+  Kits
+</Link>
 
 
 
