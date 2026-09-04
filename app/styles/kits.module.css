@@ -136,9 +136,8 @@
 
   position: relative;
 
-  width: 100%;
-
-  height: 190px;
+ width: 100%;
+  height: 250px;
 
   background: #ffffff;
 
@@ -434,7 +433,7 @@
   /* IMAGEM */
 
   .imageContainer {
-    height: 200px;
+    height: 240px;
   }
 
   /* CONTEÚDO */
