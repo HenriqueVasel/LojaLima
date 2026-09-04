@@ -18,19 +18,69 @@ const kits = [
       "Itens selecionados conforme disponibilidade",
     ],
   },
+
   {
     id: 2,
     title: "Kit Controle de Acesso Facial",
     subtitle: "Mais segurança e praticidade para sua entrada",
     image: "/produtos/kit-facial.jpg",
-    pricePix: "R$ 1.255,90",
-    priceInstallment: "R$ 1.322,00",
+    pricePix: "R$ 1.320,67",
+    priceInstallment: "R$ 1.390,18",
     items: [
       "Controlador de acesso facial",
       "Botoeira sem fio",
       "Fonte de alimentação",
       "10 metros de cabo de rede",
       "2 conectores RJ45",
+      "Itens selecionados conforme disponibilidade",
+    ],
+  },
+
+  {
+    id: 3,
+    title: "Kit 4 Câmeras IP IA Full HD",
+    subtitle: "Monitoramento inteligente com alta qualidade de imagem",
+    image: "/produtos/kit1.jpg",
+    pricePix: "R$ 0,00",
+    priceInstallment: "R$ 0,00",
+    items: [
+      "4 câmeras IP",
+      "Gravador compatível",
+      "Armazenamento para gravações",
+      "Fonte e acessórios necessários",
+      "Itens selecionados conforme disponibilidade",
+    ],
+  },
+
+  {
+    id: 4,
+    title: "Kit 4 Câmeras IP Full HD",
+    subtitle: "Segurança completa para residências e empresas",
+    image: "/produtos/kit2.jpg",
+    pricePix: "R$ 0,00",
+    priceInstallment: "R$ 0,00",
+    items: [
+      "4 câmeras IP",
+      "Gravador compatível",
+      "Armazenamento para gravações",
+      "Fonte e acessórios necessários",
+      "Itens selecionados conforme disponibilidade",
+    ],
+  },
+
+  {
+    id: 5,
+    title: "Kit 4 Câmeras Analógicas Full HD",
+    subtitle:
+      "Sistema completo de monitoramento com excelente custo-benefício",
+    image: "/produtos/kit3.jpg",
+    pricePix: "R$ 0,00",
+    priceInstallment: "R$ 0,00",
+    items: [
+      "4 câmeras Full HD",
+      "Gravador compatível",
+      "Armazenamento para gravações",
+      "Fonte e acessórios necessários",
       "Itens selecionados conforme disponibilidade",
     ],
   },
@@ -55,6 +105,7 @@ export default function KitsPage() {
       <section className={styles.container}>
         <div className={styles.heading}>
           <span>KITS PROMOCIONAIS</span>
+
           <h2>Escolha a solução ideal para você</h2>
 
           <p>
@@ -73,7 +124,9 @@ export default function KitsPage() {
                   className={styles.image}
                 />
 
-                <span className={styles.offer}>KIT PROMOCIONAL</span>
+                <span className={styles.offer}>
+                  KIT PROMOCIONAL
+                </span>
               </div>
 
               <div className={styles.content}>
@@ -88,7 +141,9 @@ export default function KitsPage() {
 
                   <ul>
                     {kit.items.map((item) => (
-                      <li key={item}>✓ {item}</li>
+                      <li key={item}>
+                        ✓ {item}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -96,9 +151,13 @@ export default function KitsPage() {
                 <div className={styles.priceBox}>
                   <span>À vista no PIX</span>
 
-                  <strong>{kit.pricePix}</strong>
+                  <strong>
+                    {kit.pricePix}
+                  </strong>
 
-                  <small>ou {kit.priceInstallment} parcelado</small>
+                  <small>
+                    ou {kit.priceInstallment} parcelado
+                  </small>
                 </div>
 
                 <Link
