@@ -40,7 +40,7 @@ const kits = [
 
   {
   id: 3,
-  slug: "kit-4-cameras-ip-ia-full-hd",
+  slug: "kit-4-cameras-ip-ia-fullhd",
   title: "Kit 4 Câmeras IP IA Full HD",
     subtitle: "Monitoramento inteligente com alta qualidade de imagem",
     image: "/produtos/kit1.jpg",
@@ -57,7 +57,7 @@ const kits = [
 
 {
   id: 4,
-  slug: "kit-4-cameras-ip-full-hd",
+  slug: "kit-4-cameras-ip-fullhd",
   title: "Kit 4 Câmeras IP Full HD",
     subtitle: "Segurança completa para residências e empresas",
     image: "/produtos/kit2.jpg",
@@ -74,7 +74,7 @@ const kits = [
 
 {
   id: 5,
-  slug: "kit-4-cameras-analogicas-full-hd",
+  slug: "kit-4-cameras-analogicas-fullhd",
   title: "Kit 4 Câmeras Analógicas Full HD",
     subtitle:
       "Sistema completo de monitoramento com excelente custo-benefício",
