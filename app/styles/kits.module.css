@@ -159,7 +159,7 @@
     height: 300px;
     padding: 10px;
   }
-
+}
 .card:hover .image {
   transform: scale(1.04);
 }
