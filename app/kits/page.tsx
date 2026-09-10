@@ -2,9 +2,10 @@ import styles from "@/app/styles/kits.module.css";
 import Link from "next/link";
 
 const kits = [
-  {
-    id: 1,
-    title: "Kit Alarme Residencial Completo",
+ {
+  id: 1,
+  slug: "kit-alarme-residencial-completo",
+  title: "Kit Alarme Residencial Completo",
     subtitle: "Proteção completa para sua casa ou empresa",
     image: "/produtos/kit-alarme.jpg",
     pricePix: "R$ 799,00",
@@ -19,9 +20,10 @@ const kits = [
     ],
   },
 
-  {
-    id: 2,
-    title: "Kit Controle de Acesso Facial",
+{
+  id: 2,
+  slug: "kit-controle-de-acesso-facial",
+  title: "Kit Controle de Acesso Facial",
     subtitle: "Mais segurança e praticidade para sua entrada",
     image: "/produtos/kit-facial.jpg",
     pricePix: "R$ 1.320,67",
@@ -37,8 +39,9 @@ const kits = [
   },
 
   {
-    id: 3,
-    title: "Kit 4 Câmeras IP IA Full HD",
+  id: 3,
+  slug: "kit-4-cameras-ip-ia-full-hd",
+  title: "Kit 4 Câmeras IP IA Full HD",
     subtitle: "Monitoramento inteligente com alta qualidade de imagem",
     image: "/produtos/kit1.jpg",
     pricePix: "R$ 0,00",
@@ -52,9 +55,10 @@ const kits = [
     ],
   },
 
-  {
-    id: 4,
-    title: "Kit 4 Câmeras IP Full HD",
+{
+  id: 4,
+  slug: "kit-4-cameras-ip-full-hd",
+  title: "Kit 4 Câmeras IP Full HD",
     subtitle: "Segurança completa para residências e empresas",
     image: "/produtos/kit2.jpg",
     pricePix: "R$ 0,00",
@@ -68,9 +72,10 @@ const kits = [
     ],
   },
 
-  {
-    id: 5,
-    title: "Kit 4 Câmeras Analógicas Full HD",
+{
+  id: 5,
+  slug: "kit-4-cameras-analogicas-full-hd",
+  title: "Kit 4 Câmeras Analógicas Full HD",
     subtitle:
       "Sistema completo de monitoramento com excelente custo-benefício",
     image: "/produtos/kit3.jpg",
@@ -161,11 +166,11 @@ export default function KitsPage() {
                 </div>
 
                 <Link
-                  href={`/kits/${kit.id}`}
-                  className={styles.button}
-                >
-                  VER KIT COMPLETO
-                </Link>
+  href={`/produto/${kit.slug}`}
+  className={styles.button}
+>
+  VER KIT COMPLETO
+</Link>
               </div>
             </article>
           ))}
