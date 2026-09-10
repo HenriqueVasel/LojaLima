@@ -1,6 +1,6 @@
 .page {
   min-height: 100vh;
-  background: #f7f8f7;
+  background: #f5f7f6;
   padding-bottom: 70px;
 }
 
@@ -9,12 +9,7 @@
 ========================= */
 
 .hero {
-  background: linear-gradient(
-    135deg,
-    #07120c,
-    #0d2b1b
-  );
-
+  background: linear-gradient(135deg, #06130c 0%, #0b2b1b 100%);
   padding: 55px 20px;
   color: white;
 }
@@ -27,23 +22,24 @@
 
 .badge {
   display: inline-block;
-  color: #65d692;
+  color: #62d58d;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.6px;
   margin-bottom: 12px;
 }
 
 .hero h1 {
-  font-size: clamp(30px, 4vw, 46px);
+  font-size: clamp(32px, 4vw, 46px);
   margin: 0 0 12px;
   font-weight: 800;
+  letter-spacing: -0.5px;
 }
 
 .hero p {
   max-width: 620px;
   margin: 0 auto;
-  color: #c9d5ce;
+  color: #cbd8d1;
   font-size: 15px;
   line-height: 1.6;
 }
@@ -55,7 +51,7 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 45px 20px;
+  padding: 48px 20px;
 }
 
 /* =========================
@@ -64,24 +60,29 @@
 
 .heading {
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 38px;
 }
 
 .heading span {
+  display: inline-block;
   color: #168b48;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.6px;
+  margin-bottom: 3px;
 }
 
 .heading h2 {
-  margin: 8px 0;
-  font-size: 28px;
-  color: #18231d;
+  margin: 8px 0 9px;
+  font-size: 29px;
+  line-height: 1.2;
+  color: #17221b;
+  font-weight: 800;
+  letter-spacing: -0.3px;
 }
 
 .heading p {
-  color: #667068;
+  color: #68736d;
   max-width: 600px;
   margin: 0 auto;
   font-size: 14px;
@@ -89,14 +90,14 @@
 }
 
 /* =========================
-   GRID DOS KITS
+   GRID
 ========================= */
 
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-  align-items: start;
+  gap: 24px;
+  align-items: stretch;
 }
 
 /* =========================
@@ -104,29 +105,27 @@
 ========================= */
 
 .card {
-  background: white;
-  border-radius: 16px;
+  position: relative;
+  background: #ffffff;
+  border-radius: 14px;
   overflow: hidden;
-  border: 1px solid #e4e8e5;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
-
+  border: 1px solid #e1e7e3;
+  box-shadow: 0 5px 20px rgba(18, 39, 27, 0.06);
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
 
-  height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.1);
+  border-color: #d2ddd6;
+  box-shadow: 0 14px 32px rgba(18, 39, 27, 0.11);
 }
-
-/* =========================
-   IMAGEM
-========================= */
 
 /* =========================
    IMAGEM
@@ -135,13 +134,15 @@
 .imageContainer {
   position: relative;
   width: 100%;
-  height: 360px;
+  height: 330px;
   background: #ffffff;
   overflow: hidden;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+
+  padding: 10px;
 }
 
 .image {
@@ -150,20 +151,11 @@
   object-fit: contain;
   object-position: center;
   display: block;
-  transition: transform 0.25s ease;
+  transition: transform 0.3s ease;
 }
 
-
-
-@media (max-width: 768px) {
-
-  .imageContainer {
-    height: 300px;
-    padding: 10px;
-  }
-}
 .card:hover .image {
-  transform: scale(1.04);
+  transform: scale(1.035);
 }
 
 /* =========================
@@ -172,21 +164,20 @@
 
 .offer {
   position: absolute;
-
-  top: 12px;
-  left: 12px;
+  top: 13px;
+  left: 13px;
 
   background: #168b48;
-  color: white;
+  color: #ffffff;
 
-  padding: 6px 10px;
-
+  padding: 6px 11px;
   border-radius: 20px;
 
   font-size: 9px;
   font-weight: 800;
+  letter-spacing: 0.7px;
 
-  letter-spacing: 0.6px;
+  box-shadow: 0 3px 8px rgba(22, 139, 72, 0.18);
 }
 
 /* =========================
@@ -195,72 +186,57 @@
 
 .content {
   padding: 20px;
-
   display: flex;
   flex-direction: column;
-
   flex: 1;
 }
 
 .content h3 {
   font-size: 18px;
-  line-height: 1.35;
-
-  color: #17211b;
-
-  margin: 0 0 8px;
-
+  line-height: 1.3;
+  color: #17221b;
+  margin: 0 0 7px;
   font-weight: 800;
+  letter-spacing: -0.15px;
 }
 
 .subtitle {
-  color: #68736c;
-
+  color: #6a746e;
   font-size: 13px;
-
   margin: 0 0 16px;
-
   line-height: 1.5;
-
   min-height: 40px;
 }
 
 /* =========================
-   ITENS DO KIT
+   ITENS
 ========================= */
 
 .items {
   border-top: 1px solid #edf0ee;
   border-bottom: 1px solid #edf0ee;
-
   padding: 14px 0;
-
-  margin-bottom: 16px;
+  margin-bottom: 17px;
 }
 
 .items h4 {
-  margin: 0 0 10px;
-
-  color: #26332b;
-
+  margin: 0 0 9px;
+  color: #25322b;
   font-size: 13px;
+  font-weight: 800;
 }
 
 .items ul {
   padding: 0;
   margin: 0;
-
   list-style: none;
 }
 
 .items li {
-  color: #58635c;
-
+  color: #5e6962;
   font-size: 12px;
-
-  padding: 4px 0;
-
-  line-height: 1.4;
+  padding: 3px 0;
+  line-height: 1.45;
 }
 
 /* =========================
@@ -268,36 +244,30 @@
 ========================= */
 
 .priceBox {
-  margin-bottom: 16px;
-
   margin-top: auto;
+  margin-bottom: 16px;
 }
 
 .priceBox span {
   display: block;
-
   color: #168b48;
-
   font-size: 11px;
-
-  font-weight: 700;
+  font-weight: 800;
+  margin-bottom: 2px;
 }
 
 .priceBox strong {
   display: block;
-
-  font-size: 24px;
-
+  font-size: 26px;
+  line-height: 1.15;
   color: #168b48;
-
-  margin: 4px 0;
-
-  font-weight: 800;
+  margin: 3px 0 4px;
+  font-weight: 850;
+  letter-spacing: -0.4px;
 }
 
 .priceBox small {
-  color: #667068;
-
+  color: #707a74;
   font-size: 11px;
 }
 
@@ -307,36 +277,32 @@
 
 .button {
   display: flex;
-
   justify-content: center;
   align-items: center;
 
   width: 100%;
-
   min-height: 46px;
 
   background: #168b48;
-
-  color: white;
+  color: #ffffff;
 
   border-radius: 8px;
 
   text-decoration: none;
-
   font-weight: 800;
-
   font-size: 11px;
-
-  letter-spacing: 0.3px;
+  letter-spacing: 0.5px;
 
   transition:
     background 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .button:hover {
   background: #0f7038;
   transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgba(22, 139, 72, 0.2);
 }
 
 /* =========================
@@ -344,11 +310,13 @@
 ========================= */
 
 @media (max-width: 1000px) {
-
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .imageContainer {
+    height: 320px;
+  }
 }
 
 /* =========================
@@ -356,7 +324,6 @@
 ========================= */
 
 @media (max-width: 768px) {
-
   .page {
     padding-bottom: 50px;
   }
@@ -364,16 +331,17 @@
   /* HERO */
 
   .hero {
-    padding: 42px 16px;
+    padding: 40px 16px;
   }
 
   .badge {
     font-size: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 9px;
   }
 
   .hero h1 {
     font-size: 30px;
+    line-height: 1.15;
     margin-bottom: 10px;
   }
 
@@ -385,13 +353,13 @@
   /* CONTAINER */
 
   .container {
-    padding: 35px 16px;
+    padding: 34px 16px;
   }
 
   /* TÍTULO */
 
   .heading {
-    margin-bottom: 28px;
+    margin-bottom: 27px;
   }
 
   .heading span {
@@ -400,19 +368,20 @@
 
   .heading h2 {
     font-size: 24px;
-    line-height: 1.3;
-    margin: 8px 0;
+    line-height: 1.25;
+    margin: 7px 0 8px;
   }
 
   .heading p {
     font-size: 13px;
+    line-height: 1.5;
   }
 
   /* GRID */
 
   .grid {
     grid-template-columns: 1fr;
-    gap: 18px;
+    gap: 20px;
   }
 
   /* CARD */
@@ -425,6 +394,7 @@
 
   .imageContainer {
     height: 240px;
+    padding: 10px;
   }
 
   /* CONTEÚDO */
@@ -444,6 +414,10 @@
 
   /* ITENS */
 
+  .items {
+    padding: 13px 0;
+  }
+
   .items li {
     font-size: 12px;
   }
@@ -451,7 +425,7 @@
   /* PREÇO */
 
   .priceBox strong {
-    font-size: 24px;
+    font-size: 25px;
   }
 
   /* BOTÃO */
@@ -460,7 +434,6 @@
     min-height: 48px;
     font-size: 11px;
   }
-
 }
 
 /* =========================
@@ -483,5 +456,9 @@
 
   .content {
     padding: 16px;
+  }
+
+  .priceBox strong {
+    font-size: 24px;
   }
 }
