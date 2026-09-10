@@ -39,61 +39,61 @@ const kits = [
   },
 
   {
-    id: 3,
-    slug: "kit-2-cameras-analogicas-fullhd",
-    title: "Kit 2 Câmeras Analógicas Full HD",
-    subtitle:
-      "Sistema completo de monitoramento para sua residência ou empresa",
-    image: "/produtos/kit1.jpg",
-    pricePix: "R$ 1.823,81",
-    priceInstallment: "R$ 1.919,80",
-    items: [
-      "2x Câmeras Intelbras VHL 1120 B G2",
-      "1x DVR MHDX 1204-C — 4 canais",
-      "1x HD WD Purple 1 TB",
-      "1x Fonte EF 1205S — 12,8V 5A",
-      "1 par de conectores RJ45",
-      "Instalação não inclusa",
-    ],
-  },
+  id: 3,
+  slug: "kit-2-cameras-analogicas-fullhd",
+  title: "Kit 2 Câmeras Analógicas Full HD",
+  subtitle:
+    "Sistema completo de monitoramento para sua residência ou empresa",
+  image: "/produtos/kit1.jpg",
+  pricePix: "R$ 1.823,81",
+  priceInstallment: "R$ 1.919,80",
+  items: [
+    "2 câmeras de segurança Full HD",
+    "DVR com capacidade para 4 canais",
+    "HD para armazenamento das gravações",
+    "Fonte de alimentação",
+    "1 par de conectores RJ45",
+    "Instalação não inclusa",
+  ],
+},
 
-  {
-    id: 4,
-    slug: "kit-4-cameras-analogicas-fullhd-novo",
-    title: "Kit 4 Câmeras Analógicas Full HD",
-    subtitle:
-      "Sistema completo de monitoramento com excelente custo-benefício",
-    image: "/produtos/kit2.jpg",
-    pricePix: "R$ 2.057,87",
-    priceInstallment: "R$ 2.166,18",
-    items: [
-      "4x Câmeras Intelbras VHL 1120 B G2",
-      "1x DVR MHDX 1204-C — 4 canais",
-      "1x HD WD Purple 1 TB",
-      "1x Fonte EF 1205S — 12,8V 5A",
-      "1 par de conectores RJ45",
-      "Instalação não inclusa",
-    ],
-  },
+{
+  id: 4,
+  slug: "kit-4-cameras-analogicas-fullhd-novo",
+  title: "Kit 4 Câmeras Analógicas Full HD",
+  subtitle:
+    "Sistema completo de monitoramento com excelente custo-benefício",
+  image: "/produtos/kit2.jpg",
+  pricePix: "R$ 2.057,87",
+  priceInstallment: "R$ 2.166,18",
+  items: [
+    "4 câmeras de segurança Full HD",
+    "DVR com capacidade para 4 canais",
+    "HD para armazenamento das gravações",
+    "Fonte de alimentação",
+    "1 par de conectores RJ45",
+    "Instalação não inclusa",
+  ],
+},
 
-  {
-    id: 5,
-    slug: "kit-8-cameras-analogicas-fullhd",
-    title: "Kit 8 Câmeras Analógicas Full HD",
-    subtitle:
-      "Monitoramento completo para áreas maiores e empresas",
-    image: "/produtos/kit3.jpg",
-    pricePix: "R$ 2.730,17",
-    priceInstallment: "R$ 2.873,86",
-    items: [
-      "8x Câmeras Intelbras VHL 1120 B G2",
-      "1x DVR MHDX 1208-C — 8 canais",
-      "1x HD WD Purple 1 TB",
-      "1x Fonte EF 1205S — 12,8V 5A",
-      "1 par de conectores RJ45",
-      "Instalação não inclusa",
-    ],
-  },
+{
+  id: 5,
+  slug: "kit-8-cameras-analogicas-fullhd",
+  title: "Kit 8 Câmeras Analógicas Full HD",
+  subtitle:
+    "Monitoramento completo para áreas maiores e empresas",
+  image: "/produtos/kit3.jpg",
+  pricePix: "R$ 2.730,17",
+  priceInstallment: "R$ 2.873,86",
+  items: [
+    "8 câmeras de segurança Full HD",
+    "DVR com capacidade para 8 canais",
+    "HD para armazenamento das gravações",
+    "Fonte de alimentação",
+    "1 par de conectores RJ45",
+    "Instalação não inclusa",
+  ],
+},
 ];
 
 export default function KitsPage() {
