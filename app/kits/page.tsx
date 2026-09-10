@@ -129,10 +129,14 @@ export default function KitsPage() {
             <article className={styles.card} key={kit.id}>
               <div className={styles.imageContainer}>
                 <img
-                  src={kit.image}
-                  alt={kit.title}
-                  className={styles.image}
-                />
+  src={kit.image}
+  alt={kit.title}
+  className={
+    kit.id === 1 || kit.id === 2
+      ? styles.imageWide
+      : styles.image
+  }
+/>
 
                 <span className={styles.offer}>
                   KIT PROMOCIONAL
