@@ -2,10 +2,10 @@ import styles from "@/app/styles/kits.module.css";
 import Link from "next/link";
 
 const kits = [
- {
-  id: 1,
-  slug: "kit-alarme-residencial-completo",
-  title: "Kit Alarme Residencial Completo",
+  {
+    id: 1,
+    slug: "kit-alarme-residencial-completo",
+    title: "Kit Alarme Residencial Completo",
     subtitle: "Proteção completa para sua casa ou empresa",
     image: "/produtos/kit-alarme.jpg",
     pricePix: "R$ 799,00",
@@ -20,10 +20,10 @@ const kits = [
     ],
   },
 
-{
-  id: 2,
-  slug: "kit-controle-de-acesso-facial",
-  title: "Kit Controle de Acesso Facial",
+  {
+    id: 2,
+    slug: "kit-controle-de-acesso-facial",
+    title: "Kit Controle de Acesso Facial",
     subtitle: "Mais segurança e praticidade para sua entrada",
     image: "/produtos/kit-facial.jpg",
     pricePix: "R$ 1.320,67",
@@ -39,54 +39,59 @@ const kits = [
   },
 
   {
-  id: 3,
-  slug: "kit-4-cameras-ip-ia-fullhd",
-  title: "Kit 4 Câmeras IP IA Full HD",
-    subtitle: "Monitoramento inteligente com alta qualidade de imagem",
+    id: 3,
+    slug: "kit-2-cameras-analogicas-fullhd",
+    title: "Kit 2 Câmeras Analógicas Full HD",
+    subtitle:
+      "Sistema completo de monitoramento para sua residência ou empresa",
     image: "/produtos/kit1.jpg",
-    pricePix: "R$ 0,00",
-    priceInstallment: "R$ 0,00",
+    pricePix: "R$ 1.823,81",
+    priceInstallment: "R$ 1.823,81",
     items: [
-      "4 câmeras IP",
-      "Gravador compatível",
-      "Armazenamento para gravações",
-      "Fonte e acessórios necessários",
-      "Itens selecionados conforme disponibilidade",
+      "2x Câmeras Intelbras VHL 1120 B G2",
+      "1x DVR MHDX 1204-C — 4 canais",
+      "1x HD WD Purple 1 TB",
+      "1x Fonte EF 1205S — 12,8V 5A",
+      "Cabos e conectores não inclusos",
+      "Instalação não inclusa",
     ],
   },
 
-{
-  id: 4,
-  slug: "kit-4-cameras-ip-fullhd",
-  title: "Kit 4 Câmeras IP Full HD",
-    subtitle: "Segurança completa para residências e empresas",
-    image: "/produtos/kit2.jpg",
-    pricePix: "R$ 0,00",
-    priceInstallment: "R$ 0,00",
-    items: [
-      "4 câmeras IP",
-      "Gravador compatível",
-      "Armazenamento para gravações",
-      "Fonte e acessórios necessários",
-      "Itens selecionados conforme disponibilidade",
-    ],
-  },
-
-{
-  id: 5,
-  slug: "kit-4-cameras-analogicas-fullhd",
-  title: "Kit 4 Câmeras Analógicas Full HD",
+  {
+    id: 4,
+    slug: "kit-4-cameras-analogicas-fullhd-novo",
+    title: "Kit 4 Câmeras Analógicas Full HD",
     subtitle:
       "Sistema completo de monitoramento com excelente custo-benefício",
-    image: "/produtos/kit3.jpg",
-    pricePix: "R$ 0,00",
-    priceInstallment: "R$ 0,00",
+    image: "/produtos/kit2.jpg",
+    pricePix: "R$ 2.057,87",
+    priceInstallment: "R$ 2.057,87",
     items: [
-      "4 câmeras Full HD",
-      "Gravador compatível",
-      "Armazenamento para gravações",
-      "Fonte e acessórios necessários",
-      "Itens selecionados conforme disponibilidade",
+      "4x Câmeras Intelbras VHL 1120 B G2",
+      "1x DVR MHDX 1204-C — 4 canais",
+      "1x HD WD Purple 1 TB",
+      "1x Fonte EF 1205S — 12,8V 5A",
+      "Cabos e conectores não inclusos",
+      "Instalação não inclusa",
+    ],
+  },
+
+  {
+    id: 5,
+    slug: "kit-8-cameras-analogicas-fullhd",
+    title: "Kit 8 Câmeras Analógicas Full HD",
+    subtitle:
+      "Monitoramento completo para áreas maiores e empresas",
+    image: "/produtos/kit3.jpg",
+    pricePix: "R$ 2.730,17",
+    priceInstallment: "R$ 2.730,17",
+    items: [
+      "8x Câmeras Intelbras VHL 1120 B G2",
+      "1x DVR MHDX 1208-C — 8 canais",
+      "1x HD WD Purple 1 TB",
+      "1x Fonte EF 1205S — 12,8V 5A",
+      "Cabos e conectores não inclusos",
+      "Instalação não inclusa",
     ],
   },
 ];
