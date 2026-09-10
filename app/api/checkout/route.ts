@@ -467,38 +467,29 @@ if (
     });
 
     // 🔥 KIT
-    if (
-      fullProduct?.isKit &&
-      fullProduct.kitItems.length > 0
-    ) {
+   // 🔥 KIT
+if (fullProduct?.isKit) {
 
-      for (const kitItem of fullProduct.kitItems) {
+  orderItemsData.push({
 
-        orderItemsData.push({
+    productId: item.productId,
 
-          productId: kitItem.product.id,
+    variantId: null,
 
-          variantId: null,
+    slug: item.product.slug,
 
-          slug: kitItem.product.slug,
+    name: item.product.name,
 
-          name: kitItem.product.name,
+    priceCents: item.product.priceCents,
 
-          priceCents: Math.round(
-            item.product.priceCents /
-            fullProduct.kitItems.length
-          ),
+    qty: item.qty,
 
-          qty:
-            kitItem.quantity *
-            item.qty,
+    imageUrl:
+      item.product.productimage?.[0]?.url || ""
 
-          imageUrl:
-            kitItem.product.productimage[0]?.url || ""
-        });
-      }
+  });
 
-    }
+}
 
     // 🔥 NORMAL
     else {

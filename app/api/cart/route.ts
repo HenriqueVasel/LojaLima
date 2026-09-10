@@ -321,20 +321,21 @@ if (!product.isKit) {
         quantity;
 
       // evita ultrapassar estoque
-      if (
-        newQty > stockQty
-      ) {
-        return NextResponse.json(
-          {
-            error:
-              "Quantidade maior que estoque",
-          },
-          {
-            status: 400,
-          }
-        );
-      }
-
+     // evita ultrapassar estoque de produtos normais
+if (
+  !product.isKit &&
+  newQty > stockQty
+) {
+  return NextResponse.json(
+    {
+      error:
+        "Quantidade maior que estoque",
+    },
+    {
+      status: 400,
+    }
+  );
+}
       await prisma.cartitem.update({
         where: {
           id: existing.id,

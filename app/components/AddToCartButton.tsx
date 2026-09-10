@@ -12,6 +12,7 @@ type Props = {
   productImage: string;
   stock: number;
   variantId?: number;
+  isKit?: boolean;
 };
 export default function AddToCartButton({
   productId,
@@ -21,13 +22,14 @@ export default function AddToCartButton({
   productImage,
   stock,
   variantId,
+  isKit,
 }: Props) {
 
   const router = useRouter();
 
   async function handleAdd() {
 
-    if (stock <= 0) {
+    if (!isKit && stock <= 0) {
   toast.error("Produto sem estoque.");
   return;
 }
@@ -65,18 +67,18 @@ if (res.status === 401) {
 
  if (index >= 0) {
 
-  if (cart[index].qty >= stock) {
-    toast.error(
-      `Apenas ${stock} unidade${stock !== 1 ? "s" : ""} disponível${stock !== 1 ? "is" : ""} em estoque.`
-    );
-    return;
-  }
+if (!isKit && cart[index].qty >= stock) {
+  toast.error(
+    `Apenas ${stock} unidade${stock !== 1 ? "s" : ""} disponível${stock !== 1 ? "is" : ""} em estoque.`
+  );
+  return;
+}
 
   cart[index].qty += 1;
 
 } else {
 
-  if (stock <= 0) {
+  if (!isKit && stock <= 0) {
     toast.error("Produto sem estoque.");
     return;
   }
@@ -155,7 +157,7 @@ return;
 
  return (
 <button
-  disabled={stock <= 0}
+  disabled={!isKit && stock <= 0}
   type="button"
   onClick={handleAdd}
   style={{
@@ -179,7 +181,7 @@ return;
     e.currentTarget.style.transform = "translateY(0)";
   }}
 >
-  {stock <= 0
+{!isKit && stock <= 0
   ? "PRODUTO SEM ESTOQUE"
   : "🛒 ADICIONAR AO CARRINHO"}
 </button>

@@ -430,6 +430,7 @@ const precoPix =
     "/produtos/placeholder.jpg"
   }
   stock={produto.stock?.quantity ?? 0}
+  isKit={produto.isKit}
 />
 
 <BuyNowButton
