@@ -138,7 +138,7 @@ const filteredProducts = products.filter((product) => {
     .map((c) => c.category.name.toLowerCase())
     .join(" ");
 
-  const finalPrice = Math.round(product.priceCents * 1.35) / 100;
+  const finalPrice = Math.round(product.priceCents * 1.40) / 100;
 
   const isCamera =
     category.includes("camera") ||
@@ -210,7 +210,7 @@ if (
 
           const description = cleanHtml(product.description ?? "").slice(0, 500);
 
-      const finalPrice = Math.round(product.priceCents * 1.35);
+      const finalPrice = Math.round(product.priceCents * 1.40);
 
 const price = (finalPrice / 100).toFixed(2);
 
